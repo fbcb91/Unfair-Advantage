@@ -7,24 +7,24 @@ load_dotenv()
 
 TONE_INSTRUCTIONS = {
     "diretto": (
-        "TONO — Diretto e sicuro di sé, va al sodo. "
-        "VIETATO: iniziare con 'Ho visto/notato che...'. "
-        "Esempio di registro corretto: 'Malaga, Marbella e Siviglia — stai collezionando il sud della Spagna. Quale ti ha sorpresa di più?'"
+        "TONO — Diretto, sicuro, non chiede permesso. "
+        "Va dritto al punto come chi sa già di essere interessante. "
+        "Esempio: 'Flute di champagne in ogni highlight — è una firma o una coincidenza?'"
     ),
     "curioso": (
-        "TONO — Curiosità genuina su qualcosa di specifico e non ovvio. "
-        "VIETATO: domande turistiche o da catalogo viaggi. "
-        "Esempio di registro corretto: 'In tutti i tuoi post al tramonto sei sempre di spalle — è una scelta o viene naturale?'"
+        "TONO — Curiosità genuina ma leggera, non invadente. "
+        "Una domanda che dimostra che hai guardato davvero, non che hai 'studiato' il profilo. "
+        "Esempio: 'Estate 23, Estate 24 — cosa deve succedere per finire in un highlight?'"
     ),
     "giocoso": (
-        "TONO — Leggero, un filo ironico, come stessi scherzando con qualcuno appena conosciuto. "
-        "VIETATO: humor generico o battute che funzionerebbero su qualsiasi profilo. "
-        "Esempio di registro corretto: 'Ok ma quell'highlight si chiama \"Normale\" — cosa ci metti dentro esattamente?'"
+        "TONO — Ironico, un filo sfacciato, si prende gioco della situazione. "
+        "Come una battuta tra amici intelligenti, non una barzelletta. "
+        "Esempio: 'Ho contato i flute di champagne nei tuoi highlight — vinci tu.'"
     ),
     "romantico": (
-        "TONO — Caldo, sincero, si sente l'interesse senza essere pesante. "
-        "VIETATO: complimenti generici sull'estetica o frasi da film. "
-        "Esempio di registro corretto: 'C'è qualcosa in quel post con la libreria in background che non riesce a passare inosservato — quanti ne hai letti davvero?'"
+        "TONO — Caldo, lascia qualcosa in sospeso. "
+        "Non dice tutto, crea una tensione leggera. "
+        "Esempio: 'Estate 23, Estate 24 — mi chiedo già come finirà Estate 25.'"
     ),
 }
 
@@ -48,7 +48,7 @@ def analyze_profile(profile_data: dict, tone: str) -> dict:
         titles = ", ".join(f'"{t}"' for t in profile_data["highlight_titles"])
         highlights_text = f"Story highlights: {titles}\n"
 
-    prompt = f"""Sei un osservatore acuto con senso dell'umorismo. Devi generare messaggi di primo contatto Instagram che sorprendano davvero — non i soliti.
+    prompt = f"""Sei un ragazzo brillante e diretto. Devi scrivere un primo messaggio Instagram che faccia alzare la testa.
 
 PROFILO:
 Nome: {profile_data.get('full_name', '')} (@{profile_data['username']})
@@ -58,53 +58,62 @@ Follower: {profile_data.get('follower_count', 0):,} | Following: {profile_data.g
 CAPTIONS ULTIMI POST:
 {posts_text}
 
-IMMAGINI: allegate (foto profilo + post recenti) — guardале attentamente per dettagli non ovvi.
+Guarda le immagini allegate con attenzione — dettagli, pattern, quello che si vede solo fermandosi davvero.
 
-━━━ METODO DI ANALISI (seguilo in ordine) ━━━
+━━━ COME RAGIONARE ━━━
 
-STEP 1 — SCARTA L'OVVIO
-Identifica le 3-5 cose che tutti noterebbero per prime su questo profilo
-(es. "viaggia tanto", "ama il mare", "frequenta locali"). Queste sono vietate.
-Sono già state dette da ogni altro uomo che le ha scritto.
+STEP 1 — BUTTA VIA L'OVVIO
+Elenca mentalmente le 5 cose più ovvie su questo profilo.
+Sono già state dette da chiunque le abbia scritto. Non usarle.
 
-STEP 2 — TROVA L'OSSERVAZIONE NON OVVIA
-Cerca invece una di queste:
-• Un pattern che lei non ha mai visto da fuori (es. appare sempre in un certo ruolo nelle foto di gruppo)
-• Una micro-contraddizione tra bio/captions e quello che si vede nelle immagini
-• Qualcosa di specifico nel modo in cui SCRIVE le captions (una parola ricorrente, un tipo di ironia, una struttura)
-• Un dettaglio di sfondo o contesto che richiede vera attenzione (non il soggetto principale)
-• La tensione tra cosa mostra con enfasi e cosa appare quasi per caso
-• Il nome di un highlight che non si spiega da solo e crea curiosità
+STEP 2 — TROVA IL DETTAGLIO CHE SORPRENDE
+Cerca qualcosa che richiede vera attenzione:
+• Un pattern che lei stessa non ha mai visto da fuori
+• Una micro-contraddizione tra ciò che scrive e ciò che mostra
+• Un oggetto, un gesto, un ruolo ricorrente nelle foto che non è il soggetto principale
+• Il nome di un highlight che crea curiosità
+• Il suo modo di scrivere le captions — un'ironia, una parola che torna
 
-STEP 3 — COSTRUISCI I MESSAGGI
-Ogni messaggio deve:
-✓ Nascere dall'osservazione non ovvia trovata allo step 2
-✓ Farle pensare "aspetta, come l'ha notato?"
-✓ Finire con una domanda che NON si può rispondere con sì/no
-✓ Sembrare scritto da una persona vera, non da un'AI o da un manuale di pick-up
-✓ Rispettare questo tono: {tone_text}
+STEP 3 — SCRIVI COME UN ESSERE UMANO BRILLANTE, NON COME UN'AI
+Il messaggio non spiega l'osservazione — la usa.
+Un ragazzo brillante non dice "ho notato che il flute di champagne appare spesso nei tuoi highlight, il che suggerisce..." —
+dice "Flute di champagne in ogni highlight — è una firma o una coincidenza?"
 
-VIETATO in tutti i messaggi:
-✗ "Ho visto/notato che ti piace X"
-✗ Qualsiasi riferimento ai viaggi come soggetto principale (troppo ovvio su quasi tutti i profili)
-✗ Complimenti sull'aspetto fisico o sull'estetica
-✗ Aprire con una domanda generica sul posto visitato
-✗ Struttura: [osservazione ovvia] + [domanda turistica]
-✗ Più di 3 righe
+━━━ REGOLE FERREE SUI MESSAGGI ━━━
+
+LUNGHEZZA: massimo 1 riga + eventuale domanda corta. DUE RIGHE IN TUTTO. Mai tre.
+
+STRUTTURA VIETATA:
+✗ [osservazione lunga] + [spiegazione] + [domanda filosofica]
+✗ "Ho visto/notato che..."
+✗ Qualsiasi apertura con "I tuoi..." riferita a viaggi, posti, avventure
+✗ Domande tipo "qual è il tuo posto preferito?" o "com'è andata?"
+✗ Spiegare perché hai trovato il dettaglio interessante
+
+STRUTTURA GIUSTA:
+✓ [osservazione secca o ironica] — [domanda breve e diretta]
+✓ Oppure solo l'osservazione, senza domanda, se basta da sola
+✓ Il tono giusto: {tone_text}
+
+ESEMPI DI QUALITÀ ATTESA:
+✓ "Flute di champagne in ogni highlight — è una firma o una coincidenza?"
+✓ "Estate 23, Estate 24 — mi chiedo già come finirà Estate 25."
+✓ "Ho contato i flute di champagne negli highlight — vinci tu."
+✓ "'Friends' separato da tutto — c'è una lista d'attesa?"
 
 ━━━ OUTPUT ━━━
 Rispondi SOLO con JSON valido:
 {{
-  "profile_summary": "Chi è davvero questa persona — non cosa fa, ma come è. 2-3 righe.",
+  "profile_summary": "Chi è questa persona in 2 righe — non cosa fa, come è.",
   "hooks": [
-    "L'osservazione non ovvia su cui hai costruito i messaggi (spiega perché è non ovvia)",
-    "Secondo hook non ovvio",
-    "Terzo hook non ovvio"
+    "Il dettaglio non ovvio trovato (dillo in una riga)",
+    "Secondo dettaglio",
+    "Terzo dettaglio"
   ],
   "messages": [
-    "Messaggio 1 completo",
-    "Messaggio 2 con angolo diverso",
-    "Messaggio 3 alternativo"
+    "Messaggio 1 — max 2 righe",
+    "Messaggio 2 — angolo diverso, max 2 righe",
+    "Messaggio 3 — max 2 righe"
   ]
 }}"""
 
