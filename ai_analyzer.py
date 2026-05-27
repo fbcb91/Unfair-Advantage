@@ -87,17 +87,17 @@ Elenca mentalmente le 5 cose più ovvie su questo profilo.
 Sono già state dette da chiunque le abbia scritto. Non usarle.
 
 STEP 2 — TROVA IL DETTAGLIO CHE SORPRENDE
+Guarda tutto: le foto, le captions, la bio, gli highlights. Non fermarti agli highlights — sono la prima cosa che vede chiunque.
 Cerca qualcosa che richiede vera attenzione:
-• Un pattern che lei stessa non ha mai visto da fuori
+• Un pattern nelle foto che lei stessa non ha mai visto da fuori
 • Una micro-contraddizione tra ciò che scrive e ciò che mostra
 • Un oggetto, un gesto, un ruolo ricorrente nelle foto che non è il soggetto principale
-• Il nome di un highlight che crea curiosità
-• Il suo modo di scrivere le captions — un'ironia, una parola che torna
+• Il modo in cui scrive le captions — un'ironia, una parola che torna, il tono
+• Qualcosa nella bio che è insolito o crea una domanda
 
 STEP 3 — SCRIVI COME UN ESSERE UMANO BRILLANTE, NON COME UN'AI
 Il messaggio non spiega l'osservazione — la usa.
-Un ragazzo brillante non dice "ho notato che il flute di champagne appare spesso nei tuoi highlight, il che suggerisce..." —
-dice "Flute di champagne in ogni highlight — è una firma o una coincidenza?"
+Un ragazzo brillante non dice "ho notato che..." — parte diretto dall'osservazione.
 
 ━━━ REGOLE FERREE SUI MESSAGGI ━━━
 
@@ -109,17 +109,17 @@ STRUTTURA VIETATA:
 ✗ Qualsiasi apertura con "I tuoi..." riferita a viaggi, posti, avventure
 ✗ Domande tipo "qual è il tuo posto preferito?" o "com'è andata?"
 ✗ Spiegare perché hai trovato il dettaglio interessante
+✗ Usare il trattino lungo (—) come struttura fissa
 
 STRUTTURA GIUSTA:
-✓ [osservazione secca o ironica] — [domanda breve e diretta]
-✓ Oppure solo l'osservazione, senza domanda, se basta da sola
+✓ Una frase secca che colpisce, con o senza domanda finale
+✓ Ogni messaggio deve avere struttura diversa dagli altri due
 ✓ Il tono giusto: {tone_text}
 
-ESEMPI DI QUALITÀ ATTESA:
-✓ "Flute di champagne in ogni highlight — è una firma o una coincidenza?"
-✓ "Estate 23, Estate 24 — mi chiedo già come finirà Estate 25."
-✓ "Ho contato i flute di champagne negli highlight — vinci tu."
-✓ "'Friends' separato da tutto — c'è una lista d'attesa?"
+ESEMPI DI QUALITÀ ATTESA (nota: strutture diverse tra loro):
+✓ "Negozio di dolciumi fondato a 24 anni. Rispetto."
+✓ "Quella caption sul fare solo cose che ti fanno svegliare felice — l'hai scritta per te o per ricordartelo?"
+✓ "Ho contato i concerti negli highlights. Il 2025 è già pieno?"
 
 ━━━ OUTPUT ━━━
 Rispondi SOLO con JSON valido:
