@@ -37,16 +37,24 @@ async def check_setup():
 
 @app.post("/api/setup")
 async def save_setup(data: SetupRequest):
-    env_lines = [
-        f"INSTAGRAM_USERNAME={data.instagram_username}",
-        f"INSTAGRAM_PASSWORD={data.instagram_password}",
-        f"ANTHROPIC_API_KEY={data.anthropic_api_key}",
-        "SESSION_FILE=session.json",
-    ]
-    with open(".env", "w") as f:
-        f.write("\n".join(env_lines) + "\n")
+    # Set in-process env vars immediately (works on any platform)
+    os.environ["INSTAGRAM_USERNAME"] = data.instagram_username
+    os.environ["INSTAGRAM_PASSWORD"] = data.instagram_password
+    os.environ["ANTHROPIC_API_KEY"] = data.anthropic_api_key
+    os.environ.setdefault("SESSION_FILE", "session.json")
 
-    load_dotenv(override=True)
+    # Also persist to .env for local use (no-op if filesystem is read-only)
+    try:
+        env_lines = [
+            f"INSTAGRAM_USERNAME={data.instagram_username}",
+            f"INSTAGRAM_PASSWORD={data.instagram_password}",
+            f"ANTHROPIC_API_KEY={data.anthropic_api_key}",
+            "SESSION_FILE=session.json",
+        ]
+        with open(".env", "w") as f:
+            f.write("\n".join(env_lines) + "\n")
+    except OSError:
+        pass
 
     import instagram
     instagram._client = None
