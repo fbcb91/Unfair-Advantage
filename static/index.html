@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="it" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unfair Advantage</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #080808; color: #f0f0f0; }
+
+    .card {
+      background: #111;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+    }
+
+    .pill {
+      padding: 6px 16px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid rgba(255,255,255,0.12);
+      cursor: pointer;
+      transition: all 0.15s;
+      color: #888;
+      background: transparent;
+    }
+    .pill:hover { border-color: rgba(217,70,239,0.4); color: #d4d4d4; }
+    .pill.active {
+      background: #d946ef;
+      border-color: #d946ef;
+      color: #fff;
+    }
+
+    .btn-primary {
+      background: #d946ef;
+      color: #fff;
+      font-weight: 600;
+      padding: 10px 28px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 14px;
+    }
+    .btn-primary:hover { background: #c026d3; }
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      color: #ccc;
+      font-weight: 500;
+      padding: 8px 20px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 13px;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+    .copy-btn {
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      background: rgba(217,70,239,0.12);
+      color: #d946ef;
+      border: 1px solid rgba(217,70,239,0.2);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .copy-btn:hover { background: rgba(217,70,239,0.22); }
+    .copy-btn.copied { background: rgba(34,197,94,0.12); color: #22c55e; border-color: rgba(34,197,94,0.2); }
+
+    textarea {
+      background: #0d0d0d;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: #f0f0f0;
+      padding: 12px 14px;
+      font-size: 14px;
+      resize: vertical;
+      outline: none;
+      transition: border 0.15s;
+    }
+    textarea:focus { border-color: rgba(217,70,239,0.4); }
+
+    input[type="text"], input[type="password"] {
+      background: #0d0d0d;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: #f0f0f0;
+      padding: 10px 12px;
+      font-size: 14px;
+      outline: none;
+      width: 100%;
+      transition: border 0.15s;
+    }
+    input[type="text"]:focus, input[type="password"]:focus { border-color: rgba(217,70,239,0.4); }
+
+    .progress-bar {
+      height: 3px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #d946ef, #a855f7);
+      border-radius: 9999px;
+      transition: width 0.4s ease;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .badge-private { background: rgba(234,179,8,0.12); color: #ca8a04; }
+    .badge-error { background: rgba(239,68,68,0.12); color: #ef4444; }
+    .badge-done { background: rgba(34,197,94,0.12); color: #22c55e; }
+
+    .msg-box {
+      background: #0d0d0d;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #e0e0e0;
+    }
+
+    .result-card { animation: fadeUp 0.3s ease forwards; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 50;
+    }
+    .modal { width: 100%; max-width: 440px; }
+
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(217,70,239,0.3);
+      border-top-color: #d946ef;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+    .avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(217,70,239,0.3);
+      background: #1a1a1a;
+    }
+    .avatar-placeholder {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: #1a1a1a;
+      border: 2px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: #444;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- Setup Modal -->
+  <div id="setupModal" class="modal-overlay hidden">
+    <div class="modal card p-8 mx-4">
+      <div class="mb-6">
+        <h2 class="text-xl font-semibold mb-1">Configurazione iniziale</h2>
+        <p class="text-sm text-gray-500">Inserisci le tue credenziali per iniziare. Vengono salvate solo in locale.</p>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1.5">Username Instagram</label>
+          <input type="text" id="igUser" placeholder="il_tuo_username" autocomplete="off" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1.5">Password Instagram</label>
+          <input type="password" id="igPass" placeholder="••••••••••" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 mb-1.5">Anthropic API Key</label>
+          <input type="password" id="apiKey" placeholder="sk-ant-..." />
+        </div>
+        <div id="setupError" class="text-red-400 text-xs hidden"></div>
+        <button class="btn-primary w-full mt-2" onclick="saveSetup()">
+          <span id="setupBtnText">Salva e continua →</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Layout -->
+  <div class="max-w-5xl mx-auto px-4 py-8">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight">Unfair <span class="text-fuchsia-500">Advantage</span></h1>
+        <p class="text-xs text-gray-600 mt-0.5">Analisi profili Instagram con AI</p>
+      </div>
+      <button class="btn-secondary" onclick="showSetup()">⚙ Impostazioni</button>
+    </div>
+
+    <!-- Input Panel -->
+    <div class="card p-6 mb-6">
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-300 mb-2">Username da analizzare</label>
+        <textarea
+          id="usernamesInput"
+          rows="4"
+          placeholder="cristina.rossi&#10;giulia_bianchi&#10;sara.verdi&#10;&#10;Uno per riga, con o senza @"
+          class="w-full"
+        ></textarea>
+        <p class="text-xs text-gray-600 mt-1.5">Un username per riga · I profili privati verranno segnalati</p>
+      </div>
+
+      <div class="mb-5">
+        <label class="block text-sm font-medium text-gray-300 mb-2.5">Tono del messaggio</label>
+        <div class="flex flex-wrap gap-2" id="tonePills">
+          <button class="pill" data-tone="diretto" onclick="selectTone(this)">Diretto</button>
+          <button class="pill active" data-tone="curioso" onclick="selectTone(this)">Curioso</button>
+          <button class="pill" data-tone="giocoso" onclick="selectTone(this)">Giocoso</button>
+          <button class="pill" data-tone="romantico" onclick="selectTone(this)">Romantico</button>
+        </div>
+        <p id="toneDesc" class="text-xs text-gray-600 mt-2">Fa domande genuine su qualcosa che hai notato. Interessato alla sua storia.</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button class="btn-primary" id="analyzeBtn" onclick="startAnalysis()">
+          Analizza profili
+        </button>
+        <button class="btn-secondary hidden" id="newAnalysisBtn" onclick="resetUI()">
+          + Nuova analisi
+        </button>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div id="progressSection" class="card p-5 mb-6 hidden">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <div class="spinner"></div>
+          <span class="text-sm font-medium">Analisi in corso</span>
+        </div>
+        <span id="progressText" class="text-xs text-gray-500">0 / 0</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <p id="progressCurrent" class="text-xs text-gray-600 mt-2"></p>
+    </div>
+
+    <!-- Results -->
+    <div id="resultsSection" class="space-y-5"></div>
+  </div>
+
+  <script>
+    const TONE_DESCS = {
+      diretto: "Va al sodo, sicuro di sé. Frasi brevi e decise.",
+      curioso: "Fa domande genuine su qualcosa che hai notato. Interessato alla sua storia.",
+      giocoso: "Leggero e un po' ironico. Un pizzico di umorismo intelligente.",
+      romantico: "Caldo e sincero. Si sente l'interesse senza essere troppo intenso.",
+    };
+
+    let selectedTone = "curioso";
+    let pollInterval = null;
+
+    // Init
+    (async () => {
+      try {
+        const r = await fetch("/api/setup");
+        const d = await r.json();
+        if (!d.configured) showSetup();
+      } catch {}
+    })();
+
+    function showSetup() {
+      document.getElementById("setupModal").classList.remove("hidden");
+    }
+
+    function hideSetup() {
+      document.getElementById("setupModal").classList.add("hidden");
+    }
+
+    async function saveSetup() {
+      const btn = document.getElementById("setupBtnText");
+      const err = document.getElementById("setupError");
+      const igUser = document.getElementById("igUser").value.trim();
+      const igPass = document.getElementById("igPass").value;
+      const apiKey = document.getElementById("apiKey").value.trim();
+
+      if (!igUser || !igPass || !apiKey) {
+        err.textContent = "Compila tutti i campi";
+        err.classList.remove("hidden");
+        return;
+      }
+
+      btn.textContent = "Salvataggio...";
+      err.classList.add("hidden");
+
+      try {
+        const r = await fetch("/api/setup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            instagram_username: igUser,
+            instagram_password: igPass,
+            anthropic_api_key: apiKey,
+          }),
+        });
+        const d = await r.json();
+        if (d.success) {
+          hideSetup();
+        } else {
+          err.textContent = "Errore nel salvataggio";
+          err.classList.remove("hidden");
+        }
+      } catch (e) {
+        err.textContent = "Errore di connessione";
+        err.classList.remove("hidden");
+      } finally {
+        btn.textContent = "Salva e continua →";
+      }
+    }
+
+    function selectTone(el) {
+      document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+      el.classList.add("active");
+      selectedTone = el.dataset.tone;
+      document.getElementById("toneDesc").textContent = TONE_DESCS[selectedTone];
+    }
+
+    function formatNum(n) {
+      if (n >= 1000000) return (n / 1000000).toFixed(1) + "M";
+      if (n >= 1000) return (n / 1000).toFixed(1) + "K";
+      return n.toString();
+    }
+
+    async function startAnalysis() {
+      const raw = document.getElementById("usernamesInput").value;
+      const usernames = raw.split("\n").map(u => u.trim().replace(/^@/, "")).filter(Boolean);
+
+      if (!usernames.length) {
+        document.getElementById("usernamesInput").focus();
+        return;
+      }
+
+      // Reset results
+      document.getElementById("resultsSection").innerHTML = "";
+      document.getElementById("newAnalysisBtn").classList.add("hidden");
+      document.getElementById("analyzeBtn").disabled = true;
+      document.getElementById("analyzeBtn").innerHTML = '<span class="spinner mr-2"></span>Avvio...';
+
+      try {
+        const r = await fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ usernames, tone: selectedTone }),
+        });
+
+        if (!r.ok) {
+          const err = await r.json();
+          alert(err.detail || "Errore nell'avvio");
+          resetAnalyzeBtn();
+          return;
+        }
+
+        const { job_id } = await r.json();
+        showProgress(usernames.length);
+        pollJob(job_id, usernames.length);
+
+      } catch (e) {
+        alert("Errore di connessione al server");
+        resetAnalyzeBtn();
+      }
+    }
+
+    function resetAnalyzeBtn() {
+      const btn = document.getElementById("analyzeBtn");
+      btn.disabled = false;
+      btn.textContent = "Analizza profili";
+    }
+
+    function showProgress(total) {
+      document.getElementById("progressSection").classList.remove("hidden");
+      document.getElementById("progressText").textContent = `0 / ${total}`;
+      document.getElementById("progressFill").style.width = "0%";
+      document.getElementById("progressCurrent").textContent = "";
+    }
+
+    function pollJob(jobId, total) {
+      let rendered = 0;
+
+      pollInterval = setInterval(async () => {
+        try {
+          const r = await fetch(`/api/status/${jobId}`);
+          const job = await r.json();
+
+          // Update progress bar
+          const pct = total > 0 ? Math.round((job.completed / total) * 100) : 0;
+          document.getElementById("progressFill").style.width = pct + "%";
+          document.getElementById("progressText").textContent = `${job.completed} / ${total}`;
+          if (job.current) {
+            document.getElementById("progressCurrent").textContent = `Analisi di @${job.current}...`;
+          }
+
+          // Render new results as they arrive
+          while (rendered < job.results.length) {
+            renderResult(job.results[rendered]);
+            rendered++;
+          }
+
+          if (job.status === "done") {
+            clearInterval(pollInterval);
+            document.getElementById("progressSection").classList.add("hidden");
+            resetAnalyzeBtn();
+            document.getElementById("newAnalysisBtn").classList.remove("hidden");
+          }
+        } catch (e) {
+          // Network blip, keep polling
+        }
+      }, 1500);
+    }
+
+    function renderResult(result) {
+      const section = document.getElementById("resultsSection");
+      const div = document.createElement("div");
+      div.className = "result-card card p-6";
+
+      const avatarHtml = result.profile_pic_url
+        ? `<img src="${result.profile_pic_url}" class="avatar" onerror="this.parentElement.innerHTML='<div class=\\'avatar-placeholder\\'>👤</div>'" />`
+        : `<div class="avatar-placeholder">👤</div>`;
+
+      const displayName = result.full_name || `@${result.username}`;
+
+      if (result.status === "private") {
+        div.innerHTML = `
+          <div class="flex items-center gap-3">
+            ${avatarHtml}
+            <div>
+              <div class="font-semibold text-sm">${displayName}</div>
+              <div class="text-xs text-gray-500">@${result.username}</div>
+            </div>
+            <span class="badge badge-private ml-auto">🔒 Profilo privato</span>
+          </div>`;
+        section.appendChild(div);
+        return;
+      }
+
+      if (result.status === "error") {
+        div.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="avatar-placeholder">⚠️</div>
+            <div>
+              <div class="font-semibold text-sm">@${result.username}</div>
+              <div class="text-xs text-red-400 mt-0.5">${result.error || "Errore sconosciuto"}</div>
+            </div>
+            <span class="badge badge-error ml-auto">Errore</span>
+          </div>`;
+        section.appendChild(div);
+        return;
+      }
+
+      // Success card
+      const hooksHtml = (result.hooks || []).map(h =>
+        `<li class="text-sm text-gray-400">• ${escHtml(h)}</li>`
+      ).join("");
+
+      const messagesHtml = (result.messages || []).map((msg, i) => `
+        <div class="space-y-2">
+          <div class="msg-box">${escHtml(msg)}</div>
+          <div class="flex justify-end">
+            <button class="copy-btn" onclick="copyMsg(this, ${i})">Copia</button>
+          </div>
+        </div>
+      `).join("");
+
+      const follower = result.follower_count ? formatNum(result.follower_count) + " follower" : "";
+      const bioPreview = result.biography ? truncate(result.biography, 120) : "";
+
+      div.innerHTML = `
+        <div class="flex items-start gap-3 mb-5">
+          ${avatarHtml}
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="font-semibold text-sm">${escHtml(displayName)}</span>
+              <span class="text-xs text-gray-600">@${result.username}</span>
+              ${follower ? `<span class="text-xs text-gray-600">· ${follower}</span>` : ""}
+              <span class="badge badge-done ml-auto">✓ Analizzato</span>
+            </div>
+            ${bioPreview ? `<p class="text-xs text-gray-500 mt-1 leading-relaxed">${escHtml(bioPreview)}</p>` : ""}
+          </div>
+        </div>
+
+        ${result.profile_summary ? `
+        <div class="mb-5">
+          <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Profilo</p>
+          <p class="text-sm text-gray-300 leading-relaxed">${escHtml(result.profile_summary)}</p>
+        </div>` : ""}
+
+        ${hooksHtml ? `
+        <div class="mb-5">
+          <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Hook trovati</p>
+          <ul class="space-y-1">${hooksHtml}</ul>
+        </div>` : ""}
+
+        <div>
+          <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Messaggi</p>
+          <div class="space-y-3" id="msgs-${result.username}">${messagesHtml}</div>
+        </div>
+      `;
+
+      // Store messages for copy
+      div.dataset.messages = JSON.stringify(result.messages || []);
+      section.appendChild(div);
+    }
+
+    function copyMsg(btn, idx) {
+      const card = btn.closest(".result-card");
+      const messages = JSON.parse(card.dataset.messages || "[]");
+      const text = messages[idx] || "";
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = "Copiato ✓";
+        btn.classList.add("copied");
+        setTimeout(() => {
+          btn.textContent = "Copia";
+          btn.classList.remove("copied");
+        }, 2000);
+      });
+    }
+
+    function resetUI() {
+      document.getElementById("resultsSection").innerHTML = "";
+      document.getElementById("newAnalysisBtn").classList.add("hidden");
+      document.getElementById("usernamesInput").value = "";
+      document.getElementById("usernamesInput").focus();
+    }
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function truncate(str, n) {
+      return str.length > n ? str.slice(0, n) + "…" : str;
+    }
+
+    // Enter key on setup fields
+    ["igUser", "igPass", "apiKey"].forEach(id => {
+      document.getElementById(id).addEventListener("keydown", e => {
+        if (e.key === "Enter") saveSetup();
+      });
+    });
+  </script>
+</body>
+</html>
