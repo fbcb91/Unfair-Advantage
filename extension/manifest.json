@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "Unfair Advantage",
+  "version": "1.0.0",
+  "description": "Analizza profili Instagram e genera messaggi personalizzati con AI",
+
+  "permissions": ["activeTab", "storage", "scripting"],
+  "host_permissions": [
+    "https://www.instagram.com/*",
+    "https://*/*"
+  ],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16":  "icons/icon16.png",
+      "48":  "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://www.instagram.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*"],
+      "matches": ["https://www.instagram.com/*"]
+    }
+  ]
+}
