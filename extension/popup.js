@@ -2,6 +2,7 @@ const DEFAULT_BACKEND = "http://localhost:8000";
 
 let selectedTone = "curioso";
 let currentUsername = null;
+let cachedProfileData = null;  // reused across tone changes
 
 // ── Init ──────────────────────────────────────────────────────────────────
 
@@ -31,16 +32,21 @@ function bindEvents() {
   document.getElementById("igLoginBtn").addEventListener("click", () =>
     chrome.tabs.create({ url: "https://www.instagram.com/accounts/login/" }));
 
-  // Tone pills
+  // Tone pills — if results already visible, regenerate immediately with cached data
   document.querySelectorAll(".pill").forEach(pill => {
-    pill.addEventListener("click", () => selectTone(pill));
+    pill.addEventListener("click", () => {
+      selectTone(pill);
+      if (cachedProfileData && !document.getElementById("resultsSection").classList.contains("hidden")) {
+        analyzeWithCache();
+      }
+    });
   });
 
   // Main buttons
   document.getElementById("analyzeBtn").addEventListener("click", analyze);
   document.getElementById("regenBtn").addEventListener("click", () => {
     hide("resultsSection");
-    analyze();
+    analyzeWithCache();  // rigenera con stessi dati, stesso tono
   });
   document.getElementById("retryBtn").addEventListener("click", () => {
     hide("errorSection");
@@ -120,6 +126,12 @@ function makePh() {
 // ── Analysis ──────────────────────────────────────────────────────────────
 
 async function analyze() {
+  // If we already have profile data cached, skip Instagram fetch
+  if (cachedProfileData) {
+    await analyzeWithCache();
+    return;
+  }
+
   hide("resultsSection");
   hide("errorSection");
   show("loadingSection");
@@ -143,18 +155,33 @@ async function analyze() {
       return;
     }
 
-    setProfilePreview(
-      profileData.username,
-      profileData.profile_pic_url,
-      profileData.full_name,
-      profileData.follower_count
-    );
+    cachedProfileData = profileData;
+    setProfilePreview(profileData.username, profileData.profile_pic_url, profileData.full_name, profileData.follower_count);
 
     setLoadingText("Analisi AI in corso...");
     const result = await callBackend(profileData, selectedTone);
-
     showResults(result);
 
+  } catch (err) {
+    showError(err.message || "Errore sconosciuto");
+  } finally {
+    hide("loadingSection");
+    btn.disabled = false;
+  }
+}
+
+async function analyzeWithCache() {
+  hide("resultsSection");
+  hide("errorSection");
+  show("loadingSection");
+  setLoadingText("Rigenerazione con nuovo tono...");
+
+  const btn = document.getElementById("analyzeBtn");
+  btn.disabled = true;
+
+  try {
+    const result = await callBackend(cachedProfileData, selectedTone);
+    showResults(result);
   } catch (err) {
     showError(err.message || "Errore sconosciuto");
   } finally {
