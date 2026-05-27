@@ -116,11 +116,6 @@ STRUTTURA GIUSTA:
 ✓ Ogni messaggio deve avere struttura diversa dagli altri due
 ✓ Il tono giusto: {tone_text}
 
-ESEMPI DI QUALITÀ ATTESA (nota: strutture diverse tra loro):
-✓ "Negozio di dolciumi fondato a 24 anni. Rispetto."
-✓ "Quella caption sul fare solo cose che ti fanno svegliare felice — l'hai scritta per te o per ricordartelo?"
-✓ "Ho contato i concerti negli highlights. Il 2025 è già pieno?"
-
 ━━━ OUTPUT ━━━
 Rispondi SOLO con JSON valido:
 {{
