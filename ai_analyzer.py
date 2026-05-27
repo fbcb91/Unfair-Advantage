@@ -120,18 +120,22 @@ Rispondi SOLO con JSON valido:
         })
     content.append({"type": "text", "text": prompt})
 
-    response = client.messages.create(
-        model="claude-opus-4-7",
-        max_tokens=16000,
-        thinking={
-            "type": "enabled",
-            "budget_tokens": 10000,
-        },
-        messages=[{"role": "user", "content": content}],
-    )
-
-    # With thinking enabled, response contains ThinkingBlock + TextBlock
-    raw = next(b.text for b in response.content if b.type == "text").strip()
+    # Try with extended thinking first, fall back to standard if unsupported
+    try:
+        response = client.messages.create(
+            model="claude-opus-4-7",
+            max_tokens=16000,
+            thinking={"type": "enabled", "budget_tokens": 10000},
+            messages=[{"role": "user", "content": content}],
+        )
+        raw = next(b.text for b in response.content if b.type == "text").strip()
+    except Exception:
+        response = client.messages.create(
+            model="claude-opus-4-7",
+            max_tokens=2000,
+            messages=[{"role": "user", "content": content}],
+        )
+        raw = response.content[0].text.strip()
 
     if "```" in raw:
         parts = raw.split("```")

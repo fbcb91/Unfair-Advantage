@@ -59,19 +59,36 @@ async def health():
 
 @app.post("/api/analyze")
 async def analyze(request: AnalyzeRequest):
+    import anthropic as _anthropic
+
     if not os.getenv("ANTHROPIC_API_KEY"):
         raise HTTPException(status_code=500, detail="API key Anthropic non configurata sul server")
 
     if request.profile.is_private:
         raise HTTPException(status_code=400, detail="Profilo privato")
 
-    from ai_analyzer import analyze_profile
-    result = await asyncio.to_thread(
-        analyze_profile,
-        request.profile.model_dump(),
-        request.tone,
-    )
-    return result
+    try:
+        from ai_analyzer import analyze_profile
+        result = await asyncio.to_thread(
+            analyze_profile,
+            request.profile.model_dump(),
+            request.tone,
+        )
+        return result
+
+    except _anthropic.AuthenticationError:
+        raise HTTPException(status_code=401, detail="API key Anthropic non valida. Controllala nelle impostazioni del server.")
+    except _anthropic.PermissionDeniedError:
+        raise HTTPException(status_code=403, detail="Accesso negato dall'API Anthropic. Verifica i permessi della tua API key.")
+    except _anthropic.RateLimitError:
+        raise HTTPException(status_code=429, detail="Troppe richieste. Riprova tra qualche secondo.")
+    except _anthropic.APIStatusError as e:
+        msg = getattr(e, "message", str(e))
+        if "credit" in msg.lower() or "billing" in msg.lower() or e.status_code in (402, 529):
+            raise HTTPException(status_code=402, detail="Crediti Anthropic esauriti. Ricarica su console.anthropic.com → Billing.")
+        raise HTTPException(status_code=502, detail=f"Errore API Anthropic: {msg}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ── Static / landing page ─────────────────────────────────────────────────
