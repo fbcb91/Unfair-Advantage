@@ -13,18 +13,21 @@
     h1 span { color: #d946ef; }
     .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 32px; }
 
-    h2 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+    h2 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .section-hint { font-size: 12px; color: #4b5563; margin-bottom: 14px; }
 
     .card { background: #111; border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 24px; margin-bottom: 16px; }
 
     label { display: block; font-size: 11px; font-weight: 500; color: #9ca3af; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
-    input {
+    input, textarea {
       display: block; width: 100%; background: #0d0d0d; border: 1px solid rgba(255,255,255,0.1);
       border-radius: 8px; color: #f0f0f0; padding: 10px 12px; font-size: 14px;
       font-family: inherit; outline: none; transition: border-color 0.15s;
     }
-    input:focus { border-color: rgba(217,70,239,0.45); }
+    input:focus, textarea:focus { border-color: rgba(217,70,239,0.45); }
+    textarea { resize: vertical; min-height: 90px; line-height: 1.55; }
     .hint { font-size: 12px; color: #4b5563; margin-top: 6px; }
+    .chars-left { font-size: 11px; color: #4b5563; text-align: right; margin-top: 4px; }
 
     .btn-row { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
     .btn {
@@ -38,14 +41,32 @@
       font-family: inherit; cursor: pointer; padding: 4px 0; transition: color 0.12s;
     }
     .btn-ghost:hover { color: #d1d5db; }
+    .btn-save-profile {
+      width: 100%; margin-top: 14px; background: rgba(217,70,239,0.15); color: #d946ef;
+      border: 1px solid rgba(217,70,239,0.25); border-radius: 8px; padding: 8px 0;
+      font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer;
+      transition: all 0.12s;
+    }
+    .btn-save-profile:hover { background: rgba(217,70,239,0.25); }
 
     .status { font-size: 13px; margin-top: 10px; min-height: 18px; }
     .status.success { color: #22c55e; }
     .status.error   { color: #ef4444; }
     .status.neutral { color: #9ca3af; }
+    .status-inline { font-size: 12px; margin-top: 8px; min-height: 16px; }
+    .status-inline.success { color: #22c55e; }
+    .status-inline.error   { color: #ef4444; }
 
     ol { padding-left: 18px; }
     ol li { font-size: 13px; color: #9ca3af; margin-bottom: 8px; line-height: 1.5; }
+
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .tag {
+      padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 500;
+      border: 1px solid rgba(255,255,255,0.1); cursor: pointer; color: #6b7280;
+      background: none; font-family: inherit; transition: all 0.12s;
+    }
+    .tag:hover { border-color: rgba(217,70,239,0.4); color: #ccc; }
   </style>
 </head>
 <body>
@@ -53,6 +74,7 @@
     <h1>Unfair <span>Advantage</span></h1>
     <p class="subtitle">Impostazioni estensione</p>
 
+    <!-- Backend URL -->
     <div class="card">
       <label for="backendUrl">URL Backend</label>
       <input type="text" id="backendUrl" placeholder="https://unfair-advantage.fly.dev" />
@@ -65,13 +87,39 @@
       <div class="status" id="statusMsg"></div>
     </div>
 
+    <!-- User self-profile -->
+    <div class="card">
+      <h2>Il tuo profilo</h2>
+      <p class="section-hint">Queste info vengono passate all'AI per rendere i messaggi più personali e autentici. Scrivi in modo naturale — interessi, carattere, cosa fai nella vita.</p>
+
+      <label for="userInfo">Chi sei</label>
+      <textarea id="userInfo" placeholder="Es: Faccio il fotografo freelance, amo il jazz, suono la chitarra da 10 anni, viaggio spesso per lavoro in Asia. Sono curioso e diretto, con un senso dell'umorismo sottile."></textarea>
+      <div class="chars-left"><span id="charsLeft">500</span> caratteri rimasti</div>
+
+      <p class="hint" style="margin-top:8px">Suggerimenti rapidi:</p>
+      <div class="tag-row">
+        <button class="tag" data-snippet="Faccio il fotografo">Fotografo</button>
+        <button class="tag" data-snippet="Lavoro in startup tech">Startup</button>
+        <button class="tag" data-snippet="Sono un atleta">Atleta</button>
+        <button class="tag" data-snippet="Viaggio spesso per lavoro">Viaggiatore</button>
+        <button class="tag" data-snippet="Amo la musica jazz">Jazz</button>
+        <button class="tag" data-snippet="Sono appassionato di cucina">Chef</button>
+        <button class="tag" data-snippet="Ironico e diretto">Ironico</button>
+        <button class="tag" data-snippet="Curioso e creativo">Creativo</button>
+      </div>
+
+      <button class="btn-save-profile" id="saveProfileBtn">Salva profilo</button>
+      <div class="status-inline" id="profileStatus"></div>
+    </div>
+
+    <!-- Instructions -->
     <div class="card">
       <h2>Come usare l'estensione</h2>
       <ol>
         <li>Assicurati di essere loggato su Instagram nel browser</li>
         <li>Naviga sul profilo Instagram che vuoi analizzare</li>
         <li>Clicca sull'icona dell'estensione in alto a destra</li>
-        <li>Scegli il tono e clicca "Analizza"</li>
+        <li>Scegli il tono o un personaggio e clicca "Analizza"</li>
         <li>Copia il messaggio che preferisci</li>
       </ol>
     </div>

@@ -70,6 +70,16 @@
     .profile-name { font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .profile-meta { font-size: 11px; color: #6b7280; }
 
+    /* Mode toggle */
+    .mode-toggle { display: flex; gap: 0; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; }
+    .mode-tab {
+      flex: 1; padding: 6px 0; font-size: 12px; font-weight: 500; text-align: center;
+      background: none; border: none; color: #6b7280; cursor: pointer; font-family: inherit;
+      transition: all 0.12s;
+    }
+    .mode-tab.active { background: rgba(217,70,239,0.15); color: #d946ef; }
+    .mode-tab:hover:not(.active) { color: #ccc; }
+
     .pill {
       padding: 5px 13px; border-radius: 9999px; font-size: 12px; font-weight: 500;
       border: 1px solid rgba(255,255,255,0.12); cursor: pointer; color: #777;
@@ -78,6 +88,19 @@
     .pill:hover { color: #ccc; border-color: rgba(217,70,239,0.35); }
     .pill.active { background: #d946ef; border-color: #d946ef; color: #fff; }
     .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    /* Character cards */
+    .char-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .char-card {
+      padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer; background: none; font-family: inherit; text-align: left;
+      transition: all 0.12s; color: #777;
+    }
+    .char-card:hover { border-color: rgba(217,70,239,0.35); color: #ccc; }
+    .char-card.active { border-color: #d946ef; background: rgba(217,70,239,0.1); color: #f0f0f0; }
+    .char-name { font-size: 12px; font-weight: 600; display: block; }
+    .char-sub { font-size: 10px; color: #4b5563; display: block; margin-top: 1px; }
+    .char-card.active .char-sub { color: rgba(217,70,239,0.7); }
 
     .btn-analyze {
       background: #d946ef; color: #fff; font-weight: 600; padding: 9px 0; border-radius: 9px;
@@ -115,6 +138,8 @@
     .results-scroll { max-height: 380px; overflow-y: auto; }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+    .char-badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 9999px; background: rgba(217,70,239,0.15); color: #d946ef; font-weight: 600; margin-left: 6px; vertical-align: middle; }
   </style>
 </head>
 <body>
@@ -151,14 +176,45 @@
       </div>
     </div>
 
-    <!-- Tone selector -->
-    <div class="mb-3">
-      <p class="label mb-2">Tono</p>
+    <!-- Mode toggle: Tono / Personaggio -->
+    <div class="mode-toggle mb-3">
+      <button class="mode-tab active" id="modeToneTab">Tono</button>
+      <button class="mode-tab" id="modeCharTab">Personaggio</button>
+    </div>
+
+    <!-- Tone selector (shown in Tono mode) -->
+    <div id="tonePanel" class="mb-3">
       <div class="pills">
         <button class="pill" data-tone="diretto">Diretto</button>
         <button class="pill active" data-tone="curioso">Curioso</button>
         <button class="pill" data-tone="giocoso">Giocoso</button>
         <button class="pill" data-tone="romantico">Romantico</button>
+      </div>
+    </div>
+
+    <!-- Character selector (shown in Personaggio mode) -->
+    <div id="charPanel" class="hidden mb-3">
+      <div class="char-grid">
+        <button class="char-card" data-char="chuck_bass">
+          <span class="char-name">Chuck Bass</span>
+          <span class="char-sub">Gossip Girl</span>
+        </button>
+        <button class="char-card" data-char="damon_salvatore">
+          <span class="char-name">Damon Salvatore</span>
+          <span class="char-sub">Vampire Diaries</span>
+        </button>
+        <button class="char-card" data-char="hitch">
+          <span class="char-name">Hitch</span>
+          <span class="char-sub">Will Smith</span>
+        </button>
+        <button class="char-card" data-char="harvey_specter">
+          <span class="char-name">Harvey Specter</span>
+          <span class="char-sub">Suits</span>
+        </button>
+        <button class="char-card" data-char="michael_scott">
+          <span class="char-name">Stile Selvaggio</span>
+          <span class="char-sub">Entusiasta sincero</span>
+        </button>
       </div>
     </div>
 
@@ -185,7 +241,7 @@
       </div>
 
       <div class="mb-2">
-        <p class="label mb-2">Messaggi</p>
+        <p class="label mb-2">Messaggi <span id="charBadge" class="char-badge hidden"></span></p>
         <div id="messagesList" class="space-y-3"></div>
       </div>
 

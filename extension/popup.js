@@ -1,8 +1,18 @@
 const DEFAULT_BACKEND = "http://localhost:8000";
 
 let selectedTone = "curioso";
+let selectedChar = "";      // empty = no character (use tone)
+let activeMode = "tone";    // "tone" | "char"
 let currentUsername = null;
-let cachedProfileData = null;  // reused across tone changes
+let cachedProfileData = null;
+
+const CHAR_LABELS = {
+  chuck_bass: "Chuck Bass",
+  damon_salvatore: "Damon Salvatore",
+  hitch: "Hitch",
+  harvey_specter: "Harvey Specter",
+  michael_scott: "Stile Selvaggio",
+};
 
 // ── Init ──────────────────────────────────────────────────────────────────
 
@@ -32,10 +42,24 @@ function bindEvents() {
   document.getElementById("igLoginBtn").addEventListener("click", () =>
     chrome.tabs.create({ url: "https://www.instagram.com/accounts/login/" }));
 
-  // Tone pills — if results already visible, regenerate immediately with cached data
+  // Mode tabs
+  document.getElementById("modeToneTab").addEventListener("click", () => switchMode("tone"));
+  document.getElementById("modeCharTab").addEventListener("click", () => switchMode("char"));
+
+  // Tone pills
   document.querySelectorAll(".pill").forEach(pill => {
     pill.addEventListener("click", () => {
       selectTone(pill);
+      if (cachedProfileData && !document.getElementById("resultsSection").classList.contains("hidden")) {
+        analyzeWithCache();
+      }
+    });
+  });
+
+  // Character cards
+  document.querySelectorAll(".char-card").forEach(card => {
+    card.addEventListener("click", () => {
+      selectChar(card);
       if (cachedProfileData && !document.getElementById("resultsSection").classList.contains("hidden")) {
         analyzeWithCache();
       }
@@ -46,18 +70,63 @@ function bindEvents() {
   document.getElementById("analyzeBtn").addEventListener("click", analyze);
   document.getElementById("regenBtn").addEventListener("click", () => {
     hide("resultsSection");
-    analyzeWithCache();  // rigenera con stessi dati, stesso tono
+    analyzeWithCache();
   });
   document.getElementById("retryBtn").addEventListener("click", () => {
     hide("errorSection");
     analyze();
   });
 
-  // Copy buttons — event delegation since buttons are created dynamically
+  // Copy buttons — event delegation
   document.getElementById("messagesList").addEventListener("click", e => {
     const btn = e.target.closest(".copy-btn");
     if (btn) copyMsg(btn);
   });
+}
+
+// ── Mode / tone / character ───────────────────────────────────────────────
+
+function switchMode(mode) {
+  activeMode = mode;
+
+  const toneTab = document.getElementById("modeToneTab");
+  const charTab = document.getElementById("modeCharTab");
+  const tonePanel = document.getElementById("tonePanel");
+  const charPanel = document.getElementById("charPanel");
+
+  if (mode === "tone") {
+    toneTab.classList.add("active");
+    charTab.classList.remove("active");
+    tonePanel.classList.remove("hidden");
+    charPanel.classList.add("hidden");
+    selectedChar = "";
+  } else {
+    charTab.classList.add("active");
+    toneTab.classList.remove("active");
+    charPanel.classList.remove("hidden");
+    tonePanel.classList.add("hidden");
+    // auto-select first char if none selected
+    if (!selectedChar) {
+      const first = document.querySelector(".char-card");
+      if (first) selectChar(first);
+    }
+  }
+
+  if (cachedProfileData && !document.getElementById("resultsSection").classList.contains("hidden")) {
+    analyzeWithCache();
+  }
+}
+
+function selectTone(el) {
+  document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+  el.classList.add("active");
+  selectedTone = el.dataset.tone;
+}
+
+function selectChar(el) {
+  document.querySelectorAll(".char-card").forEach(c => c.classList.remove("active"));
+  el.classList.add("active");
+  selectedChar = el.dataset.char;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────
@@ -71,12 +140,6 @@ function extractUsername(url) {
   return reserved.has(m[1]) ? null : m[1];
 }
 
-function selectTone(el) {
-  document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
-  el.classList.add("active");
-  selectedTone = el.dataset.tone;
-}
-
 function show(id) { document.getElementById(id)?.classList.remove("hidden"); }
 function hide(id) { document.getElementById(id)?.classList.add("hidden"); }
 
@@ -88,12 +151,6 @@ function fmt(n) {
   if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
   if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
   return String(n);
-}
-
-function esc(s) {
-  return String(s)
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
 // ── Profile preview ───────────────────────────────────────────────────────
@@ -126,7 +183,6 @@ function makePh() {
 // ── Analysis ──────────────────────────────────────────────────────────────
 
 async function analyze() {
-  // If we already have profile data cached, skip Instagram fetch
   if (cachedProfileData) {
     await analyzeWithCache();
     return;
@@ -159,7 +215,7 @@ async function analyze() {
     setProfilePreview(profileData.username, profileData.profile_pic_url, profileData.full_name, profileData.follower_count);
 
     setLoadingText("Analisi AI in corso...");
-    const result = await callBackend(profileData, selectedTone);
+    const result = await callBackend(profileData);
     showResults(result);
 
   } catch (err) {
@@ -174,13 +230,13 @@ async function analyzeWithCache() {
   hide("resultsSection");
   hide("errorSection");
   show("loadingSection");
-  setLoadingText("Rigenerazione con nuovo tono...");
+  setLoadingText("Rigenerazione in corso...");
 
   const btn = document.getElementById("analyzeBtn");
   btn.disabled = true;
 
   try {
-    const result = await callBackend(cachedProfileData, selectedTone);
+    const result = await callBackend(cachedProfileData);
     showResults(result);
   } catch (err) {
     showError(err.message || "Errore sconosciuto");
@@ -203,14 +259,21 @@ async function extractProfileFromTab() {
   });
 }
 
-async function callBackend(profileData, tone) {
-  const { backendUrl } = await chrome.storage.sync.get({ backendUrl: DEFAULT_BACKEND });
+async function callBackend(profileData) {
+  const { backendUrl, userInfo } = await chrome.storage.sync.get({ backendUrl: DEFAULT_BACKEND, userInfo: "" });
   const url = backendUrl.replace(/\/$/, "");
+
+  const body = {
+    profile: profileData,
+    tone: activeMode === "tone" ? selectedTone : "curioso",
+    character: activeMode === "char" ? selectedChar : "",
+    user_info: userInfo || "",
+  };
 
   const res = await fetch(`${url}/api/analyze`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ profile: profileData, tone }),
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
@@ -249,6 +312,15 @@ function showResults(result) {
     show("hooksBlock");
   } else {
     hide("hooksBlock");
+  }
+
+  // Character badge
+  const badge = document.getElementById("charBadge");
+  if (activeMode === "char" && selectedChar && CHAR_LABELS[selectedChar]) {
+    badge.textContent = CHAR_LABELS[selectedChar];
+    badge.classList.remove("hidden");
+  } else {
+    badge.classList.add("hidden");
   }
 
   // Messages

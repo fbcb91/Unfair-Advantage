@@ -48,6 +48,8 @@ class ProfileData(BaseModel):
 class AnalyzeRequest(BaseModel):
     profile: ProfileData
     tone: str = "curioso"
+    character: str = ""
+    user_info: str = ""
 
 
 # ── Endpoints ─────────────────────────────────────────────────────────────
@@ -73,6 +75,8 @@ async def analyze(request: AnalyzeRequest):
             analyze_profile,
             request.profile.model_dump(),
             request.tone,
+            request.character,
+            request.user_info,
         )
         return result
 
