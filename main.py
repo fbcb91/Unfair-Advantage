@@ -1,12 +1,13 @@
+import asyncio
 import os
 import uuid
-import asyncio
 from typing import List
-from fastapi import FastAPI, BackgroundTasks, HTTPException
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-from pydantic import BaseModel
+
 from dotenv import load_dotenv
+from fastapi import BackgroundTasks, FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 load_dotenv()
 
@@ -15,57 +16,89 @@ app = FastAPI(title="Unfair Advantage")
 jobs: dict = {}
 
 
+# ── Models ──────────────────────────────────────────────────────────────────
+
+class SetupRequest(BaseModel):
+    anthropic_api_key: str
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+class TwoFARequest(BaseModel):
+    code: str
+
 class AnalyzeRequest(BaseModel):
     usernames: List[str]
     tone: str = "curioso"
 
 
-class SetupRequest(BaseModel):
-    instagram_username: str
-    instagram_password: str
-    anthropic_api_key: str
-
+# ── Setup / Auth ─────────────────────────────────────────────────────────────
 
 @app.get("/api/setup")
 async def check_setup():
+    from instagram import is_logged_in
+    logged_in = await is_logged_in()
     return {
-        "configured": bool(
-            os.getenv("INSTAGRAM_USERNAME") and os.getenv("ANTHROPIC_API_KEY")
-        )
+        "api_key_set": bool(os.getenv("ANTHROPIC_API_KEY")),
+        "logged_in": logged_in,
     }
 
 
 @app.post("/api/setup")
-async def save_setup(data: SetupRequest):
-    # Set in-process env vars immediately (works on any platform)
-    os.environ["INSTAGRAM_USERNAME"] = data.instagram_username
-    os.environ["INSTAGRAM_PASSWORD"] = data.instagram_password
+async def save_api_key(data: SetupRequest):
     os.environ["ANTHROPIC_API_KEY"] = data.anthropic_api_key
-    os.environ.setdefault("SESSION_FILE", "session.json")
-
-    # Also persist to .env for local use (no-op if filesystem is read-only)
     try:
-        env_lines = [
-            f"INSTAGRAM_USERNAME={data.instagram_username}",
-            f"INSTAGRAM_PASSWORD={data.instagram_password}",
-            f"ANTHROPIC_API_KEY={data.anthropic_api_key}",
-            "SESSION_FILE=session.json",
-        ]
-        with open(".env", "w") as f:
-            f.write("\n".join(env_lines) + "\n")
+        _write_env()
     except OSError:
         pass
-
-    import instagram
-    instagram._client = None
-
     return {"success": True}
 
 
+@app.post("/api/login")
+async def do_login(data: LoginRequest):
+    from instagram import start_login
+    result = await start_login(data.username, data.password)
+    if result.get("success"):
+        os.environ["INSTAGRAM_USERNAME"] = data.username
+        os.environ["INSTAGRAM_PASSWORD"] = data.password
+        try:
+            _write_env()
+        except OSError:
+            pass
+    return result
+
+
+@app.post("/api/login/verify")
+async def do_2fa(data: TwoFARequest):
+    from instagram import submit_2fa
+    return await submit_2fa(data.code)
+
+
+@app.post("/api/logout")
+async def do_logout():
+    global _context
+    from pathlib import Path
+    import instagram
+    instagram._context = None
+    instagram._browser = None
+    instagram._login_page = None
+    try:
+        Path(instagram.COOKIES_FILE).unlink(missing_ok=True)
+    except Exception:
+        pass
+    return {"success": True}
+
+
+# ── Analysis ──────────────────────────────────────────────────────────────────
+
 @app.post("/api/analyze")
 async def start_analysis(request: AnalyzeRequest, background_tasks: BackgroundTasks):
-    if not os.getenv("INSTAGRAM_USERNAME"):
-        raise HTTPException(status_code=400, detail="Credenziali non configurate")
+    from instagram import is_logged_in
+    if not await is_logged_in():
+        raise HTTPException(status_code=401, detail="Non sei loggato su Instagram")
+    if not os.getenv("ANTHROPIC_API_KEY"):
+        raise HTTPException(status_code=400, detail="API key Anthropic non configurata")
 
     usernames = [u.strip().lstrip("@") for u in request.usernames if u.strip()]
     if not usernames:
@@ -92,14 +125,13 @@ async def get_status(job_id: str):
 
 
 async def _process_batch(job_id: str, usernames: List[str], tone: str):
-    from instagram import get_profile_data
     from ai_analyzer import analyze_profile
+    from instagram import get_profile_data
 
     for i, username in enumerate(usernames):
         jobs[job_id]["current"] = username
-
         try:
-            profile = await asyncio.to_thread(get_profile_data, username)
+            profile = await get_profile_data(username)
 
             if profile.get("is_private"):
                 result = {
@@ -125,6 +157,21 @@ async def _process_batch(job_id: str, usernames: List[str], tone: str):
     jobs[job_id]["status"] = "done"
     jobs[job_id]["current"] = ""
 
+
+# ── Helpers ──────────────────────────────────────────────────────────────────
+
+def _write_env():
+    lines = {
+        "INSTAGRAM_USERNAME": os.getenv("INSTAGRAM_USERNAME", ""),
+        "INSTAGRAM_PASSWORD": os.getenv("INSTAGRAM_PASSWORD", ""),
+        "ANTHROPIC_API_KEY": os.getenv("ANTHROPIC_API_KEY", ""),
+        "SESSION_FILE": os.getenv("SESSION_FILE", "session.json"),
+    }
+    with open(".env", "w") as f:
+        f.write("\n".join(f"{k}={v}" for k, v in lines.items()) + "\n")
+
+
+# ── Static ────────────────────────────────────────────────────────────────────
 
 @app.get("/")
 async def serve_index():

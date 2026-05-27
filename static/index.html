@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it" class="dark">
+<html lang="it">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,214 +11,157 @@
     * { font-family: 'Inter', sans-serif; }
     body { background: #080808; color: #f0f0f0; }
 
-    .card {
-      background: #111;
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 16px;
-    }
+    .card { background: #111; border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; }
 
     .pill {
-      padding: 6px 16px;
-      border-radius: 9999px;
-      font-size: 13px;
-      font-weight: 500;
-      border: 1px solid rgba(255,255,255,0.12);
-      cursor: pointer;
-      transition: all 0.15s;
-      color: #888;
-      background: transparent;
+      padding: 6px 16px; border-radius: 9999px; font-size: 13px; font-weight: 500;
+      border: 1px solid rgba(255,255,255,0.12); cursor: pointer; transition: all 0.15s; color: #888;
     }
     .pill:hover { border-color: rgba(217,70,239,0.4); color: #d4d4d4; }
-    .pill.active {
-      background: #d946ef;
-      border-color: #d946ef;
-      color: #fff;
-    }
+    .pill.active { background: #d946ef; border-color: #d946ef; color: #fff; }
 
     .btn-primary {
-      background: #d946ef;
-      color: #fff;
-      font-weight: 600;
-      padding: 10px 28px;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      transition: all 0.15s;
-      font-size: 14px;
+      background: #d946ef; color: #fff; font-weight: 600; padding: 10px 28px;
+      border-radius: 10px; border: none; cursor: pointer; transition: all 0.15s; font-size: 14px;
     }
     .btn-primary:hover { background: #c026d3; }
-    .btn-primary:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .btn-secondary {
-      background: rgba(255,255,255,0.06);
-      color: #ccc;
-      font-weight: 500;
-      padding: 8px 20px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.1);
-      cursor: pointer;
-      transition: all 0.15s;
-      font-size: 13px;
+      background: rgba(255,255,255,0.06); color: #ccc; font-weight: 500; padding: 8px 20px;
+      border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
+      transition: all 0.15s; font-size: 13px;
     }
     .btn-secondary:hover { background: rgba(255,255,255,0.1); }
 
+    .btn-ghost {
+      background: transparent; color: #666; font-weight: 400; padding: 6px 12px;
+      border-radius: 8px; border: none; cursor: pointer; transition: all 0.15s; font-size: 13px;
+    }
+    .btn-ghost:hover { color: #aaa; }
+
     .copy-btn {
-      padding: 5px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 500;
-      background: rgba(217,70,239,0.12);
-      color: #d946ef;
-      border: 1px solid rgba(217,70,239,0.2);
-      cursor: pointer;
-      transition: all 0.15s;
-      white-space: nowrap;
+      padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+      background: rgba(217,70,239,0.12); color: #d946ef; border: 1px solid rgba(217,70,239,0.2);
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
     }
     .copy-btn:hover { background: rgba(217,70,239,0.22); }
     .copy-btn.copied { background: rgba(34,197,94,0.12); color: #22c55e; border-color: rgba(34,197,94,0.2); }
 
-    textarea {
-      background: #0d0d0d;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px;
-      color: #f0f0f0;
-      padding: 12px 14px;
-      font-size: 14px;
-      resize: vertical;
-      outline: none;
-      transition: border 0.15s;
+    textarea, input[type="text"], input[type="password"], input[type="number"] {
+      background: #0d0d0d; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+      color: #f0f0f0; padding: 10px 12px; font-size: 14px; outline: none; transition: border 0.15s;
     }
-    textarea:focus { border-color: rgba(217,70,239,0.4); }
+    textarea { resize: vertical; border-radius: 10px; padding: 12px 14px; }
+    textarea:focus, input:focus { border-color: rgba(217,70,239,0.45); }
 
-    input[type="text"], input[type="password"] {
-      background: #0d0d0d;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px;
-      color: #f0f0f0;
-      padding: 10px 12px;
-      font-size: 14px;
-      outline: none;
-      width: 100%;
-      transition: border 0.15s;
-    }
-    input[type="text"]:focus, input[type="password"]:focus { border-color: rgba(217,70,239,0.4); }
-
-    .progress-bar {
-      height: 3px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 9999px;
-      overflow: hidden;
-    }
+    .progress-bar { height: 3px; background: rgba(255,255,255,0.06); border-radius: 9999px; overflow: hidden; }
     .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #d946ef, #a855f7);
-      border-radius: 9999px;
-      transition: width 0.4s ease;
+      height: 100%; background: linear-gradient(90deg, #d946ef, #a855f7);
+      border-radius: 9999px; transition: width 0.4s ease;
     }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
-      border-radius: 9999px;
-      font-size: 11px;
-      font-weight: 500;
-    }
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 500; }
     .badge-private { background: rgba(234,179,8,0.12); color: #ca8a04; }
-    .badge-error { background: rgba(239,68,68,0.12); color: #ef4444; }
-    .badge-done { background: rgba(34,197,94,0.12); color: #22c55e; }
+    .badge-error   { background: rgba(239,68,68,0.12);  color: #ef4444; }
+    .badge-done    { background: rgba(34,197,94,0.12);  color: #22c55e; }
 
     .msg-box {
-      background: #0d0d0d;
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 10px;
-      padding: 12px 14px;
-      font-size: 14px;
-      line-height: 1.6;
-      color: #e0e0e0;
+      background: #0d0d0d; border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px; padding: 12px 14px; font-size: 14px; line-height: 1.6; color: #e0e0e0;
     }
 
     .result-card { animation: fadeUp 0.3s ease forwards; }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(4px);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 50;
+    .overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 50;
     }
-    .modal { width: 100%; max-width: 440px; }
+    .modal { width: 100%; max-width: 460px; }
 
     .spinner {
-      width: 16px; height: 16px;
-      border: 2px solid rgba(217,70,239,0.3);
-      border-top-color: #d946ef;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      display: inline-block;
+      width: 16px; height: 16px; border: 2px solid rgba(217,70,239,0.3);
+      border-top-color: #d946ef; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    .step-dot {
+      width: 8px; height: 8px; border-radius: 50%; transition: background 0.2s;
+    }
+
+    .ig-status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
+    .dot-green { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; }
+    .dot-red   { width: 7px; height: 7px; border-radius: 50%; background: #ef4444; }
 
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 
-    .avatar {
-      width: 48px; height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid rgba(217,70,239,0.3);
-      background: #1a1a1a;
-    }
-    .avatar-placeholder {
-      width: 48px; height: 48px;
-      border-radius: 50%;
-      background: #1a1a1a;
-      border: 2px solid rgba(255,255,255,0.08);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; color: #444;
-    }
+    .avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(217,70,239,0.3); background: #1a1a1a; }
+    .avatar-ph { width: 48px; height: 48px; border-radius: 50%; background: #1a1a1a; border: 2px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-size: 18px; color: #444; }
   </style>
 </head>
 <body class="min-h-screen">
 
-  <!-- Setup Modal -->
-  <div id="setupModal" class="modal-overlay hidden">
+  <!-- ── Setup / Login Modal ── -->
+  <div id="modalOverlay" class="overlay hidden">
     <div class="modal card p-8 mx-4">
-      <div class="mb-6">
-        <h2 class="text-xl font-semibold mb-1">Configurazione</h2>
-        <p class="text-sm text-gray-500">Le credenziali sono attive solo per questa sessione. Per renderle permanenti impostale nelle variabili d'ambiente della tua piattaforma (es. Railway → Variables).</p>
+
+      <!-- Step dots -->
+      <div class="flex items-center gap-2 mb-6">
+        <div id="dot1" class="step-dot bg-fuchsia-500"></div>
+        <div id="dot2" class="step-dot bg-gray-700"></div>
+        <div id="dot3" class="step-dot bg-gray-700"></div>
       </div>
-      <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-medium text-gray-400 mb-1.5">Username Instagram</label>
-          <input type="text" id="igUser" placeholder="il_tuo_username" autocomplete="off" />
+
+      <!-- Step 1: API key -->
+      <div id="step1">
+        <h2 class="text-lg font-semibold mb-1">API Key Anthropic</h2>
+        <p class="text-sm text-gray-500 mb-5">Necessaria per far girare l'AI. La trovi su <span class="text-gray-400">console.anthropic.com</span></p>
+        <label class="block text-xs font-medium text-gray-400 mb-1.5">Anthropic API Key</label>
+        <input type="password" id="apiKeyInput" class="w-full" placeholder="sk-ant-..." />
+        <div id="step1Error" class="text-red-400 text-xs mt-2 hidden"></div>
+        <button class="btn-primary w-full mt-5" onclick="saveApiKey()">Continua →</button>
+      </div>
+
+      <!-- Step 2: Instagram login -->
+      <div id="step2" class="hidden">
+        <h2 class="text-lg font-semibold mb-1">Connetti Instagram</h2>
+        <p class="text-sm text-gray-500 mb-5">Un browser Chrome si avvia in background e fa il login per te. Funziona esattamente come aprirlo sul tuo telefono.</p>
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1.5">Username Instagram</label>
+            <input type="text" id="igUser" class="w-full" placeholder="il_tuo_username" autocomplete="off" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-400 mb-1.5">Password</label>
+            <input type="password" id="igPass" class="w-full" placeholder="••••••••" />
+          </div>
         </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-400 mb-1.5">Password Instagram</label>
-          <input type="password" id="igPass" placeholder="••••••••••" />
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-400 mb-1.5">Anthropic API Key</label>
-          <input type="password" id="apiKey" placeholder="sk-ant-..." />
-        </div>
-        <div id="setupError" class="text-red-400 text-xs hidden"></div>
-        <button class="btn-primary w-full mt-2" onclick="saveSetup()">
-          <span id="setupBtnText">Salva e continua →</span>
+        <div id="step2Error" class="text-red-400 text-xs mt-2 hidden"></div>
+        <button class="btn-primary w-full mt-5" id="loginBtn" onclick="doLogin()">
+          <span id="loginBtnText">Connetti →</span>
+        </button>
+        <button class="btn-ghost w-full mt-2" onclick="goToStep(1)">← Indietro</button>
+      </div>
+
+      <!-- Step 3: 2FA -->
+      <div id="step3" class="hidden">
+        <h2 class="text-lg font-semibold mb-1">Verifica in due passaggi</h2>
+        <p class="text-sm text-gray-500 mb-5">Instagram ha mandato un codice di verifica. Inseriscilo qui.</p>
+        <label class="block text-xs font-medium text-gray-400 mb-1.5">Codice di verifica</label>
+        <input type="number" id="tfaCode" class="w-full" placeholder="123456" maxlength="6" />
+        <div id="step3Error" class="text-red-400 text-xs mt-2 hidden"></div>
+        <button class="btn-primary w-full mt-5" id="tfaBtn" onclick="do2FA()">
+          <span id="tfaBtnText">Verifica →</span>
         </button>
       </div>
+
     </div>
   </div>
 
-  <!-- Main Layout -->
+  <!-- ── Main App ── -->
   <div class="max-w-5xl mx-auto px-4 py-8">
 
     <!-- Header -->
@@ -227,25 +170,27 @@
         <h1 class="text-2xl font-bold tracking-tight">Unfair <span class="text-fuchsia-500">Advantage</span></h1>
         <p class="text-xs text-gray-600 mt-0.5">Analisi profili Instagram con AI</p>
       </div>
-      <button class="btn-secondary" onclick="showSetup()">⚙ Impostazioni</button>
+      <div class="flex items-center gap-3">
+        <div id="igStatusBadge" class="ig-status hidden">
+          <div class="dot-green"></div>
+          <span class="text-gray-500" id="igStatusText">Connesso</span>
+        </div>
+        <button class="btn-secondary" onclick="showModal()">⚙ Impostazioni</button>
+      </div>
     </div>
 
     <!-- Input Panel -->
     <div class="card p-6 mb-6">
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-300 mb-2">Username da analizzare</label>
-        <textarea
-          id="usernamesInput"
-          rows="4"
-          placeholder="cristina.rossi&#10;giulia_bianchi&#10;sara.verdi&#10;&#10;Uno per riga, con o senza @"
-          class="w-full"
-        ></textarea>
-        <p class="text-xs text-gray-600 mt-1.5">Un username per riga · I profili privati verranno segnalati</p>
+        <textarea id="usernamesInput" rows="4" class="w-full"
+          placeholder="cristina.rossi&#10;giulia_bianchi&#10;sara.verdi&#10;&#10;Uno per riga, con o senza @"></textarea>
+        <p class="text-xs text-gray-600 mt-1.5">Un username per riga · I profili privati vengono segnalati</p>
       </div>
 
       <div class="mb-5">
         <label class="block text-sm font-medium text-gray-300 mb-2.5">Tono del messaggio</label>
-        <div class="flex flex-wrap gap-2" id="tonePills">
+        <div class="flex flex-wrap gap-2">
           <button class="pill" data-tone="diretto" onclick="selectTone(this)">Diretto</button>
           <button class="pill active" data-tone="curioso" onclick="selectTone(this)">Curioso</button>
           <button class="pill" data-tone="giocoso" onclick="selectTone(this)">Giocoso</button>
@@ -255,12 +200,8 @@
       </div>
 
       <div class="flex items-center gap-3">
-        <button class="btn-primary" id="analyzeBtn" onclick="startAnalysis()">
-          Analizza profili
-        </button>
-        <button class="btn-secondary hidden" id="newAnalysisBtn" onclick="resetUI()">
-          + Nuova analisi
-        </button>
+        <button class="btn-primary" id="analyzeBtn" onclick="startAnalysis()">Analizza profili</button>
+        <button class="btn-secondary hidden" id="newAnalysisBtn" onclick="resetUI()">+ Nuova analisi</button>
       </div>
     </div>
 
@@ -285,72 +226,154 @@
 
   <script>
     const TONE_DESCS = {
-      diretto: "Va al sodo, sicuro di sé. Frasi brevi e decise.",
-      curioso: "Fa domande genuine su qualcosa che hai notato. Interessato alla sua storia.",
-      giocoso: "Leggero e un po' ironico. Un pizzico di umorismo intelligente.",
+      diretto:   "Va al sodo, sicuro di sé. Frasi brevi e decise.",
+      curioso:   "Fa domande genuine su qualcosa che hai notato. Interessato alla sua storia.",
+      giocoso:   "Leggero e un po' ironico. Un pizzico di umorismo intelligente.",
       romantico: "Caldo e sincero. Si sente l'interesse senza essere troppo intenso.",
     };
-
     let selectedTone = "curioso";
     let pollInterval = null;
+    let currentStep = 1;
 
-    // Init
+    // ── Init ──────────────────────────────────────────────────────────────
+
     (async () => {
       try {
         const r = await fetch("/api/setup");
         const d = await r.json();
-        if (!d.configured) showSetup();
+        if (!d.api_key_set) {
+          showModal(1);
+        } else if (!d.logged_in) {
+          showModal(2);
+        } else {
+          updateStatusBadge(true);
+        }
       } catch {}
     })();
 
-    function showSetup() {
-      document.getElementById("setupModal").classList.remove("hidden");
+    // ── Modal steps ───────────────────────────────────────────────────────
+
+    function showModal(step = 1) {
+      document.getElementById("modalOverlay").classList.remove("hidden");
+      goToStep(step);
     }
 
-    function hideSetup() {
-      document.getElementById("setupModal").classList.add("hidden");
+    function hideModal() {
+      document.getElementById("modalOverlay").classList.add("hidden");
     }
 
-    async function saveSetup() {
-      const btn = document.getElementById("setupBtnText");
-      const err = document.getElementById("setupError");
-      const igUser = document.getElementById("igUser").value.trim();
-      const igPass = document.getElementById("igPass").value;
-      const apiKey = document.getElementById("apiKey").value.trim();
+    function goToStep(n) {
+      currentStep = n;
+      [1, 2, 3].forEach(i => {
+        document.getElementById(`step${i}`).classList.toggle("hidden", i !== n);
+        document.getElementById(`dot${i}`).style.background = i < n ? "#a855f7" : (i === n ? "#d946ef" : "#374151");
+      });
+    }
 
-      if (!igUser || !igPass || !apiKey) {
-        err.textContent = "Compila tutti i campi";
-        err.classList.remove("hidden");
-        return;
-      }
+    // ── Step 1: API key ───────────────────────────────────────────────────
 
-      btn.textContent = "Salvataggio...";
+    async function saveApiKey() {
+      const key = document.getElementById("apiKeyInput").value.trim();
+      const err = document.getElementById("step1Error");
+      if (!key) { showErr(err, "Inserisci la API key"); return; }
       err.classList.add("hidden");
 
       try {
-        const r = await fetch("/api/setup", {
+        await fetch("/api/setup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            instagram_username: igUser,
-            instagram_password: igPass,
-            anthropic_api_key: apiKey,
-          }),
+          body: JSON.stringify({ anthropic_api_key: key }),
         });
-        const d = await r.json();
-        if (d.success) {
-          hideSetup();
-        } else {
-          err.textContent = "Errore nel salvataggio";
-          err.classList.remove("hidden");
-        }
+        goToStep(2);
       } catch (e) {
-        err.textContent = "Errore di connessione";
-        err.classList.remove("hidden");
-      } finally {
-        btn.textContent = "Salva e continua →";
+        showErr(err, "Errore di connessione");
       }
     }
+
+    // ── Step 2: Instagram login ───────────────────────────────────────────
+
+    async function doLogin() {
+      const username = document.getElementById("igUser").value.trim().replace(/^@/, "");
+      const password = document.getElementById("igPass").value;
+      const err = document.getElementById("step2Error");
+      const btn = document.getElementById("loginBtn");
+      const btnText = document.getElementById("loginBtnText");
+
+      if (!username || !password) { showErr(err, "Inserisci username e password"); return; }
+      err.classList.add("hidden");
+
+      setLoading(btn, btnText, "Apertura browser...");
+
+      try {
+        const r = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+        const d = await r.json();
+
+        if (d.success) {
+          hideModal();
+          updateStatusBadge(true);
+        } else if (d.needs_2fa) {
+          goToStep(3);
+        } else if (d.needs_challenge) {
+          showErr(err, "Instagram ha rilevato un accesso sospetto. Prova ad usare un account che usi già regolarmente.");
+        } else {
+          showErr(err, d.error || "Login fallito");
+        }
+      } catch (e) {
+        showErr(err, "Errore di connessione al server");
+      } finally {
+        resetLoading(btn, btnText, "Connetti →");
+      }
+    }
+
+    // ── Step 3: 2FA ───────────────────────────────────────────────────────
+
+    async function do2FA() {
+      const code = document.getElementById("tfaCode").value.trim();
+      const err = document.getElementById("step3Error");
+      const btn = document.getElementById("tfaBtn");
+      const btnText = document.getElementById("tfaBtnText");
+
+      if (!code) { showErr(err, "Inserisci il codice"); return; }
+      err.classList.add("hidden");
+
+      setLoading(btn, btnText, "Verifica...");
+
+      try {
+        const r = await fetch("/api/login/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code }),
+        });
+        const d = await r.json();
+
+        if (d.success) {
+          hideModal();
+          updateStatusBadge(true);
+        } else {
+          showErr(err, d.error || "Codice non valido");
+        }
+      } catch (e) {
+        showErr(err, "Errore di connessione");
+      } finally {
+        resetLoading(btn, btnText, "Verifica →");
+      }
+    }
+
+    // ── Status badge ──────────────────────────────────────────────────────
+
+    function updateStatusBadge(loggedIn) {
+      const badge = document.getElementById("igStatusBadge");
+      const text  = document.getElementById("igStatusText");
+      badge.classList.remove("hidden");
+      badge.querySelector("div").className = loggedIn ? "dot-green" : "dot-red";
+      text.textContent = loggedIn ? "Instagram connesso" : "Non connesso";
+    }
+
+    // ── Tone selector ─────────────────────────────────────────────────────
 
     function selectTone(el) {
       document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
@@ -359,26 +382,19 @@
       document.getElementById("toneDesc").textContent = TONE_DESCS[selectedTone];
     }
 
-    function formatNum(n) {
-      if (n >= 1000000) return (n / 1000000).toFixed(1) + "M";
-      if (n >= 1000) return (n / 1000).toFixed(1) + "K";
-      return n.toString();
-    }
+    // ── Analysis ──────────────────────────────────────────────────────────
 
     async function startAnalysis() {
       const raw = document.getElementById("usernamesInput").value;
       const usernames = raw.split("\n").map(u => u.trim().replace(/^@/, "")).filter(Boolean);
+      if (!usernames.length) { document.getElementById("usernamesInput").focus(); return; }
 
-      if (!usernames.length) {
-        document.getElementById("usernamesInput").focus();
-        return;
-      }
-
-      // Reset results
       document.getElementById("resultsSection").innerHTML = "";
       document.getElementById("newAnalysisBtn").classList.add("hidden");
-      document.getElementById("analyzeBtn").disabled = true;
-      document.getElementById("analyzeBtn").innerHTML = '<span class="spinner mr-2"></span>Avvio...';
+
+      const btn = document.getElementById("analyzeBtn");
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner mr-2" style="display:inline-block"></span>Avvio...';
 
       try {
         const r = await fetch("/api/analyze", {
@@ -387,12 +403,8 @@
           body: JSON.stringify({ usernames, tone: selectedTone }),
         });
 
-        if (!r.ok) {
-          const err = await r.json();
-          alert(err.detail || "Errore nell'avvio");
-          resetAnalyzeBtn();
-          return;
-        }
+        if (r.status === 401) { showModal(2); resetAnalyzeBtn(); return; }
+        if (!r.ok) { const e = await r.json(); alert(e.detail || "Errore"); resetAnalyzeBtn(); return; }
 
         const { job_id } = await r.json();
         showProgress(usernames.length);
@@ -414,30 +426,21 @@
       document.getElementById("progressSection").classList.remove("hidden");
       document.getElementById("progressText").textContent = `0 / ${total}`;
       document.getElementById("progressFill").style.width = "0%";
-      document.getElementById("progressCurrent").textContent = "";
     }
 
     function pollJob(jobId, total) {
       let rendered = 0;
-
       pollInterval = setInterval(async () => {
         try {
           const r = await fetch(`/api/status/${jobId}`);
           const job = await r.json();
 
-          // Update progress bar
           const pct = total > 0 ? Math.round((job.completed / total) * 100) : 0;
           document.getElementById("progressFill").style.width = pct + "%";
           document.getElementById("progressText").textContent = `${job.completed} / ${total}`;
-          if (job.current) {
-            document.getElementById("progressCurrent").textContent = `Analisi di @${job.current}...`;
-          }
+          if (job.current) document.getElementById("progressCurrent").textContent = `Analisi di @${job.current}...`;
 
-          // Render new results as they arrive
-          while (rendered < job.results.length) {
-            renderResult(job.results[rendered]);
-            rendered++;
-          }
+          while (rendered < job.results.length) { renderResult(job.results[rendered]); rendered++; }
 
           if (job.status === "done") {
             clearInterval(pollInterval);
@@ -445,11 +448,11 @@
             resetAnalyzeBtn();
             document.getElementById("newAnalysisBtn").classList.remove("hidden");
           }
-        } catch (e) {
-          // Network blip, keep polling
-        }
+        } catch {}
       }, 1500);
     }
+
+    // ── Result card ───────────────────────────────────────────────────────
 
     function renderResult(result) {
       const section = document.getElementById("resultsSection");
@@ -457,104 +460,75 @@
       div.className = "result-card card p-6";
 
       const avatarHtml = result.profile_pic_url
-        ? `<img src="${result.profile_pic_url}" class="avatar" onerror="this.parentElement.innerHTML='<div class=\\'avatar-placeholder\\'>👤</div>'" />`
-        : `<div class="avatar-placeholder">👤</div>`;
+        ? `<img src="${result.profile_pic_url}" class="avatar" onerror="this.outerHTML='<div class=\\'avatar-ph\\'>👤</div>'" />`
+        : `<div class="avatar-ph">👤</div>`;
 
-      const displayName = result.full_name || `@${result.username}`;
+      const name = result.full_name || `@${result.username}`;
 
       if (result.status === "private") {
-        div.innerHTML = `
-          <div class="flex items-center gap-3">
-            ${avatarHtml}
-            <div>
-              <div class="font-semibold text-sm">${displayName}</div>
-              <div class="text-xs text-gray-500">@${result.username}</div>
-            </div>
-            <span class="badge badge-private ml-auto">🔒 Profilo privato</span>
-          </div>`;
-        section.appendChild(div);
-        return;
+        div.innerHTML = `<div class="flex items-center gap-3">${avatarHtml}
+          <div><div class="font-semibold text-sm">${esc(name)}</div>
+          <div class="text-xs text-gray-500">@${result.username}</div></div>
+          <span class="badge badge-private ml-auto">🔒 Profilo privato</span></div>`;
+        section.appendChild(div); return;
       }
 
       if (result.status === "error") {
-        div.innerHTML = `
-          <div class="flex items-center gap-3">
-            <div class="avatar-placeholder">⚠️</div>
-            <div>
-              <div class="font-semibold text-sm">@${result.username}</div>
-              <div class="text-xs text-red-400 mt-0.5">${result.error || "Errore sconosciuto"}</div>
-            </div>
-            <span class="badge badge-error ml-auto">Errore</span>
-          </div>`;
-        section.appendChild(div);
-        return;
+        div.innerHTML = `<div class="flex items-center gap-3"><div class="avatar-ph">⚠️</div>
+          <div><div class="font-semibold text-sm">@${result.username}</div>
+          <div class="text-xs text-red-400 mt-0.5">${esc(result.error || "Errore sconosciuto")}</div></div>
+          <span class="badge badge-error ml-auto">Errore</span></div>`;
+        section.appendChild(div); return;
       }
 
-      // Success card
-      const hooksHtml = (result.hooks || []).map(h =>
-        `<li class="text-sm text-gray-400">• ${escHtml(h)}</li>`
-      ).join("");
-
-      const messagesHtml = (result.messages || []).map((msg, i) => `
-        <div class="space-y-2">
-          <div class="msg-box">${escHtml(msg)}</div>
-          <div class="flex justify-end">
-            <button class="copy-btn" onclick="copyMsg(this, ${i})">Copia</button>
+      const follower = result.follower_count ? fmt(result.follower_count) + " follower" : "";
+      const bio = result.biography ? trunc(result.biography, 120) : "";
+      const hooks = (result.hooks || []).map(h => `<li class="text-sm text-gray-400">• ${esc(h)}</li>`).join("");
+      const msgs = (result.messages || []).map((m, i) => `
+        <div>
+          <div class="msg-box">${esc(m)}</div>
+          <div class="flex justify-end mt-1.5">
+            <button class="copy-btn" onclick="copyMsg(this,${i})">Copia</button>
           </div>
-        </div>
-      `).join("");
-
-      const follower = result.follower_count ? formatNum(result.follower_count) + " follower" : "";
-      const bioPreview = result.biography ? truncate(result.biography, 120) : "";
+        </div>`).join("");
 
       div.innerHTML = `
         <div class="flex items-start gap-3 mb-5">
           ${avatarHtml}
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2 flex-wrap">
-              <span class="font-semibold text-sm">${escHtml(displayName)}</span>
+              <span class="font-semibold text-sm">${esc(name)}</span>
               <span class="text-xs text-gray-600">@${result.username}</span>
               ${follower ? `<span class="text-xs text-gray-600">· ${follower}</span>` : ""}
               <span class="badge badge-done ml-auto">✓ Analizzato</span>
             </div>
-            ${bioPreview ? `<p class="text-xs text-gray-500 mt-1 leading-relaxed">${escHtml(bioPreview)}</p>` : ""}
+            ${bio ? `<p class="text-xs text-gray-500 mt-1 leading-relaxed">${esc(bio)}</p>` : ""}
           </div>
         </div>
-
         ${result.profile_summary ? `
         <div class="mb-5">
           <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Profilo</p>
-          <p class="text-sm text-gray-300 leading-relaxed">${escHtml(result.profile_summary)}</p>
+          <p class="text-sm text-gray-300 leading-relaxed">${esc(result.profile_summary)}</p>
         </div>` : ""}
-
-        ${hooksHtml ? `
+        ${hooks ? `
         <div class="mb-5">
           <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Hook trovati</p>
-          <ul class="space-y-1">${hooksHtml}</ul>
+          <ul class="space-y-1">${hooks}</ul>
         </div>` : ""}
-
         <div>
           <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Messaggi</p>
-          <div class="space-y-3" id="msgs-${result.username}">${messagesHtml}</div>
-        </div>
-      `;
+          <div class="space-y-3">${msgs}</div>
+        </div>`;
 
-      // Store messages for copy
       div.dataset.messages = JSON.stringify(result.messages || []);
       section.appendChild(div);
     }
 
     function copyMsg(btn, idx) {
-      const card = btn.closest(".result-card");
-      const messages = JSON.parse(card.dataset.messages || "[]");
-      const text = messages[idx] || "";
-      navigator.clipboard.writeText(text).then(() => {
-        btn.textContent = "Copiato ✓";
-        btn.classList.add("copied");
-        setTimeout(() => {
-          btn.textContent = "Copia";
-          btn.classList.remove("copied");
-        }, 2000);
+      const messages = JSON.parse(btn.closest(".result-card").dataset.messages || "[]");
+      navigator.clipboard.writeText(messages[idx] || "").then(() => {
+        btn.textContent = "Copiato ✓"; btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "Copia"; btn.classList.remove("copied"); }, 2000);
       });
     }
 
@@ -565,25 +539,26 @@
       document.getElementById("usernamesInput").focus();
     }
 
-    function escHtml(str) {
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    }
+    // ── Utils ─────────────────────────────────────────────────────────────
 
-    function truncate(str, n) {
-      return str.length > n ? str.slice(0, n) + "…" : str;
+    function esc(s) {
+      return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
     }
+    function trunc(s, n) { return s.length > n ? s.slice(0, n) + "…" : s; }
+    function fmt(n) {
+      if (n >= 1e6) return (n/1e6).toFixed(1) + "M";
+      if (n >= 1e3) return (n/1e3).toFixed(1) + "K";
+      return String(n);
+    }
+    function showErr(el, msg) { el.textContent = msg; el.classList.remove("hidden"); }
+    function setLoading(btn, span, txt) { btn.disabled = true; span.innerHTML = `<span class="spinner mr-2" style="display:inline-block"></span>${txt}`; }
+    function resetLoading(btn, span, txt) { btn.disabled = false; span.textContent = txt; }
 
-    // Enter key on setup fields
-    ["igUser", "igPass", "apiKey"].forEach(id => {
-      document.getElementById(id).addEventListener("keydown", e => {
-        if (e.key === "Enter") saveSetup();
-      });
-    });
+    // Enter key shortcuts
+    document.getElementById("apiKeyInput").addEventListener("keydown", e => { if(e.key==="Enter") saveApiKey(); });
+    document.getElementById("igPass").addEventListener("keydown", e => { if(e.key==="Enter") doLogin(); });
+    document.getElementById("tfaCode") && document.getElementById("tfaCode").addEventListener("keydown", e => { if(e.key==="Enter") do2FA(); });
   </script>
 </body>
 </html>
