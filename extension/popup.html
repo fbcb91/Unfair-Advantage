@@ -3,153 +3,199 @@
 <head>
   <meta charset="UTF-8" />
   <title>Unfair Advantage</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    * { font-family: 'Inter', sans-serif; }
-    body { background: #0a0a0a; color: #f0f0f0; width: 380px; min-height: 200px; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #f0f0f0; width: 380px; min-height: 200px; padding: 16px; }
+
+    /* Layout utilities */
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .items-start { align-items: flex-start; }
+    .justify-between { justify-content: space-between; }
+    .justify-end { justify-content: flex-end; }
+    .flex-wrap { flex-wrap: wrap; }
+    .flex-1 { flex: 1; min-width: 0; }
+    .gap-1 { gap: 4px; }
+    .gap-2 { gap: 8px; }
+    .gap-3 { gap: 12px; }
+    .w-full { width: 100%; }
+    .text-center { text-align: center; }
+    .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .hidden { display: none !important; }
+    .pre-wrap { white-space: pre-wrap; }
+
+    /* Spacing */
+    .mb-1 { margin-bottom: 4px; }
+    .mb-2 { margin-bottom: 8px; }
+    .mb-3 { margin-bottom: 12px; }
+    .mb-4 { margin-bottom: 16px; }
+    .mt-1 { margin-top: 4px; }
+    .mt-2 { margin-top: 8px; }
+    .ml-auto { margin-left: auto; }
+    .py-4 { padding: 16px 0; }
+    .py-8 { padding: 32px 0; }
+    .p-3 { padding: 12px; }
+
+    /* Typography */
+    .text-2xl { font-size: 20px; }
+    .text-base { font-size: 14px; font-weight: 700; }
+    .text-sm { font-size: 13px; }
+    .text-xs { font-size: 11px; }
+    .font-bold { font-weight: 700; }
+    .font-semibold { font-weight: 600; }
+    .font-medium { font-weight: 500; }
+    .leading { line-height: 1.55; }
+    .fuchsia { color: #d946ef; }
+    .gray-400 { color: #9ca3af; }
+    .gray-500 { color: #6b7280; }
+    .gray-600 { color: #4b5563; }
+    .red-400 { color: #f87171; }
+    .label { font-size: 10px; font-weight: 600; color: #4b5563; text-transform: uppercase; letter-spacing: 0.08em; }
+    .space-y-1 > * + * { margin-top: 4px; }
+    .space-y-2 > * + * { margin-top: 8px; }
+    .space-y-3 > * + * { margin-top: 12px; }
+
+    /* Components */
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .logo { font-size: 15px; font-weight: 700; }
+
+    .btn-icon { background: none; border: none; color: #4b5563; font-size: 14px; cursor: pointer; padding: 2px 4px; transition: color 0.12s; }
+    .btn-icon:hover { color: #9ca3af; }
+
+    .profile-box { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid rgba(217,70,239,0.35); flex-shrink: 0; }
+    .avatar-ph { width: 36px; height: 36px; border-radius: 50%; background: #1c1c1c; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+    .profile-name { font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .profile-meta { font-size: 11px; color: #6b7280; }
 
     .pill {
       padding: 5px 13px; border-radius: 9999px; font-size: 12px; font-weight: 500;
-      border: 1px solid rgba(255,255,255,0.12); cursor: pointer; color: #777; transition: all 0.12s;
+      border: 1px solid rgba(255,255,255,0.12); cursor: pointer; color: #777;
+      background: none; font-family: inherit; transition: all 0.12s;
     }
     .pill:hover { color: #ccc; border-color: rgba(217,70,239,0.35); }
     .pill.active { background: #d946ef; border-color: #d946ef; color: #fff; }
+    .pills { display: flex; flex-wrap: wrap; gap: 6px; }
 
-    .btn {
-      background: #d946ef; color: #fff; font-weight: 600; padding: 9px 0;
-      border-radius: 9px; border: none; cursor: pointer; font-size: 13px;
-      transition: background 0.12s; width: 100%;
+    .btn-analyze {
+      background: #d946ef; color: #fff; font-weight: 600; padding: 9px 0; border-radius: 9px;
+      border: none; cursor: pointer; font-size: 13px; font-family: inherit;
+      width: 100%; transition: background 0.12s; margin-bottom: 16px;
     }
-    .btn:hover { background: #c026d3; }
-    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-analyze:hover { background: #c026d3; }
+    .btn-analyze:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-link { background: none; border: none; color: #d946ef; font-size: 12px; font-family: inherit; cursor: pointer; text-decoration: underline; margin-top: 10px; }
+    .btn-regen { background: none; border: none; color: #4b5563; font-size: 12px; font-family: inherit; cursor: pointer; width: 100%; padding: 4px 0; transition: color 0.12s; }
+    .btn-regen:hover { color: #9ca3af; }
+
+    .spinner {
+      width: 14px; height: 14px; border: 2px solid rgba(217,70,239,0.25);
+      border-top-color: #d946ef; border-radius: 50%; animation: spin 0.65s linear infinite;
+      display: inline-block; vertical-align: middle; margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     .msg-box {
       background: #111; border: 1px solid rgba(255,255,255,0.07);
       border-radius: 9px; padding: 10px 12px; font-size: 13px;
       line-height: 1.55; color: #e0e0e0; white-space: pre-wrap;
     }
-
     .copy-btn {
       padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500;
       background: rgba(217,70,239,0.12); color: #d946ef; border: 1px solid rgba(217,70,239,0.2);
-      cursor: pointer; transition: all 0.12s; white-space: nowrap;
+      cursor: pointer; font-family: inherit; white-space: nowrap; transition: all 0.12s; margin-top: 4px; float: right;
     }
     .copy-btn:hover { background: rgba(217,70,239,0.22); }
     .copy-btn.copied { background: rgba(34,197,94,0.12); color: #22c55e; border-color: rgba(34,197,94,0.2); }
+    .clearfix::after { content: ""; display: block; clear: both; }
 
-    .spinner {
-      width: 14px; height: 14px; border: 2px solid rgba(217,70,239,0.25);
-      border-top-color: #d946ef; border-radius: 50%; animation: spin 0.65s linear infinite;
-      display: inline-block; vertical-align: middle;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1.5px solid rgba(217,70,239,0.35); }
-    .avatar-ph { width: 36px; height: 36px; border-radius: 50%; background: #1c1c1c; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-
+    .results-scroll { max-height: 380px; overflow-y: auto; }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
-
-    #resultsSection { max-height: 400px; overflow-y: auto; }
-    .section-label { font-size: 10px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.08em; }
   </style>
 </head>
-<body class="p-4">
+<body>
 
   <!-- Header -->
-  <div class="flex items-center justify-between mb-3">
-    <span class="font-bold text-base">Unfair <span class="text-fuchsia-500">Advantage</span></span>
-    <button onclick="openOptions()" class="text-gray-600 hover:text-gray-400 text-xs cursor-pointer border-none bg-transparent">⚙</button>
+  <div class="header">
+    <span class="logo">Unfair <span class="fuchsia">Advantage</span></span>
+    <button class="btn-icon" id="settingsBtn">⚙</button>
   </div>
 
-  <!-- Not on profile -->
+  <!-- Not on a profile page -->
   <div id="notOnProfile" class="hidden text-center py-8">
-    <div class="text-2xl mb-2">📍</div>
-    <p class="text-sm text-gray-500">Naviga su un profilo Instagram<br />per usare l'estensione</p>
-    <button class="mt-3 text-xs text-fuchsia-500 underline cursor-pointer border-none bg-transparent"
-            onclick="chrome.tabs.create({url:'https://www.instagram.com'})">
-      Apri Instagram
-    </button>
+    <div style="font-size:28px;margin-bottom:8px">📍</div>
+    <p class="text-sm gray-500">Naviga su un profilo Instagram<br>per usare l'estensione</p>
+    <button class="btn-link" id="openIgBtn">Apri Instagram</button>
   </div>
 
   <!-- Not logged in -->
   <div id="notLoggedIn" class="hidden text-center py-8">
-    <div class="text-2xl mb-2">🔐</div>
-    <p class="text-sm text-gray-500">Fai il login su Instagram nel browser<br />poi riapri l'estensione</p>
-    <button class="mt-3 text-xs text-fuchsia-500 underline cursor-pointer border-none bg-transparent"
-            onclick="chrome.tabs.create({url:'https://www.instagram.com/accounts/login/'})">
-      Vai al login
-    </button>
+    <div style="font-size:28px;margin-bottom:8px">🔐</div>
+    <p class="text-sm gray-500">Fai il login su Instagram nel browser<br>poi riapri l'estensione</p>
+    <button class="btn-link" id="igLoginBtn">Vai al login</button>
   </div>
 
   <!-- Main UI -->
   <div id="mainUi" class="hidden">
 
     <!-- Profile preview -->
-    <div id="profilePreview" class="flex items-center gap-2.5 mb-4 p-2.5 rounded-lg bg-white/[0.03]">
-      <div id="profileAvatar" class="avatar-ph">👤</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-semibold text-sm truncate" id="profileName"></div>
-        <div class="text-xs text-gray-500" id="profileMeta"></div>
+    <div class="profile-box" id="profileBox">
+      <div class="avatar-ph" id="profileAvatar">👤</div>
+      <div class="flex-1">
+        <div class="profile-name" id="profileName">@username</div>
+        <div class="profile-meta" id="profileMeta"></div>
       </div>
     </div>
 
     <!-- Tone selector -->
     <div class="mb-3">
-      <p class="section-label mb-2">Tono</p>
-      <div class="flex flex-wrap gap-1.5">
-        <button class="pill" data-tone="diretto" onclick="selectTone(this)">Diretto</button>
-        <button class="pill active" data-tone="curioso" onclick="selectTone(this)">Curioso</button>
-        <button class="pill" data-tone="giocoso" onclick="selectTone(this)">Giocoso</button>
-        <button class="pill" data-tone="romantico" onclick="selectTone(this)">Romantico</button>
+      <p class="label mb-2">Tono</p>
+      <div class="pills">
+        <button class="pill" data-tone="diretto">Diretto</button>
+        <button class="pill active" data-tone="curioso">Curioso</button>
+        <button class="pill" data-tone="giocoso">Giocoso</button>
+        <button class="pill" data-tone="romantico">Romantico</button>
       </div>
     </div>
 
-    <!-- Analyze button -->
-    <button class="btn mb-4" id="analyzeBtn" onclick="analyze()">Analizza profilo</button>
+    <!-- Analyze -->
+    <button class="btn-analyze" id="analyzeBtn">Analizza profilo</button>
 
     <!-- Loading -->
     <div id="loadingSection" class="hidden text-center py-4">
-      <div class="spinner mb-2"></div>
-      <p class="text-xs text-gray-500" id="loadingText">Caricamento profilo...</p>
+      <div style="margin-bottom:8px"><span class="spinner"></span></div>
+      <p class="text-xs gray-500" id="loadingText">Caricamento...</p>
     </div>
 
     <!-- Results -->
-    <div id="resultsSection" class="hidden space-y-4">
+    <div id="resultsSection" class="hidden results-scroll">
 
-      <!-- Profile summary -->
-      <div id="summaryBlock" class="hidden">
-        <p class="section-label mb-1.5">Profilo</p>
-        <p class="text-xs text-gray-400 leading-relaxed" id="summaryText"></p>
+      <div id="summaryBlock" class="hidden mb-3">
+        <p class="label mb-1">Profilo</p>
+        <p class="text-xs gray-400 leading" id="summaryText"></p>
       </div>
 
-      <!-- Hooks -->
-      <div id="hooksBlock" class="hidden">
-        <p class="section-label mb-1.5">Hook trovati</p>
-        <ul id="hooksList" class="space-y-0.5"></ul>
+      <div id="hooksBlock" class="hidden mb-3">
+        <p class="label mb-1">Hook trovati</p>
+        <ul id="hooksList" class="space-y-1"></ul>
       </div>
 
-      <!-- Messages -->
-      <div id="messagesBlock">
-        <p class="section-label mb-2">Messaggi</p>
-        <div id="messagesList" class="space-y-2.5"></div>
+      <div class="mb-2">
+        <p class="label mb-2">Messaggi</p>
+        <div id="messagesList" class="space-y-3"></div>
       </div>
 
-      <!-- Re-analyze -->
-      <button onclick="resetAndAnalyze()"
-        class="w-full text-xs text-gray-600 hover:text-gray-400 cursor-pointer border-none bg-transparent py-1">
-        ↻ Rigenera messaggi
-      </button>
+      <button class="btn-regen" id="regenBtn">↻ Rigenera messaggi</button>
     </div>
 
     <!-- Error -->
     <div id="errorSection" class="hidden">
-      <p class="text-xs text-red-400 leading-relaxed" id="errorText"></p>
-      <button onclick="retryFromError()"
-        class="mt-2 text-xs text-fuchsia-500 underline cursor-pointer border-none bg-transparent">
-        Riprova
-      </button>
+      <p class="text-xs red-400 leading" id="errorText"></p>
+      <button class="btn-link" id="retryBtn">Riprova</button>
     </div>
 
   </div>

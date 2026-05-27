@@ -3,50 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <title>Unfair Advantage — Impostazioni</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
-    * { font-family: 'Inter', sans-serif; }
-    body { background: #080808; color: #f0f0f0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #080808; color: #f0f0f0; padding: 32px; min-height: 100vh; }
+    .container { max-width: 480px; margin: 0 auto; }
+
+    h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    h1 span { color: #d946ef; }
+    .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 32px; }
+
+    h2 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+
+    .card { background: #111; border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 24px; margin-bottom: 16px; }
+
+    label { display: block; font-size: 11px; font-weight: 500; color: #9ca3af; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
     input {
-      background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
-      color: #f0f0f0; padding: 10px 12px; font-size: 14px; outline: none; width: 100%;
-      transition: border 0.15s;
+      display: block; width: 100%; background: #0d0d0d; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; color: #f0f0f0; padding: 10px 12px; font-size: 14px;
+      font-family: inherit; outline: none; transition: border-color 0.15s;
     }
     input:focus { border-color: rgba(217,70,239,0.45); }
-    .btn { background: #d946ef; color: #fff; font-weight: 600; padding: 10px 24px;
-           border-radius: 8px; border: none; cursor: pointer; font-size: 14px; transition: background 0.15s; }
+    .hint { font-size: 12px; color: #4b5563; margin-top: 6px; }
+
+    .btn-row { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
+    .btn {
+      background: #d946ef; color: #fff; font-weight: 600; padding: 9px 22px;
+      border-radius: 8px; border: none; cursor: pointer; font-size: 13px;
+      font-family: inherit; transition: background 0.12s;
+    }
     .btn:hover { background: #c026d3; }
-    .card { background: #111; border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; }
+    .btn-ghost {
+      background: none; border: none; color: #6b7280; font-size: 13px;
+      font-family: inherit; cursor: pointer; padding: 4px 0; transition: color 0.12s;
+    }
+    .btn-ghost:hover { color: #d1d5db; }
+
+    .status { font-size: 13px; margin-top: 10px; min-height: 18px; }
+    .status.success { color: #22c55e; }
+    .status.error   { color: #ef4444; }
+    .status.neutral { color: #9ca3af; }
+
+    ol { padding-left: 18px; }
+    ol li { font-size: 13px; color: #9ca3af; margin-bottom: 8px; line-height: 1.5; }
   </style>
 </head>
-<body class="min-h-screen p-8">
-  <div class="max-w-lg mx-auto">
-    <div class="mb-8">
-      <h1 class="text-2xl font-semibold">Unfair <span class="text-fuchsia-500">Advantage</span></h1>
-      <p class="text-sm text-gray-500 mt-1">Impostazioni estensione</p>
+<body>
+  <div class="container">
+    <h1>Unfair <span>Advantage</span></h1>
+    <p class="subtitle">Impostazioni estensione</p>
+
+    <div class="card">
+      <label for="backendUrl">URL Backend</label>
+      <input type="text" id="backendUrl" placeholder="https://unfair-advantage.fly.dev" />
+      <p class="hint">L'indirizzo del tuo server Fly.io (o localhost:8000 per sviluppo locale)</p>
+
+      <div class="btn-row">
+        <button class="btn" id="saveBtn">Salva</button>
+        <button class="btn-ghost" id="testBtn">Testa connessione</button>
+      </div>
+      <div class="status" id="statusMsg"></div>
     </div>
 
-    <div class="card p-6 space-y-5">
-      <div>
-        <label class="block text-xs font-medium text-gray-400 mb-1.5">URL Backend</label>
-        <input type="text" id="backendUrl" placeholder="https://tua-app.railway.app" />
-        <p class="text-xs text-gray-600 mt-1.5">L'indirizzo del tuo server Railway (o localhost:8000 per sviluppo locale)</p>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <button class="btn" onclick="save()">Salva</button>
-        <button onclick="testConnection()" class="text-sm text-gray-500 hover:text-gray-300 cursor-pointer border-none bg-transparent">
-          Testa connessione
-        </button>
-      </div>
-
-      <div id="status" class="text-sm hidden"></div>
-    </div>
-
-    <div class="card p-6 mt-4">
-      <h2 class="text-sm font-semibold mb-3">Come usare l'estensione</h2>
-      <ol class="text-sm text-gray-400 space-y-2 list-decimal list-inside">
+    <div class="card">
+      <h2>Come usare l'estensione</h2>
+      <ol>
         <li>Assicurati di essere loggato su Instagram nel browser</li>
         <li>Naviga sul profilo Instagram che vuoi analizzare</li>
         <li>Clicca sull'icona dell'estensione in alto a destra</li>
@@ -55,7 +76,6 @@
       </ol>
     </div>
   </div>
-
   <script src="options.js"></script>
 </body>
 </html>
