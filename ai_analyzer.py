@@ -66,7 +66,7 @@ Usa queste info se aprono spunti naturali: una passione in comune, un contrasto 
 Non citarle in modo forzato — solo se funzionano davvero.
 """
 
-    opening = character_text if character_text else "Sei un ragazzo brillante e diretto. Devi scrivere un primo messaggio Instagram che faccia alzare la testa."
+    opening = character_text if character_text else "Sei un ragazzo che deve scrivere il primo messaggio a una ragazza che non conosce. Sei brillante, mai banale e sicuro di te. Non scriverai mai un messaggio come tutti gli altri. Ti vuoi distinguere dalla massa e sorprendere."
 
     prompt = f"""{opening}
 
