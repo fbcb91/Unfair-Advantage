@@ -51,6 +51,13 @@ class AnalyzeRequest(BaseModel):
     character: str = ""
     user_info: str = ""
 
+class RefineRequest(BaseModel):
+    profile: ProfileData
+    tone: str = "curioso"
+    character: str = ""
+    original_message: str
+    instruction: str = ""
+
 
 # ── Endpoints ─────────────────────────────────────────────────────────────
 
@@ -90,6 +97,38 @@ async def analyze(request: AnalyzeRequest):
         msg = getattr(e, "message", str(e))
         if "credit" in msg.lower() or "billing" in msg.lower() or e.status_code in (402, 529):
             raise HTTPException(status_code=402, detail="Crediti Anthropic esauriti. Ricarica su console.anthropic.com → Billing.")
+        raise HTTPException(status_code=502, detail=f"Errore API Anthropic: {msg}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/refine")
+async def refine(request: RefineRequest):
+    import anthropic as _anthropic
+
+    if not os.getenv("ANTHROPIC_API_KEY"):
+        raise HTTPException(status_code=500, detail="API key Anthropic non configurata sul server")
+
+    try:
+        from ai_analyzer import refine_message
+        alternatives = await asyncio.to_thread(
+            refine_message,
+            request.profile.model_dump(),
+            request.tone,
+            request.character,
+            request.original_message,
+            request.instruction,
+        )
+        return {"alternatives": alternatives}
+
+    except _anthropic.AuthenticationError:
+        raise HTTPException(status_code=401, detail="API key Anthropic non valida.")
+    except _anthropic.RateLimitError:
+        raise HTTPException(status_code=429, detail="Troppe richieste. Riprova tra qualche secondo.")
+    except _anthropic.APIStatusError as e:
+        msg = getattr(e, "message", str(e))
+        if "credit" in msg.lower() or "billing" in msg.lower() or e.status_code in (402, 529):
+            raise HTTPException(status_code=402, detail="Crediti Anthropic esauriti.")
         raise HTTPException(status_code=502, detail=f"Errore API Anthropic: {msg}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

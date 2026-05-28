@@ -327,25 +327,142 @@ function showResults(result) {
   const msgList = document.getElementById("messagesList");
   msgList.innerHTML = "";
   (result.messages || []).forEach((msg) => {
-    const wrap = document.createElement("div");
-
-    const box = document.createElement("div");
-    box.className = "msg-box";
-    box.textContent = msg;
-
-    const row = document.createElement("div");
-    row.className = "clearfix";
-
-    const btn = document.createElement("button");
-    btn.className = "copy-btn";
-    btn.textContent = "Copia";
-    btn.dataset.msg = msg;
-
-    row.appendChild(btn);
-    wrap.appendChild(box);
-    wrap.appendChild(row);
-    msgList.appendChild(wrap);
+    msgList.appendChild(buildMessageCard(msg));
   });
+}
+
+function buildMessageCard(msg) {
+  const wrap = document.createElement("div");
+  wrap.className = "msg-card";
+
+  const box = document.createElement("div");
+  box.className = "msg-box";
+  box.textContent = msg;
+
+  const row = document.createElement("div");
+  row.className = "clearfix";
+
+  const copyBtn = document.createElement("button");
+  copyBtn.className = "copy-btn";
+  copyBtn.textContent = "Copia";
+  copyBtn.dataset.msg = msg;
+
+  const improveBtn = document.createElement("button");
+  improveBtn.className = "improve-btn";
+  improveBtn.textContent = "Migliora";
+  improveBtn.addEventListener("click", () => toggleRefinePanel(wrap, msg));
+
+  row.appendChild(improveBtn);
+  row.appendChild(copyBtn);
+  wrap.appendChild(box);
+  wrap.appendChild(row);
+  return wrap;
+}
+
+function toggleRefinePanel(wrap, originalMsg) {
+  const existing = wrap.querySelector(".refine-panel");
+  if (existing) { existing.remove(); return; }
+
+  const panel = document.createElement("div");
+  panel.className = "refine-panel";
+
+  const hint = document.createElement("p");
+  hint.style.cssText = "font-size:10px;color:#4b5563;margin-bottom:5px;";
+  hint.textContent = "Direzione (opzionale) — es. più corta, aggiungi una domanda, più ironica";
+
+  const textarea = document.createElement("textarea");
+  textarea.className = "refine-input";
+  textarea.rows = 2;
+  textarea.placeholder = "Lascia vuoto e l'AI decide da sola";
+
+  const actions = document.createElement("div");
+  actions.className = "refine-actions";
+
+  const goBtn = document.createElement("button");
+  goBtn.className = "btn-refine-go";
+  goBtn.textContent = "Genera varianti";
+  goBtn.addEventListener("click", () => runRefine(wrap, panel, goBtn, originalMsg, textarea.value));
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.className = "btn-refine-cancel";
+  cancelBtn.textContent = "Annulla";
+  cancelBtn.addEventListener("click", () => panel.remove());
+
+  actions.appendChild(goBtn);
+  actions.appendChild(cancelBtn);
+  panel.appendChild(hint);
+  panel.appendChild(textarea);
+  panel.appendChild(actions);
+  wrap.appendChild(panel);
+  textarea.focus();
+}
+
+async function runRefine(wrap, panel, goBtn, originalMsg, instruction) {
+  goBtn.disabled = true;
+  goBtn.textContent = "Generazione...";
+
+  const existing = panel.querySelector(".refine-results");
+  if (existing) existing.remove();
+
+  try {
+    const { backendUrl } = await chrome.storage.sync.get({ backendUrl: DEFAULT_BACKEND });
+    const url = backendUrl.replace(/\/$/, "");
+
+    const body = {
+      profile: cachedProfileData,
+      tone: activeMode === "tone" ? selectedTone : "curioso",
+      character: activeMode === "char" ? selectedChar : "",
+      original_message: originalMsg,
+      instruction: instruction || "",
+    };
+
+    const res = await fetch(`${url}/api/refine`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Errore server (${res.status})`);
+    }
+
+    const data = await res.json();
+    const alternatives = data.alternatives || [];
+
+    const resultsDiv = document.createElement("div");
+    resultsDiv.className = "refine-results";
+
+    alternatives.forEach(alt => {
+      const altBox = document.createElement("div");
+      altBox.className = "refine-alt";
+      altBox.textContent = alt;
+
+      const altRow = document.createElement("div");
+      altRow.className = "refine-alt-row";
+
+      const copyAlt = document.createElement("button");
+      copyAlt.className = "copy-btn";
+      copyAlt.style.float = "none";
+      copyAlt.textContent = "Copia";
+      copyAlt.dataset.msg = alt;
+      copyAlt.addEventListener("click", () => copyMsg(copyAlt));
+
+      altRow.appendChild(copyAlt);
+      resultsDiv.appendChild(altBox);
+      resultsDiv.appendChild(altRow);
+    });
+
+    panel.appendChild(resultsDiv);
+  } catch (err) {
+    const errEl = document.createElement("p");
+    errEl.style.cssText = "font-size:11px;color:#f87171;margin-top:6px;";
+    errEl.textContent = err.message || "Errore sconosciuto";
+    panel.appendChild(errEl);
+  } finally {
+    goBtn.disabled = false;
+    goBtn.textContent = "Genera varianti";
+  }
 }
 
 function copyMsg(btn) {

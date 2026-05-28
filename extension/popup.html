@@ -140,6 +140,32 @@
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
 
     .char-badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 9999px; background: rgba(217,70,239,0.15); color: #d946ef; font-weight: 600; margin-left: 6px; vertical-align: middle; }
+
+    .refine-panel { margin-top: 6px; padding: 8px 10px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.07); }
+    .refine-input {
+      width: 100%; background: #0d0d0d; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; color: #f0f0f0; padding: 7px 10px; font-size: 12px;
+      font-family: inherit; outline: none; resize: none; transition: border-color 0.15s;
+    }
+    .refine-input:focus { border-color: rgba(217,70,239,0.4); }
+    .refine-input::placeholder { color: #4b5563; }
+    .refine-actions { display: flex; gap: 6px; margin-top: 6px; }
+    .btn-refine-go {
+      flex: 1; padding: 6px 0; border-radius: 6px; font-size: 11px; font-weight: 600;
+      background: rgba(217,70,239,0.18); color: #d946ef; border: 1px solid rgba(217,70,239,0.25);
+      cursor: pointer; font-family: inherit; transition: all 0.12s;
+    }
+    .btn-refine-go:hover { background: rgba(217,70,239,0.28); }
+    .btn-refine-go:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-refine-cancel { padding: 6px 10px; border-radius: 6px; font-size: 11px; background: none; border: 1px solid rgba(255,255,255,0.08); color: #6b7280; cursor: pointer; font-family: inherit; transition: all 0.12s; }
+    .btn-refine-cancel:hover { color: #ccc; }
+    .refine-results { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+    .refine-alt { background: rgba(217,70,239,0.05); border: 1px solid rgba(217,70,239,0.15); border-radius: 8px; padding: 9px 11px; font-size: 13px; line-height: 1.55; color: #e0e0e0; white-space: pre-wrap; }
+    .refine-alt-row { display: flex; justify-content: flex-end; gap: 6px; margin-top: 4px; }
+    .btn-use { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; background: rgba(217,70,239,0.12); color: #d946ef; border: 1px solid rgba(217,70,239,0.2); cursor: pointer; font-family: inherit; transition: all 0.12s; }
+    .btn-use:hover { background: rgba(217,70,239,0.22); }
+    .improve-btn { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; background: none; color: #4b5563; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; font-family: inherit; transition: all 0.12s; margin-top: 4px; }
+    .improve-btn:hover { color: #9ca3af; border-color: rgba(255,255,255,0.15); }
   </style>
 </head>
 <body>

@@ -180,3 +180,61 @@ Rispondi SOLO con JSON valido:
     result["follower_count"] = profile_data.get("follower_count", 0)
 
     return result
+
+
+def refine_message(profile_data: dict, tone: str, character: str, original_message: str, instruction: str = "") -> list:
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise ValueError("ANTHROPIC_API_KEY non configurata nelle impostazioni")
+
+    client = anthropic.Anthropic(api_key=api_key)
+    tone_text = TONE_INSTRUCTIONS.get(tone, TONE_INSTRUCTIONS["curioso"])
+    character_text = CHARACTER_INSTRUCTIONS.get(character, "") if character else ""
+    opening = character_text if character_text else "Sei un ragazzo brillante, mai banale e sicuro di te."
+
+    direction_section = ""
+    if instruction and instruction.strip():
+        direction_section = f"\nIl mittente vuole: {instruction.strip()}\n"
+
+    prompt = f"""{opening}
+
+Hai scritto questo primo messaggio Instagram per @{profile_data['username']}:
+"{original_message}"
+{direction_section}
+Il messaggio ha del potenziale ma può essere migliorato. Proponi 3 varianti alternative — angoli diversi, strutture diverse tra loro.
+
+PROFILO (per contesto):
+Bio: {profile_data.get('biography') or '(nessuna bio)'}
+{f"Highlights: {', '.join(profile_data['highlight_titles'][:5])}" if profile_data.get('highlight_titles') else ""}
+
+REGOLE FERREE:
+• Max 2 righe per messaggio
+• Niente trattino lungo (—)
+• Niente struttura "o sei X o Y"
+• Non commentare ciò che manca nel profilo
+• Spontaneo, non analitico
+• {tone_text}
+
+Rispondi SOLO con JSON valido:
+{{"alternatives": ["Variante 1", "Variante 2", "Variante 3"]}}"""
+
+    response = client.messages.create(
+        model="claude-opus-4-7",
+        max_tokens=1000,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    raw = response.content[0].text.strip()
+
+    if "```" in raw:
+        parts = raw.split("```")
+        for part in parts:
+            stripped = part.strip()
+            if stripped.startswith("{"):
+                raw = stripped
+                break
+        else:
+            raw = parts[1].strip()
+            if raw.startswith("json"):
+                raw = raw[4:].strip()
+
+    return json.loads(raw).get("alternatives", [])
