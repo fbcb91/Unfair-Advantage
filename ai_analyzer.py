@@ -8,23 +8,19 @@ load_dotenv()
 TONE_INSTRUCTIONS = {
     "diretto": (
         "TONO — Diretto, sicuro, non chiede permesso. "
-        "Va dritto al punto come chi sa già di essere interessante. "
-        "Esempio: 'Flute di champagne in ogni highlight — è una firma o una coincidenza?'"
+        "Va dritto al punto come chi sa già di essere interessante."
     ),
     "curioso": (
         "TONO — Curiosità genuina ma leggera, non invadente. "
-        "Una domanda che dimostra che hai guardato davvero, non che hai 'studiato' il profilo. "
-        "Esempio: 'Estate 23, Estate 24 — cosa deve succedere per finire in un highlight?'"
+        "Una domanda che dimostra che hai guardato davvero, non che hai 'studiato' il profilo."
     ),
     "giocoso": (
         "TONO — Ironico, un filo sfacciato, si prende gioco della situazione. "
-        "Come una battuta tra amici intelligenti, non una barzelletta. "
-        "Esempio: 'Ho contato i flute di champagne nei tuoi highlight — vinci tu.'"
+        "Come una battuta tra amici intelligenti, non una barzelletta."
     ),
     "romantico": (
         "TONO — Caldo, lascia qualcosa in sospeso. "
-        "Non dice tutto, crea una tensione leggera. "
-        "Esempio: 'Estate 23, Estate 24 — mi chiedo già come finirà Estate 25.'"
+        "Non dice tutto, crea una tensione leggera."
     ),
 }
 
@@ -98,6 +94,7 @@ Cerca qualcosa che richiede vera attenzione:
 STEP 3 — SCRIVI COME UN ESSERE UMANO BRILLANTE, NON COME UN'AI
 Il messaggio non spiega l'osservazione — la usa.
 Un ragazzo brillante non dice "ho notato che..." — parte diretto dall'osservazione.
+Il messaggio deve sembrare spontaneo, come se avessi notato qualcosa e non potessi non dirlo. Non deve sembrare l'analisi di un profilo.
 
 ━━━ REGOLE FERREE SUI MESSAGGI ━━━
 
@@ -109,11 +106,14 @@ STRUTTURA VIETATA:
 ✗ Qualsiasi apertura con "I tuoi..." riferita a viaggi, posti, avventure
 ✗ Domande tipo "qual è il tuo posto preferito?" o "com'è andata?"
 ✗ Spiegare perché hai trovato il dettaglio interessante
-✗ Usare il trattino lungo (—) come struttura fissa
+✗ Il trattino lungo (—) in qualsiasi posizione della frase
+✗ Struttura "o sei X o Y" in qualsiasi forma
+✗ Commentare ciò che manca nel profilo (bio vuota, nessuna caption, highlights senza testo) — guarda ciò che c'è
 
 STRUTTURA GIUSTA:
 ✓ Una frase secca che colpisce, con o senza domanda finale
 ✓ Ogni messaggio deve avere struttura diversa dagli altri due
+✓ Almeno uno dei tre messaggi dovrebbe chiudersi con una domanda breve, solo se apre davvero qualcosa
 ✓ Il tono giusto: {tone_text}
 
 ━━━ OUTPUT ━━━
