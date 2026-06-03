@@ -1,11 +1,12 @@
 import asyncio
 import os
+import httpx
 from typing import List, Optional
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -13,13 +14,18 @@ load_dotenv()
 
 app = FastAPI(title="Unfair Advantage API")
 
-# Allow requests from Chrome extensions and any origin (single-tenant API)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["POST", "GET"],
     allow_headers=["*"],
 )
+
+SUPABASE_URL = os.getenv("SUPABASE_URL", "")
+SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY", "")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "")
+STRIPE_PRICE_ID = os.getenv("STRIPE_PRICE_ID", "")
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET", "")
 
 
 # ── Models ────────────────────────────────────────────────────────────────
@@ -58,16 +64,93 @@ class RefineRequest(BaseModel):
     original_message: str
     instruction: str = ""
 
+class AuthRequest(BaseModel):
+    email: str
+    password: str
 
-# ── Endpoints ─────────────────────────────────────────────────────────────
+class RefreshRequest(BaseModel):
+    refresh_token: str
+
+class CheckoutRequest(BaseModel):
+    success_url: str
+    cancel_url: str
+
+
+# ── Auth helpers ──────────────────────────────────────────────────────────
+
+from auth_utils import get_current_user_id
+from supabase_client import get_user_status, increment_usage, get_admin_client
+
+async def _supabase_post(path: str, payload: dict) -> tuple[dict, int]:
+    async with httpx.AsyncClient() as client:
+        res = await client.post(
+            f"{SUPABASE_URL}/auth/v1/{path}",
+            json=payload,
+            headers={"apikey": SUPABASE_ANON_KEY, "Content-Type": "application/json"},
+            timeout=10.0,
+        )
+    return res.json(), res.status_code
+
+
+# ── Health ────────────────────────────────────────────────────────────────
 
 @app.get("/api/health")
 async def health():
     return {"ok": True}
 
 
+# ── Auth endpoints ─────────────────────────────────────────────────────────
+
+@app.post("/api/auth/signup")
+async def signup(req: AuthRequest):
+    data, status = await _supabase_post("signup", {"email": req.email, "password": req.password})
+    if status >= 400:
+        msg = data.get("msg") or data.get("error_description") or "Errore durante la registrazione."
+        raise HTTPException(status_code=400, detail=msg)
+    return {
+        "access_token": data.get("access_token"),
+        "refresh_token": data.get("refresh_token"),
+        "email": data.get("user", {}).get("email"),
+    }
+
+@app.post("/api/auth/login")
+async def login(req: AuthRequest):
+    data, status = await _supabase_post(
+        "token?grant_type=password",
+        {"email": req.email, "password": req.password},
+    )
+    if status >= 400:
+        msg = data.get("error_description") or data.get("msg") or "Email o password errati."
+        raise HTTPException(status_code=400, detail=msg)
+    return {
+        "access_token": data.get("access_token"),
+        "refresh_token": data.get("refresh_token"),
+        "email": data.get("user", {}).get("email"),
+    }
+
+@app.post("/api/auth/refresh")
+async def refresh_token(req: RefreshRequest):
+    data, status = await _supabase_post(
+        "token?grant_type=refresh_token",
+        {"refresh_token": req.refresh_token},
+    )
+    if status >= 400:
+        raise HTTPException(status_code=401, detail="Sessione scaduta. Accedi di nuovo.")
+    return {
+        "access_token": data.get("access_token"),
+        "refresh_token": data.get("refresh_token"),
+    }
+
+@app.get("/api/me")
+async def get_me(user_id: str = Depends(get_current_user_id)):
+    status = await asyncio.to_thread(get_user_status, user_id)
+    return status
+
+
+# ── Analysis endpoints ─────────────────────────────────────────────────────
+
 @app.post("/api/analyze")
-async def analyze(request: AnalyzeRequest):
+async def analyze(request: AnalyzeRequest, user_id: str = Depends(get_current_user_id)):
     import anthropic as _anthropic
 
     if not os.getenv("ANTHROPIC_API_KEY"):
@@ -75,6 +158,13 @@ async def analyze(request: AnalyzeRequest):
 
     if request.profile.is_private:
         raise HTTPException(status_code=400, detail="Profilo privato")
+
+    user_status = await asyncio.to_thread(get_user_status, user_id)
+    if not user_status["can_analyze"]:
+        raise HTTPException(
+            status_code=402,
+            detail=f"Hai raggiunto il limite di {user_status['analyses_limit']} analisi gratuite questo mese. Passa a Premium per continuare.",
+        )
 
     try:
         from ai_analyzer import analyze_profile
@@ -85,25 +175,31 @@ async def analyze(request: AnalyzeRequest):
             request.character,
             request.user_info,
         )
+        await asyncio.to_thread(increment_usage, user_id)
+        result["_usage"] = {
+            "analyses_this_month": user_status["analyses_this_month"] + 1,
+            "analyses_limit": user_status["analyses_limit"],
+            "subscription": user_status["subscription"],
+        }
         return result
 
     except _anthropic.AuthenticationError:
-        raise HTTPException(status_code=401, detail="API key Anthropic non valida. Controllala nelle impostazioni del server.")
+        raise HTTPException(status_code=401, detail="API key Anthropic non valida.")
     except _anthropic.PermissionDeniedError:
-        raise HTTPException(status_code=403, detail="Accesso negato dall'API Anthropic. Verifica i permessi della tua API key.")
+        raise HTTPException(status_code=403, detail="Accesso negato dall'API Anthropic.")
     except _anthropic.RateLimitError:
         raise HTTPException(status_code=429, detail="Troppe richieste. Riprova tra qualche secondo.")
     except _anthropic.APIStatusError as e:
         msg = getattr(e, "message", str(e))
         if "credit" in msg.lower() or "billing" in msg.lower() or e.status_code in (402, 529):
-            raise HTTPException(status_code=402, detail="Crediti Anthropic esauriti. Ricarica su console.anthropic.com → Billing.")
+            raise HTTPException(status_code=402, detail="Crediti Anthropic esauriti.")
         raise HTTPException(status_code=502, detail=f"Errore API Anthropic: {msg}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/api/refine")
-async def refine(request: RefineRequest):
+async def refine(request: RefineRequest, user_id: str = Depends(get_current_user_id)):
     import anthropic as _anthropic
 
     if not os.getenv("ANTHROPIC_API_KEY"):
@@ -132,6 +228,88 @@ async def refine(request: RefineRequest):
         raise HTTPException(status_code=502, detail=f"Errore API Anthropic: {msg}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ── Stripe endpoints ───────────────────────────────────────────────────────
+
+@app.post("/api/checkout")
+async def create_checkout(req: CheckoutRequest, user_id: str = Depends(get_current_user_id)):
+    if not STRIPE_SECRET_KEY or not STRIPE_PRICE_ID:
+        raise HTTPException(status_code=503, detail="Pagamenti non ancora configurati.")
+    import stripe
+    stripe.api_key = STRIPE_SECRET_KEY
+
+    sb = get_admin_client()
+    profile_res = sb.table("profiles").select("stripe_customer_id").eq("id", user_id).single().execute()
+    customer_id = profile_res.data.get("stripe_customer_id") if profile_res.data else None
+
+    session = stripe.checkout.Session.create(
+        customer=customer_id or None,
+        mode="subscription",
+        line_items=[{"price": STRIPE_PRICE_ID, "quantity": 1}],
+        success_url=req.success_url,
+        cancel_url=req.cancel_url,
+        metadata={"user_id": user_id},
+        allow_promotion_codes=True,
+    )
+    return {"url": session.url}
+
+
+@app.post("/api/webhook/stripe")
+async def stripe_webhook(request: Request):
+    if not STRIPE_SECRET_KEY:
+        raise HTTPException(status_code=503, detail="Stripe non configurato.")
+    import stripe
+    stripe.api_key = STRIPE_SECRET_KEY
+
+    payload = await request.body()
+    sig = request.headers.get("stripe-signature", "")
+    try:
+        event = stripe.Webhook.construct_event(payload, sig, STRIPE_WEBHOOK_SECRET)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Webhook signature non valida.")
+
+    sb = get_admin_client()
+
+    if event["type"] == "checkout.session.completed":
+        session = event["data"]["object"]
+        user_id = session["metadata"].get("user_id")
+        customer_id = session.get("customer")
+        subscription_id = session.get("subscription")
+        if user_id:
+            sb.table("profiles").update({
+                "stripe_customer_id": customer_id,
+                "subscription_id": subscription_id,
+                "subscription_status": "premium",
+            }).eq("id", user_id).execute()
+
+    elif event["type"] in ("customer.subscription.deleted", "customer.subscription.updated"):
+        sub = event["data"]["object"]
+        status = sub.get("status")
+        subscription_id = sub.get("id")
+        current_period_end = sub.get("current_period_end")
+        is_active = status in ("active", "trialing")
+
+        import datetime
+        period_end_iso = datetime.datetime.fromtimestamp(
+            current_period_end, tz=datetime.timezone.utc
+        ).isoformat() if current_period_end else None
+
+        sb.table("profiles").update({
+            "subscription_status": "premium" if is_active else "free",
+            "current_period_end": period_end_iso,
+        }).eq("subscription_id", subscription_id).execute()
+
+    return {"ok": True}
+
+
+@app.get("/pricing")
+async def pricing_page():
+    return FileResponse("static/pricing.html")
+
+@app.get("/success")
+async def success_page():
+    return FileResponse("static/success.html")
 
 
 # ── Static / landing page ─────────────────────────────────────────────────

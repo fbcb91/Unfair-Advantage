@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Unfair Advantage — Impostazioni</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', sans-serif; background: #080808; color: #f0f0f0; padding: 32px; min-height: 100vh; }
@@ -12,7 +12,6 @@
     h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
     h1 span { color: #d946ef; }
     .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 32px; }
-
     h2 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
     .section-hint { font-size: 12px; color: #4b5563; margin-bottom: 14px; }
 
@@ -30,43 +29,40 @@
     .chars-left { font-size: 11px; color: #4b5563; text-align: right; margin-top: 4px; }
 
     .btn-row { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
-    .btn {
-      background: #d946ef; color: #fff; font-weight: 600; padding: 9px 22px;
-      border-radius: 8px; border: none; cursor: pointer; font-size: 13px;
-      font-family: inherit; transition: background 0.12s;
-    }
+    .btn { background: #d946ef; color: #fff; font-weight: 600; padding: 9px 22px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-family: inherit; transition: background 0.12s; }
     .btn:hover { background: #c026d3; }
-    .btn-ghost {
-      background: none; border: none; color: #6b7280; font-size: 13px;
-      font-family: inherit; cursor: pointer; padding: 4px 0; transition: color 0.12s;
-    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-ghost { background: none; border: none; color: #6b7280; font-size: 13px; font-family: inherit; cursor: pointer; padding: 4px 0; transition: color 0.12s; }
     .btn-ghost:hover { color: #d1d5db; }
-    .btn-save-profile {
-      width: 100%; margin-top: 14px; background: rgba(217,70,239,0.15); color: #d946ef;
-      border: 1px solid rgba(217,70,239,0.25); border-radius: 8px; padding: 8px 0;
-      font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer;
-      transition: all 0.12s;
-    }
-    .btn-save-profile:hover { background: rgba(217,70,239,0.25); }
+    .btn-ghost.danger:hover { color: #f87171; }
+    .btn-secondary { background: rgba(217,70,239,0.15); color: #d946ef; border: 1px solid rgba(217,70,239,0.25); border-radius: 8px; padding: 8px 0; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.12s; width: 100%; margin-top: 14px; }
+    .btn-secondary:hover { background: rgba(217,70,239,0.25); }
 
     .status { font-size: 13px; margin-top: 10px; min-height: 18px; }
     .status.success { color: #22c55e; }
     .status.error   { color: #ef4444; }
     .status.neutral { color: #9ca3af; }
-    .status-inline { font-size: 12px; margin-top: 8px; min-height: 16px; }
-    .status-inline.success { color: #22c55e; }
-    .status-inline.error   { color: #ef4444; }
+
+    .auth-toggle { display: flex; gap: 0; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; }
+    .auth-tab { flex: 1; padding: 8px 0; font-size: 13px; font-weight: 500; text-align: center; background: none; border: none; color: #6b7280; cursor: pointer; font-family: inherit; transition: all 0.12s; }
+    .auth-tab.active { background: rgba(217,70,239,0.15); color: #d946ef; }
+
+    .logged-in-box { display: flex; flex-direction: column; gap: 12px; }
+    .user-row { display: flex; align-items: center; justify-content: space-between; }
+    .user-email { font-size: 14px; font-weight: 600; }
+    .sub-badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 9999px; }
+    .sub-badge.free { background: rgba(255,255,255,0.06); color: #6b7280; }
+    .sub-badge.premium { background: rgba(217,70,239,0.15); color: #d946ef; }
+    .usage-bar-wrap { background: rgba(255,255,255,0.05); border-radius: 6px; height: 6px; overflow: hidden; }
+    .usage-bar { height: 100%; background: #d946ef; border-radius: 6px; transition: width 0.3s; }
+    .usage-label { font-size: 11px; color: #6b7280; display: flex; justify-content: space-between; margin-bottom: 4px; }
+
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .tag { padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 500; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; color: #6b7280; background: none; font-family: inherit; transition: all 0.12s; }
+    .tag:hover { border-color: rgba(217,70,239,0.4); color: #ccc; }
 
     ol { padding-left: 18px; }
     ol li { font-size: 13px; color: #9ca3af; margin-bottom: 8px; line-height: 1.5; }
-
-    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-    .tag {
-      padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 500;
-      border: 1px solid rgba(255,255,255,0.1); cursor: pointer; color: #6b7280;
-      background: none; font-family: inherit; transition: all 0.12s;
-    }
-    .tag:hover { border-color: rgba(217,70,239,0.4); color: #ccc; }
   </style>
 </head>
 <body>
@@ -74,12 +70,71 @@
     <h1>Unfair <span>Advantage</span></h1>
     <p class="subtitle">Impostazioni estensione</p>
 
+    <!-- Account -->
+    <div class="card" id="accountCard">
+      <h2 style="margin-bottom:16px">Account</h2>
+
+      <!-- Logged out -->
+      <div id="authForms">
+        <div class="auth-toggle">
+          <button class="auth-tab active" id="tabLogin">Accedi</button>
+          <button class="auth-tab" id="tabSignup">Registrati</button>
+        </div>
+
+        <div id="loginForm">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" placeholder="tu@email.com" autocomplete="email" />
+          <div style="margin-top:10px">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
+          </div>
+          <div class="btn-row">
+            <button class="btn" id="loginBtn">Accedi</button>
+          </div>
+          <div class="status" id="loginStatus"></div>
+        </div>
+
+        <div id="signupForm" class="hidden">
+          <label for="signupEmail">Email</label>
+          <input type="email" id="signupEmail" placeholder="tu@email.com" autocomplete="email" />
+          <div style="margin-top:10px">
+            <label for="signupPassword">Password</label>
+            <input type="password" id="signupPassword" placeholder="Min 6 caratteri" autocomplete="new-password" />
+          </div>
+          <div class="btn-row">
+            <button class="btn" id="signupBtn">Crea account</button>
+          </div>
+          <div class="status" id="signupStatus"></div>
+        </div>
+      </div>
+
+      <!-- Logged in -->
+      <div id="loggedInView" class="hidden logged-in-box">
+        <div class="user-row">
+          <span class="user-email" id="userEmail">—</span>
+          <span class="sub-badge free" id="subBadge">Free</span>
+        </div>
+
+        <div id="usageSection">
+          <div class="usage-label">
+            <span>Analisi questo mese</span>
+            <span id="usageCount">0 / 10</span>
+          </div>
+          <div class="usage-bar-wrap">
+            <div class="usage-bar" id="usageBar" style="width:0%"></div>
+          </div>
+        </div>
+
+        <button class="btn-secondary hidden" id="upgradeBtn">✦ Passa a Premium — €4,99/mese</button>
+        <button class="btn-ghost danger" id="logoutBtn" style="font-size:12px;margin-top:4px;">Disconnetti</button>
+      </div>
+    </div>
+
     <!-- Backend URL -->
     <div class="card">
       <label for="backendUrl">URL Backend</label>
       <input type="text" id="backendUrl" placeholder="https://unfair-advantage.fly.dev" />
       <p class="hint">L'indirizzo del tuo server Fly.io (o localhost:8000 per sviluppo locale)</p>
-
       <div class="btn-row">
         <button class="btn" id="saveBtn">Salva</button>
         <button class="btn-ghost" id="testBtn">Testa connessione</button>
@@ -87,40 +142,34 @@
       <div class="status" id="statusMsg"></div>
     </div>
 
-    <!-- User self-profile -->
+    <!-- User profile -->
     <div class="card">
       <h2>Il tuo profilo</h2>
-      <p class="section-hint">Queste info vengono passate all'AI per rendere i messaggi più personali e autentici. Scrivi in modo naturale — interessi, carattere, cosa fai nella vita.</p>
-
+      <p class="section-hint">Info su di te per rendere i messaggi più autentici. Scrivi in modo naturale.</p>
       <label for="userInfo">Chi sei</label>
-      <textarea id="userInfo" placeholder="Es: Faccio il fotografo freelance, amo il jazz, suono la chitarra da 10 anni, viaggio spesso per lavoro in Asia. Sono curioso e diretto, con un senso dell'umorismo sottile."></textarea>
+      <textarea id="userInfo" placeholder="Es: Faccio il fotografo freelance, amo il jazz, viaggio spesso in Asia. Ironico e diretto."></textarea>
       <div class="chars-left"><span id="charsLeft">500</span> caratteri rimasti</div>
-
-      <p class="hint" style="margin-top:8px">Suggerimenti rapidi:</p>
       <div class="tag-row">
         <button class="tag" data-snippet="Faccio il fotografo">Fotografo</button>
         <button class="tag" data-snippet="Lavoro in startup tech">Startup</button>
         <button class="tag" data-snippet="Sono un atleta">Atleta</button>
         <button class="tag" data-snippet="Viaggio spesso per lavoro">Viaggiatore</button>
         <button class="tag" data-snippet="Amo la musica jazz">Jazz</button>
-        <button class="tag" data-snippet="Sono appassionato di cucina">Chef</button>
         <button class="tag" data-snippet="Ironico e diretto">Ironico</button>
-        <button class="tag" data-snippet="Curioso e creativo">Creativo</button>
       </div>
-
-      <button class="btn-save-profile" id="saveProfileBtn">Salva profilo</button>
-      <div class="status-inline" id="profileStatus"></div>
+      <button class="btn-secondary" id="saveProfileBtn">Salva profilo</button>
+      <div class="status" id="profileStatus"></div>
     </div>
 
-    <!-- Instructions -->
+    <!-- How to use -->
     <div class="card">
       <h2>Come usare l'estensione</h2>
-      <ol>
+      <ol style="margin-top:12px">
         <li>Assicurati di essere loggato su Instagram nel browser</li>
         <li>Naviga sul profilo Instagram che vuoi analizzare</li>
         <li>Clicca sull'icona dell'estensione in alto a destra</li>
         <li>Scegli il tono o un personaggio e clicca "Analizza"</li>
-        <li>Copia il messaggio che preferisci</li>
+        <li>Copia o migliora il messaggio che preferisci</li>
       </ol>
     </div>
   </div>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unfair Advantage — Premium</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #080808; color: #f0f0f0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+
+    .container { max-width: 440px; width: 100%; }
+
+    .logo { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 40px; }
+    .logo span { color: #d946ef; }
+
+    .card { background: #111; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 32px; }
+
+    .plan-name { font-size: 13px; font-weight: 600; color: #d946ef; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .plan-price { font-size: 48px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+    .plan-price span { font-size: 20px; font-weight: 500; color: #9ca3af; }
+    .plan-desc { font-size: 13px; color: #6b7280; margin-bottom: 28px; }
+
+    .features { list-style: none; margin-bottom: 28px; display: flex; flex-direction: column; gap: 10px; }
+    .features li { font-size: 14px; color: #d1d5db; display: flex; align-items: center; gap: 10px; }
+    .features li::before { content: "✓"; color: #d946ef; font-weight: 700; flex-shrink: 0; }
+
+    .divider { height: 1px; background: rgba(255,255,255,0.07); margin-bottom: 28px; }
+
+    .free-note { font-size: 12px; color: #4b5563; margin-bottom: 20px; text-align: center; }
+    .free-note strong { color: #6b7280; }
+
+    .btn-subscribe {
+      width: 100%; padding: 14px; background: #d946ef; color: #fff; font-weight: 700;
+      font-size: 15px; border: none; border-radius: 12px; cursor: pointer; font-family: inherit;
+      transition: background 0.12s; display: block; text-align: center;
+    }
+    .btn-subscribe:hover { background: #c026d3; }
+    .btn-subscribe:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .terms { font-size: 11px; color: #374151; text-align: center; margin-top: 12px; }
+
+    .status { font-size: 13px; text-align: center; margin-top: 14px; min-height: 18px; }
+    .status.error { color: #f87171; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">Unfair <span>Advantage</span></div>
+
+    <div class="card">
+      <div class="plan-name">Premium</div>
+      <div class="plan-price">€4,99<span>/mese</span></div>
+      <div class="plan-desc">Tutto illimitato, nessuna sorpresa.</div>
+
+      <ul class="features">
+        <li>Analisi illimitate ogni mese</li>
+        <li>Tutti i personaggi (Chuck Bass, Damon, Hitch...)</li>
+        <li>Raffinamento messaggi illimitato</li>
+        <li>Il tuo profilo personale per messaggi su misura</li>
+        <li>Accesso a tutti i futuri aggiornamenti</li>
+      </ul>
+
+      <div class="divider"></div>
+
+      <div class="free-note">Piano gratuito: <strong>10 analisi al mese</strong></div>
+
+      <button class="btn-subscribe" id="subscribeBtn">Attiva Premium</button>
+      <div class="terms">Disdici quando vuoi. Nessun vincolo.</div>
+      <div class="status" id="statusMsg"></div>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const backendUrl = params.get("backend") || "";
+
+    document.getElementById("subscribeBtn").addEventListener("click", async () => {
+      const btn = document.getElementById("subscribeBtn");
+      const status = document.getElementById("statusMsg");
+      btn.disabled = true;
+      btn.textContent = "Attendere...";
+      status.textContent = "";
+      status.className = "status";
+
+      const token = params.get("token") || "";
+      if (!token) {
+        status.textContent = "Token mancante. Riapri da estensione.";
+        status.className = "status error";
+        btn.disabled = false;
+        btn.textContent = "Attiva Premium";
+        return;
+      }
+
+      try {
+        const res = await fetch(`${backendUrl}/api/checkout`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+          body: JSON.stringify({
+            success_url: `${backendUrl}/success`,
+            cancel_url: window.location.href,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Errore sconosciuto");
+        window.location.href = data.url;
+      } catch (err) {
+        status.textContent = err.message;
+        status.className = "status error";
+        btn.disabled = false;
+        btn.textContent = "Attiva Premium";
+      }
+    });
+  </script>
+</body>
+</html>
