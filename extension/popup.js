@@ -1,4 +1,4 @@
-const DEFAULT_BACKEND = "http://localhost:8000";
+const DEFAULT_BACKEND = "https://unfair-advantage.fly.dev";
 
 let selectedTone = "curioso";
 let selectedChar = "";
