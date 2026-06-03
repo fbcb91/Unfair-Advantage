@@ -30,6 +30,15 @@ function bindEvents() {
   document.getElementById("loginPassword").addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
   document.getElementById("signupPassword").addEventListener("keydown", e => { if (e.key === "Enter") doSignup(); });
 
+  // Advanced section toggle
+  document.getElementById("advancedToggle").addEventListener("click", () => {
+    const section = document.getElementById("advancedSection");
+    const btn = document.getElementById("advancedToggle");
+    const open = !section.classList.contains("hidden");
+    section.classList.toggle("hidden", open);
+    btn.textContent = open ? "⚙ Impostazioni avanzate" : "⚙ Nascondi impostazioni avanzate";
+  });
+
   // Backend URL
   document.getElementById("saveBtn").addEventListener("click", saveBackend);
   document.getElementById("testBtn").addEventListener("click", testConnection);

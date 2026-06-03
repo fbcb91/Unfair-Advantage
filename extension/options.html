@@ -62,6 +62,9 @@
     .tag { padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 500; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; color: #6b7280; background: none; font-family: inherit; transition: all 0.12s; }
     .tag:hover { border-color: rgba(217,70,239,0.4); color: #ccc; }
 
+    .advanced-toggle { background: none; border: none; color: #374151; font-size: 11px; font-family: inherit; cursor: pointer; padding: 4px 0; transition: color 0.12s; display: block; margin: 0 auto 8px; }
+    .advanced-toggle:hover { color: #6b7280; }
+
     ol { padding-left: 18px; }
     ol li { font-size: 13px; color: #9ca3af; margin-bottom: 8px; line-height: 1.5; }
   </style>
@@ -131,16 +134,19 @@
       </div>
     </div>
 
-    <!-- Backend URL -->
-    <div class="card">
-      <label for="backendUrl">URL Backend</label>
-      <input type="text" id="backendUrl" placeholder="https://unfair-advantage.fly.dev" />
-      <p class="hint">L'indirizzo del tuo server Fly.io (o localhost:8000 per sviluppo locale)</p>
-      <div class="btn-row">
-        <button class="btn" id="saveBtn">Salva</button>
-        <button class="btn-ghost" id="testBtn">Testa connessione</button>
+    <!-- Advanced (collapsed by default) -->
+    <button class="advanced-toggle" id="advancedToggle">⚙ Impostazioni avanzate</button>
+    <div id="advancedSection" class="hidden">
+      <div class="card">
+        <label for="backendUrl">URL Backend</label>
+        <input type="text" id="backendUrl" placeholder="https://unfair-advantage.fly.dev" />
+        <p class="hint">Lascia invariato. Modifica solo se hai un server personalizzato.</p>
+        <div class="btn-row">
+          <button class="btn" id="saveBtn">Salva</button>
+          <button class="btn-ghost" id="testBtn">Testa connessione</button>
+        </div>
+        <div class="status" id="statusMsg"></div>
       </div>
-      <div class="status" id="statusMsg"></div>
     </div>
 
     <!-- User profile -->
