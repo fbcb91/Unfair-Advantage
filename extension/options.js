@@ -185,11 +185,13 @@ async function refreshAccountView() {
 function showAuthForms() {
   document.getElementById("authForms").classList.remove("hidden");
   document.getElementById("loggedInView").classList.add("hidden");
+  document.getElementById("profileCard").classList.add("hidden");
 }
 
 function showLoggedIn(email, status) {
   document.getElementById("authForms").classList.add("hidden");
   document.getElementById("loggedInView").classList.remove("hidden");
+  document.getElementById("profileCard").classList.remove("hidden");
 
   document.getElementById("userEmail").textContent = email || "—";
 
