@@ -3,77 +3,329 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Unfair Advantage</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <title>Unfair Advantage — Il primo messaggio che non viene ignorato</title>
+  <meta name="description" content="L'AI che analizza profili Instagram e ti suggerisce cosa scrivere — specifico, personale, impossibile da ignorare." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
-    * { font-family: 'Inter', sans-serif; }
-    body { background: #080808; color: #f0f0f0; }
-    .card { background: #111; border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; }
-    .step-num {
-      width: 28px; height: 28px; border-radius: 50%; background: rgba(217,70,239,0.15);
-      color: #d946ef; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #080808; color: #f0f0f0; line-height: 1.6; }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* Layout */
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 80px 0; }
+
+    /* Nav */
+    nav { padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; background: rgba(8,8,8,0.92); backdrop-filter: blur(12px); z-index: 100; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-size: 16px; font-weight: 700; }
+    .nav-logo span { color: #d946ef; }
+    .nav-cta { background: #d946ef; color: #fff; font-weight: 600; padding: 8px 20px; border-radius: 8px; font-size: 13px; transition: background 0.12s; }
+    .nav-cta:hover { background: #c026d3; }
+
+    /* Hero */
+    .hero { padding: 100px 0 80px; text-align: center; }
+    .hero-tag { display: inline-block; font-size: 12px; font-weight: 600; color: #d946ef; background: rgba(217,70,239,0.1); border: 1px solid rgba(217,70,239,0.25); padding: 4px 14px; border-radius: 9999px; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 28px; }
+    .hero h1 { font-size: clamp(36px, 6vw, 64px); font-weight: 900; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 24px; }
+    .hero h1 em { font-style: normal; color: #d946ef; }
+    .hero-sub { font-size: clamp(16px, 2vw, 20px); color: #9ca3af; max-width: 560px; margin: 0 auto 40px; line-height: 1.6; }
+    .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { background: #d946ef; color: #fff; font-weight: 700; padding: 14px 32px; border-radius: 10px; font-size: 15px; transition: background 0.12s; display: inline-block; }
+    .btn-primary:hover { background: #c026d3; }
+    .btn-outline { background: none; color: #9ca3af; font-weight: 500; padding: 14px 24px; border-radius: 10px; font-size: 15px; border: 1px solid rgba(255,255,255,0.12); transition: all 0.12s; display: inline-block; }
+    .btn-outline:hover { color: #fff; border-color: rgba(255,255,255,0.25); }
+
+    /* How it works */
+    .section-label { font-size: 11px; font-weight: 700; color: #d946ef; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
+    .section-title { font-size: clamp(26px, 4vw, 38px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; }
+    .section-sub { font-size: 16px; color: #6b7280; max-width: 480px; }
+
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 48px; }
+    .step { background: #111; border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 28px; }
+    .step-num { width: 36px; height: 36px; border-radius: 10px; background: rgba(217,70,239,0.12); color: #d946ef; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+    .step h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .step p { font-size: 13px; color: #6b7280; line-height: 1.6; }
+
+    /* Features */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 48px; }
+    .feature { background: #111; border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 24px; }
+    .feature-icon { font-size: 24px; margin-bottom: 12px; }
+    .feature h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .feature p { font-size: 13px; color: #6b7280; line-height: 1.55; }
+
+    /* Examples */
+    .examples-wrap { margin-top: 48px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .example { background: #111; border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 20px; }
+    .example-profile { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .example-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #d946ef33, #7c3aed33); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .example-name { font-size: 13px; font-weight: 600; }
+    .example-meta { font-size: 11px; color: #6b7280; }
+    .example-tag { display: inline-block; font-size: 10px; font-weight: 600; color: #d946ef; background: rgba(217,70,239,0.1); border: 1px solid rgba(217,70,239,0.2); padding: 2px 8px; border-radius: 9999px; margin-bottom: 10px; }
+    .example-msg { font-size: 14px; color: #e0e0e0; line-height: 1.6; font-style: italic; }
+    .example-hook { font-size: 11px; color: #4b5563; margin-top: 10px; }
+
+    /* Pricing */
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 48px; max-width: 640px; margin-left: auto; margin-right: auto; }
+    .pricing-card { background: #111; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 32px; }
+    .pricing-card.featured { border-color: rgba(217,70,239,0.4); background: linear-gradient(135deg, rgba(217,70,239,0.06), rgba(124,58,237,0.06)); }
+    .pricing-badge { display: inline-block; font-size: 10px; font-weight: 700; color: #d946ef; background: rgba(217,70,239,0.12); border: 1px solid rgba(217,70,239,0.25); padding: 3px 10px; border-radius: 9999px; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 16px; }
+    .pricing-price { font-size: 42px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; margin-bottom: 4px; }
+    .pricing-price span { font-size: 16px; font-weight: 500; color: #6b7280; }
+    .pricing-desc { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
+    .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    .pricing-features li { font-size: 13px; color: #d1d5db; display: flex; align-items: center; gap: 8px; }
+    .pricing-features li::before { content: "✓"; color: #d946ef; font-weight: 700; flex-shrink: 0; }
+    .pricing-features li.muted { color: #4b5563; }
+    .pricing-features li.muted::before { content: "—"; color: #374151; }
+    .btn-pricing { display: block; text-align: center; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; transition: all 0.12s; }
+    .btn-pricing-free { background: rgba(255,255,255,0.06); color: #9ca3af; border: 1px solid rgba(255,255,255,0.1); }
+    .btn-pricing-free:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .btn-pricing-premium { background: #d946ef; color: #fff; }
+    .btn-pricing-premium:href { background: #c026d3; }
+
+    /* Divider */
+    .divider { height: 1px; background: rgba(255,255,255,0.05); }
+
+    /* Footer */
+    footer { padding: 32px 0; text-align: center; color: #374151; font-size: 13px; }
+
+    /* Glow effect on hero */
+    .glow { position: relative; }
+    .glow::after { content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; height: 300px; background: radial-gradient(ellipse, rgba(217,70,239,0.08) 0%, transparent 70%); pointer-events: none; z-index: -1; }
+
+    @media (max-width: 600px) {
+      .section { padding: 60px 0; }
+      .hero { padding: 60px 0 50px; }
     }
   </style>
 </head>
-<body class="min-h-screen">
-  <div class="max-w-2xl mx-auto px-4 py-16">
+<body>
 
-    <div class="text-center mb-12">
-      <h1 class="text-4xl font-bold tracking-tight mb-3">
-        Unfair <span class="text-fuchsia-500">Advantage</span>
-      </h1>
-      <p class="text-gray-400 text-lg">
-        Analizza profili Instagram e genera messaggi personalizzati con AI —<br />
-        direttamente dal tuo browser.
-      </p>
-    </div>
-
-    <div class="card p-8 mb-6">
-      <h2 class="font-semibold text-lg mb-6">Come iniziare</h2>
-      <div class="space-y-5">
-        <div class="flex gap-4">
-          <div class="step-num">1</div>
-          <div>
-            <p class="font-medium text-sm">Installa l'estensione Chrome</p>
-            <p class="text-sm text-gray-500 mt-0.5">Scarica la cartella <code class="text-fuchsia-400 text-xs">extension/</code> e caricala in Chrome da <span class="text-gray-400">chrome://extensions → Modalità sviluppatore → Carica estensione non pacchettizzata</span></p>
-          </div>
-        </div>
-        <div class="flex gap-4">
-          <div class="step-num">2</div>
-          <div>
-            <p class="font-medium text-sm">Configura il backend URL</p>
-            <p class="text-sm text-gray-500 mt-0.5">Nelle impostazioni dell'estensione (icona ⚙) inserisci l'URL di questa pagina: <code class="text-fuchsia-400 text-xs" id="thisUrl">caricamento...</code></p>
-          </div>
-        </div>
-        <div class="flex gap-4">
-          <div class="step-num">3</div>
-          <div>
-            <p class="font-medium text-sm">Apri un profilo Instagram</p>
-            <p class="text-sm text-gray-500 mt-0.5">Naviga su <span class="text-gray-400">instagram.com/username</span>, clicca l'icona dell'estensione e analizza.</p>
-          </div>
-        </div>
+  <!-- Nav -->
+  <nav>
+    <div class="container">
+      <div class="nav-inner">
+        <div class="nav-logo">Unfair <span>Advantage</span></div>
+        <a href="#pricing" class="nav-cta">Inizia gratis</a>
       </div>
     </div>
+  </nav>
 
-    <div class="card p-6">
-      <div class="flex items-center gap-3">
-        <div id="healthDot" class="w-2 h-2 rounded-full bg-gray-600"></div>
-        <span class="text-sm text-gray-500" id="healthText">Controllo server...</span>
+  <!-- Hero -->
+  <div class="hero glow">
+    <div class="container">
+      <div class="hero-tag">Estensione Chrome × AI</div>
+      <h1>Il primo messaggio<br>che <em>non viene ignorato</em></h1>
+      <p class="hero-sub">Unfair Advantage analizza il profilo Instagram di lei — foto, bio, captions — e ti dice esattamente cosa scrivere. Specifico, personale, impossibile da ignorare.</p>
+      <div class="hero-actions">
+        <a href="#how" class="btn-primary">Come funziona</a>
+        <a href="#pricing" class="btn-outline">Vedi i prezzi</a>
       </div>
     </div>
-
   </div>
+
+  <div class="divider"></div>
+
+  <!-- How it works -->
+  <div class="section" id="how">
+    <div class="container">
+      <div class="section-label">Come funziona</div>
+      <div class="section-title">Tre secondi. Poi scrivi.</div>
+      <p class="section-sub">Niente ricerche manuali, niente frasi copia-incolla. L'AI fa il lavoro pesante.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Vai sul profilo</h3>
+          <p>Naviga su qualsiasi profilo Instagram pubblico direttamente dal tuo browser.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Clicca l'estensione</h3>
+          <p>L'AI legge bio, captions, highlights e analizza le foto con la vision — come faresti tu, ma più veloce.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Copia e invia</h3>
+          <p>Ricevi 3 messaggi personalizzati pronti da inviare. Se non ti convincono, rigenerali o migliorane uno.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Features -->
+  <div class="section">
+    <div class="container">
+      <div class="section-label">Funzionalità</div>
+      <div class="section-title">Non è un generatore di frasi.</div>
+      <p class="section-sub">È un'AI che guarda davvero il profilo e trova dettagli che nessuno nota.</p>
+
+      <div class="features-grid">
+        <div class="feature">
+          <div class="feature-icon">👁</div>
+          <h3>Vision AI</h3>
+          <p>Analizza le foto come le vedi tu — outfit, luoghi, dettagli in background. Non solo il testo.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🎭</div>
+          <h3>Personaggi</h3>
+          <p>Scrivi come Chuck Bass, Damon Salvatore, Harvey Specter o Hitch. La stessa voce, nel mondo reale.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🎯</div>
+          <h3>Toni diversi</h3>
+          <p>Diretto, curioso, giocoso o romantico — scegli il registro che ti rappresenta e l'AI si adatta.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">✦</div>
+          <h3>Migliora</h3>
+          <p>Un messaggio ha del potenziale ma non è perfetto? Indicagli la direzione e ricevi 3 varianti.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🔒</div>
+          <h3>Privacy totale</h3>
+          <p>Usa la tua sessione Instagram esistente. Nessun login Instagram richiesto, nessun dato salvato.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">⚡</div>
+          <h3>Istantaneo</h3>
+          <p>Risultati in 15-20 secondi. Meno tempo di quanto impiegheresti a pensare cosa scrivere da solo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Examples -->
+  <div class="section">
+    <div class="container">
+      <div class="section-label">Esempi reali</div>
+      <div class="section-title">Questi non li scrive nessun altro.</div>
+      <p class="section-sub">L'AI trova dettagli che richiedono vera attenzione. Niente "bella foto" o "dove sei stata?".</p>
+
+      <div class="examples-wrap">
+        <div class="example">
+          <div class="example-profile">
+            <div class="example-avatar">🎵</div>
+            <div>
+              <div class="example-name">alice_b.</div>
+              <div class="example-meta">Negoziante · 26K follower</div>
+            </div>
+          </div>
+          <div class="example-tag">Tono Diretto</div>
+          <div class="example-msg">"Negozio di dolciumi fondato a 24 anni. Rispetto."</div>
+          <div class="example-hook">→ Hook trovato: ha aperto un'attività in proprio da giovanissima, non lo dice nella bio</div>
+        </div>
+
+        <div class="example">
+          <div class="example-profile">
+            <div class="example-avatar">🌊</div>
+            <div>
+              <div class="example-name">greta.g</div>
+              <div class="example-meta">555 in bio · 3.9K follower</div>
+            </div>
+          </div>
+          <div class="example-tag">Chuck Bass</div>
+          <div class="example-msg">"Un bestiario, un'ostrica e un tè. Manca solo il movente."</div>
+          <div class="example-hook">→ Hook trovato: cover degli highlights sono animali esotici senza senso apparente</div>
+        </div>
+
+        <div class="example">
+          <div class="example-profile">
+            <div class="example-avatar">📸</div>
+            <div>
+              <div class="example-name">larabrandoni_</div>
+              <div class="example-meta">lilli · 2.7K follower</div>
+            </div>
+          </div>
+          <div class="example-tag">Tono Curioso</div>
+          <div class="example-msg">"Profilo senza una parola scritta da nessuna parte, ci vuole disciplina. Cosa non vuoi che si legga?"</div>
+          <div class="example-hook">→ Hook trovato: zero captions su tutti i post, scelta precisa non casuale</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Pricing -->
+  <div class="section" id="pricing">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:0;">
+        <div class="section-label" style="display:inline-block">Prezzi</div>
+        <div class="section-title">Inizia gratis. Scala quando vuoi.</div>
+        <p class="section-sub" style="margin:0 auto 0;">Nessuna carta richiesta per iniziare.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-badge">Free</div>
+          <div class="pricing-price">€0<span>/mese</span></div>
+          <div class="pricing-desc">Per provare il prodotto davvero.</div>
+          <ul class="pricing-features">
+            <li>10 analisi al mese</li>
+            <li>Tutti i toni (diretto, curioso, giocoso, romantico)</li>
+            <li class="muted">Personaggi (Chuck Bass, Damon...)</li>
+            <li class="muted">Raffinamento messaggi</li>
+          </ul>
+          <a href="#install" class="btn-pricing btn-pricing-free">Inizia gratis</a>
+        </div>
+
+        <div class="pricing-card featured">
+          <div class="pricing-badge">Premium</div>
+          <div class="pricing-price">€4,99<span>/mese</span></div>
+          <div class="pricing-desc">Per chi vuole il massimo ogni giorno.</div>
+          <ul class="pricing-features">
+            <li>Analisi illimitate</li>
+            <li>Tutti i toni</li>
+            <li>Personaggi (Chuck Bass, Damon, Hitch, Harvey...)</li>
+            <li>Raffinamento messaggi illimitato</li>
+            <li>Il tuo profilo personale per messaggi su misura</li>
+            <li>Accesso a tutti i futuri aggiornamenti</li>
+          </ul>
+          <a href="#install" class="btn-pricing btn-pricing-premium">Attiva Premium</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Install CTA -->
+  <div class="section" id="install" style="text-align:center;">
+    <div class="container">
+      <div class="section-title" style="max-width:500px; margin:0 auto 16px;">Pronto a smettere di scrivere messaggi generici?</div>
+      <p style="font-size:16px; color:#6b7280; margin-bottom:36px;">Installa l'estensione, crea un account gratuito e prova su un profilo reale.</p>
+
+      <div style="background:#111; border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:32px; max-width:520px; margin:0 auto;">
+        <p style="font-size:13px; color:#6b7280; margin-bottom:20px;">L'estensione è disponibile per Chrome. Scarica il pacchetto e caricalo come estensione non pacchettizzata.</p>
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+          <a href="https://github.com/fbcb91/Unfair-Advantage" target="_blank" class="btn-primary" style="font-size:14px; padding:12px 24px;">Scarica da GitHub</a>
+        </div>
+        <p style="font-size:11px; color:#374151; margin-top:16px;">Presto disponibile su Chrome Web Store</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <footer>
+    <div class="container">
+      <span style="font-weight:700; color:#6b7280;">Unfair <span style="color:#d946ef;">Advantage</span></span>
+      <span style="margin: 0 12px; color:#1f2937;">·</span>
+      <span>Disdici quando vuoi</span>
+      <span style="margin: 0 12px; color:#1f2937;">·</span>
+      <span id="year"></span>
+    </div>
+  </footer>
+
   <script>
-    document.getElementById("thisUrl").textContent = window.location.origin;
-    fetch("/api/health").then(r => {
-      if (r.ok) {
-        document.getElementById("healthDot").className = "w-2 h-2 rounded-full bg-green-500";
-        document.getElementById("healthText").textContent = "Server attivo e funzionante";
-      }
-    }).catch(() => {
-      document.getElementById("healthText").textContent = "Server non raggiungibile";
-    });
+    document.getElementById("year").textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
