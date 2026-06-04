@@ -13,6 +13,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   await refreshAccountView();
 
   bindEvents();
+
+  // Quiet backend reachability check — show banner if server is down
+  const url = (backendUrl || DEFAULT_BACKEND).replace(/\/$/, "");
+  try {
+    const res = await fetch(`${url}/api/health`, { signal: AbortSignal.timeout(6000) });
+    if (!res.ok) showAuthStatus("login", "Server non risponde correttamente. Riprova tra poco.", "error");
+  } catch {
+    showAuthStatus("login", "Server non raggiungibile. Controlla la connessione o riprova tra poco.", "error");
+  }
 });
 
 function bindEvents() {
@@ -90,14 +99,20 @@ async function doLogin() {
 
   try {
     const { backendUrl } = await chrome.storage.sync.get({ backendUrl: DEFAULT_BACKEND });
-    const url = backendUrl.replace(/\/$/, "");
-    const res = await fetch(`${url}/api/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.detail || "Errore di accesso.");
+    const url = (backendUrl || DEFAULT_BACKEND).replace(/\/$/, "");
+    let res;
+    try {
+      res = await fetch(`${url}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+    } catch {
+      throw new Error("Server non raggiungibile. Controlla la tua connessione.");
+    }
+    let data;
+    try { data = await res.json(); } catch { data = {}; }
+    if (!res.ok) throw new Error(data.detail || `Errore ${res.status}. Riprova.`);
 
     await chrome.storage.sync.set({
       accessToken: data.access_token,
@@ -123,14 +138,20 @@ async function doSignup() {
 
   try {
     const { backendUrl } = await chrome.storage.sync.get({ backendUrl: DEFAULT_BACKEND });
-    const url = backendUrl.replace(/\/$/, "");
-    const res = await fetch(`${url}/api/auth/signup`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.detail || "Errore di registrazione.");
+    const url = (backendUrl || DEFAULT_BACKEND).replace(/\/$/, "");
+    let res;
+    try {
+      res = await fetch(`${url}/api/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+    } catch {
+      throw new Error("Server non raggiungibile. Controlla la tua connessione.");
+    }
+    let data;
+    try { data = await res.json(); } catch { data = {}; }
+    if (!res.ok) throw new Error(data.detail || `Errore ${res.status}. Riprova.`);
 
     if (data.access_token) {
       await chrome.storage.sync.set({
