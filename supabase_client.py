@@ -21,7 +21,10 @@ def get_current_month() -> str:
 
 
 def get_user_status(user_id: str) -> dict:
-    sb = get_admin_client()
+    try:
+        sb = get_admin_client()
+    except Exception:
+        return {"subscription": "free", "analyses_this_month": 0, "analyses_limit": FREE_LIMIT, "can_analyze": True}
 
     try:
         res = sb.table("profiles").select("subscription_status, current_period_end").eq("id", user_id).single().execute()

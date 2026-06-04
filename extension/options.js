@@ -184,7 +184,9 @@ async function openPricing() {
 // ── Account view ──────────────────────────────────────────────────────────
 
 async function refreshAccountView() {
-  const { accessToken, backendUrl } = await chrome.storage.sync.get({ accessToken: "", backendUrl: DEFAULT_BACKEND });
+  const { accessToken, backendUrl, userEmail } = await chrome.storage.sync.get({
+    accessToken: "", backendUrl: DEFAULT_BACKEND, userEmail: "",
+  });
 
   if (!accessToken) {
     showAuthForms(); return;
@@ -193,13 +195,30 @@ async function refreshAccountView() {
   try {
     const url = (backendUrl || DEFAULT_BACKEND).replace(/\/$/, "");
     const res = await fetch(`${url}/api/me`, { headers: { Authorization: `Bearer ${accessToken}` } });
-    if (!res.ok) { showAuthForms(); return; }
 
-    const status = await res.json();
-    const { userEmail } = await chrome.storage.sync.get({ userEmail: "" });
+    if (res.status === 401) {
+      // Token scaduto o non valido — logout
+      await chrome.storage.sync.remove(["accessToken", "refreshToken", "userEmail"]);
+      showAuthForms(); return;
+    }
+
+    let status;
+    try { status = await res.json(); } catch { status = null; }
+
+    if (!res.ok || !status) {
+      // Errore server ma token presente — mostra loggato con valori di default
+      showLoggedIn(userEmail, { subscription: "free", analyses_this_month: 0, analyses_limit: 10 });
+      return;
+    }
+
     showLoggedIn(userEmail, status);
   } catch {
-    showAuthForms();
+    // Errore di rete ma token presente — mostra loggato con valori di default
+    if (accessToken) {
+      showLoggedIn(userEmail, { subscription: "free", analyses_this_month: 0, analyses_limit: 10 });
+    } else {
+      showAuthForms();
+    }
   }
 }
 
