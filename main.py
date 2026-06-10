@@ -346,6 +346,10 @@ async def pricing_page():
 async def success_page():
     return FileResponse("static/success.html")
 
+@app.get("/privacy")
+async def privacy_page():
+    return FileResponse("static/privacy.html")
+
 
 # ── Static / landing page ─────────────────────────────────────────────────
 

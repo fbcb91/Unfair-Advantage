@@ -37,6 +37,28 @@
     .btn-outline { background: none; color: #9ca3af; font-weight: 500; padding: 14px 24px; border-radius: 10px; font-size: 15px; border: 1px solid rgba(255,255,255,0.12); transition: all 0.12s; display: inline-block; }
     .btn-outline:hover { color: #fff; border-color: rgba(255,255,255,0.25); }
 
+    /* Product mockup */
+    .mockup {
+      max-width: 380px; margin: 56px auto 0; background: #101010;
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 18px;
+      text-align: left; box-shadow: 0 24px 80px rgba(217,70,239,0.12), 0 4px 24px rgba(0,0,0,0.6);
+    }
+    .mockup-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .mockup-logo { font-size: 13px; font-weight: 700; }
+    .mockup-logo em { font-style: normal; color: #d946ef; }
+    .mockup-pill { font-size: 10px; font-weight: 600; color: #9ca3af; background: rgba(255,255,255,0.06); padding: 3px 9px; border-radius: 9999px; }
+    .mockup-profile { display: flex; align-items: center; gap: 10px; padding: 10px; background: #0a0a0a; border-radius: 12px; margin-bottom: 12px; }
+    .mockup-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #d946ef, #7c3aed); flex-shrink: 0; }
+    .mockup-name { font-size: 13px; font-weight: 600; }
+    .mockup-meta { font-size: 11px; color: #6b7280; }
+    .mockup-badge { margin-left: auto; font-size: 10px; font-weight: 600; color: #22c55e; }
+    .mockup-hook { font-size: 11px; color: #9ca3af; background: rgba(217,70,239,0.07); border: 1px solid rgba(217,70,239,0.15); border-radius: 10px; padding: 8px 12px; margin-bottom: 12px; }
+    .mockup-msg { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 12px; }
+    .mockup-msg p { font-size: 13px; line-height: 1.55; color: #e5e5e5; margin-bottom: 10px; }
+    .mockup-msg-actions { display: flex; justify-content: flex-end; gap: 8px; }
+    .mockup-btn-ghost { font-size: 11px; color: #6b7280; padding: 5px 12px; border: 1px solid rgba(255,255,255,0.1); border-radius: 7px; }
+    .mockup-btn-copy { font-size: 11px; font-weight: 600; color: #fff; background: #d946ef; padding: 5px 14px; border-radius: 7px; }
+
     /* How it works */
     .section-label { font-size: 11px; font-weight: 700; color: #d946ef; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
     .section-title { font-size: clamp(26px, 4vw, 38px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; }
@@ -122,6 +144,30 @@
       <div class="hero-actions">
         <a href="#how" class="btn-primary">Come funziona</a>
         <a href="#pricing" class="btn-outline">Vedi i prezzi</a>
+      </div>
+
+      <!-- Product mockup -->
+      <div class="mockup">
+        <div class="mockup-header">
+          <span class="mockup-logo">Unfair <em>Advantage</em></span>
+          <span class="mockup-pill">2/3</span>
+        </div>
+        <div class="mockup-profile">
+          <div class="mockup-avatar"></div>
+          <div>
+            <div class="mockup-name">@giulia.rmn</div>
+            <div class="mockup-meta">1.2K follower</div>
+          </div>
+          <span class="mockup-badge">Analizzato ✓</span>
+        </div>
+        <div class="mockup-hook">💡 In 4 foto su 9 c'è la stessa tazza gialla, mai citata</div>
+        <div class="mockup-msg">
+          <p>Ho bisogno di sapere la storia della tazza gialla. Compare ovunque e nessuno ne parla.</p>
+          <div class="mockup-msg-actions">
+            <span class="mockup-btn-ghost">Migliora</span>
+            <span class="mockup-btn-copy">Copia</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -336,6 +382,8 @@
       <span style="font-weight:700; color:#6b7280;">Unfair <span style="color:#d946ef;">Advantage</span></span>
       <span style="margin: 0 12px; color:#1f2937;">·</span>
       <span>Disdici quando vuoi</span>
+      <span style="margin: 0 12px; color:#1f2937;">·</span>
+      <a href="/privacy" style="color:#4b5563;">Privacy</a>
       <span style="margin: 0 12px; color:#1f2937;">·</span>
       <span id="year"></span>
     </div>
