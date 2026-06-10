@@ -101,8 +101,31 @@ async def health():
 
 # ── Auth endpoints ─────────────────────────────────────────────────────────
 
+# Signup rate limit: max 3 new accounts per IP per day (in-memory, resets on deploy)
+import time
+_signup_log: dict = {}
+SIGNUP_MAX_PER_DAY = 3
+
+def _check_signup_rate(ip: str):
+    now = time.time()
+    window_start = now - 86400
+    timestamps = [t for t in _signup_log.get(ip, []) if t > window_start]
+    if len(timestamps) >= SIGNUP_MAX_PER_DAY:
+        raise HTTPException(status_code=429, detail="Troppe registrazioni da questo indirizzo. Riprova domani.")
+    timestamps.append(now)
+    _signup_log[ip] = timestamps
+    # Evita crescita illimitata della mappa
+    if len(_signup_log) > 10000:
+        cutoff = now - 86400
+        for k in list(_signup_log.keys()):
+            if all(t <= cutoff for t in _signup_log[k]):
+                del _signup_log[k]
+
+
 @app.post("/api/auth/signup")
-async def signup(req: AuthRequest):
+async def signup(req: AuthRequest, request: Request):
+    client_ip = request.headers.get("Fly-Client-IP") or (request.client.host if request.client else "unknown")
+    _check_signup_rate(client_ip)
     data, status = await _supabase_post("signup", {"email": req.email, "password": req.password})
     if status >= 400:
         msg = data.get("msg") or data.get("error_description") or "Errore durante la registrazione."
