@@ -207,7 +207,7 @@ async function refreshAccountView() {
 
     if (!res.ok || !status) {
       // Errore server ma token presente — mostra loggato con valori di default
-      showLoggedIn(userEmail, { subscription: "free", analyses_this_month: 0, analyses_limit: 10 });
+      showLoggedIn(userEmail, { subscription: "free", analyses_this_month: 0, analyses_limit: 3 });
       return;
     }
 
@@ -215,7 +215,7 @@ async function refreshAccountView() {
   } catch {
     // Errore di rete ma token presente — mostra loggato con valori di default
     if (accessToken) {
-      showLoggedIn(userEmail, { subscription: "free", analyses_this_month: 0, analyses_limit: 10 });
+      showLoggedIn(userEmail, { subscription: "free", analyses_this_month: 0, analyses_limit: 3 });
     } else {
       showAuthForms();
     }
@@ -246,7 +246,7 @@ function showLoggedIn(email, status) {
     document.getElementById("usageSection").classList.remove("hidden");
 
     const count = status.analyses_this_month || 0;
-    const limit = status.analyses_limit || 10;
+    const limit = status.analyses_limit || 3;
     document.getElementById("usageCount").textContent = `${count} / ${limit}`;
     document.getElementById("usageBar").style.width = `${Math.min(100, (count / limit) * 100)}%`;
   }

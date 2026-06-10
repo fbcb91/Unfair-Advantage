@@ -109,7 +109,7 @@ function updateUsagePill() {
     pill.className = "usage-pill premium";
   } else {
     const count = userStatus.analyses_this_month || 0;
-    const limit = userStatus.analyses_limit || 10;
+    const limit = userStatus.analyses_limit || 3;
     const remaining = limit - count;
     pill.textContent = `${count}/${limit}`;
     pill.className = remaining <= 2 ? "usage-pill warning" : "usage-pill";
@@ -293,7 +293,7 @@ async function analyze() {
     const result = await callBackend(profileData);
     showResults(result);
     if (result._usage) {
-      userStatus = { ...userStatus, ...result._usage, can_analyze: result._usage.subscription === "premium" || result._usage.analyses_this_month < (result._usage.analyses_limit || 10) };
+      userStatus = { ...userStatus, ...result._usage, can_analyze: result._usage.subscription === "premium" || result._usage.analyses_this_month < (result._usage.analyses_limit || 3) };
       updateUsagePill();
     }
   } catch (err) {
@@ -476,6 +476,7 @@ async function runRefine(wrap, panel, goBtn, originalMsg, instruction) {
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
+      if (res.status === 402) openPricingPage();
       throw new Error(err.detail || `Errore server (${res.status})`);
     }
 

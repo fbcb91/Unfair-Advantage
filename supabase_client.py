@@ -4,7 +4,7 @@ from supabase import create_client, Client
 
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")
 SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY", "")
-FREE_LIMIT = 10
+FREE_LIMIT = 3
 
 _client: Client = None
 

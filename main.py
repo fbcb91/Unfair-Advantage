@@ -174,6 +174,7 @@ async def analyze(request: AnalyzeRequest, user_id: str = Depends(get_current_us
             request.tone,
             request.character,
             request.user_info,
+            user_status["subscription"] == "premium",
         )
         await asyncio.to_thread(increment_usage, user_id)
         result["_usage"] = {
@@ -205,6 +206,14 @@ async def refine(request: RefineRequest, user_id: str = Depends(get_current_user
     if not os.getenv("ANTHROPIC_API_KEY"):
         raise HTTPException(status_code=500, detail="API key Anthropic non configurata sul server")
 
+    user_status = await asyncio.to_thread(get_user_status, user_id)
+    is_premium = user_status["subscription"] == "premium"
+    if not is_premium and not user_status["can_analyze"]:
+        raise HTTPException(
+            status_code=402,
+            detail="Hai esaurito le analisi gratuite di questo mese. Passa a Premium per continuare.",
+        )
+
     try:
         from ai_analyzer import refine_message
         alternatives = await asyncio.to_thread(
@@ -214,7 +223,10 @@ async def refine(request: RefineRequest, user_id: str = Depends(get_current_user
             request.character,
             request.original_message,
             request.instruction,
+            is_premium,
         )
+        if not is_premium:
+            await asyncio.to_thread(increment_usage, user_id)
         return {"alternatives": alternatives}
 
     except _anthropic.AuthenticationError:

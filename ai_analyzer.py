@@ -33,10 +33,15 @@ CHARACTER_INSTRUCTIONS = {
 }
 
 
-def analyze_profile(profile_data: dict, tone: str, character: str = "", user_info: str = "") -> dict:
+PREMIUM_MODEL = "claude-opus-4-7"
+FREE_MODEL = "claude-sonnet-4-6"
+
+
+def analyze_profile(profile_data: dict, tone: str, character: str = "", user_info: str = "", is_premium: bool = False) -> dict:
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
         raise ValueError("ANTHROPIC_API_KEY non configurata nelle impostazioni")
+    model = PREMIUM_MODEL if is_premium else FREE_MODEL
 
     client = anthropic.Anthropic(api_key=api_key)
     tone_text = TONE_INSTRUCTIONS.get(tone, TONE_INSTRUCTIONS["curioso"])
@@ -144,18 +149,18 @@ Rispondi SOLO con JSON valido:
         })
     content.append({"type": "text", "text": prompt})
 
-    # Try with extended thinking first, fall back to standard if unsupported
+    # Try with extended thinking first, fall back to standard only if thinking is unsupported
     try:
         response = client.messages.create(
-            model="claude-opus-4-7",
+            model=model,
             max_tokens=16000,
             thinking={"type": "enabled", "budget_tokens": 10000},
             messages=[{"role": "user", "content": content}],
         )
         raw = next(b.text for b in response.content if b.type == "text").strip()
-    except Exception:
+    except anthropic.BadRequestError:
         response = client.messages.create(
-            model="claude-opus-4-7",
+            model=model,
             max_tokens=2000,
             messages=[{"role": "user", "content": content}],
         )
@@ -182,10 +187,11 @@ Rispondi SOLO con JSON valido:
     return result
 
 
-def refine_message(profile_data: dict, tone: str, character: str, original_message: str, instruction: str = "") -> list:
+def refine_message(profile_data: dict, tone: str, character: str, original_message: str, instruction: str = "", is_premium: bool = False) -> list:
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
         raise ValueError("ANTHROPIC_API_KEY non configurata nelle impostazioni")
+    model = PREMIUM_MODEL if is_premium else FREE_MODEL
 
     client = anthropic.Anthropic(api_key=api_key)
     tone_text = TONE_INSTRUCTIONS.get(tone, TONE_INSTRUCTIONS["curioso"])
@@ -219,7 +225,7 @@ Rispondi SOLO con JSON valido:
 {{"alternatives": ["Variante 1", "Variante 2", "Variante 3"]}}"""
 
     response = client.messages.create(
-        model="claude-opus-4-7",
+        model=model,
         max_tokens=1000,
         messages=[{"role": "user", "content": prompt}],
     )

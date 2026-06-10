@@ -1,13 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Unfair Advantage",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Analizza profili Instagram e genera messaggi personalizzati con AI",
 
-  "permissions": ["activeTab", "storage", "scripting"],
+  "permissions": ["activeTab", "storage"],
   "host_permissions": [
     "https://www.instagram.com/*",
-    "https://*/*"
+    "https://unfair-advantage.fly.dev/*"
   ],
 
   "action": {
