@@ -104,7 +104,12 @@ function updateUsagePill() {
   const pill = document.getElementById("usagePill");
   if (!userStatus) { pill.classList.add("hidden"); return; }
 
-  if (userStatus.subscription === "premium") {
+  // Premium hints on character tab/panel for free users
+  const isPremium = userStatus.subscription === "premium";
+  document.getElementById("charPremiumStar")?.classList.toggle("hidden", isPremium);
+  document.getElementById("charPremiumNote")?.classList.toggle("hidden", isPremium);
+
+  if (isPremium) {
     pill.textContent = "Premium";
     pill.className = "usage-pill premium";
   } else {
@@ -174,6 +179,8 @@ function bindEvents() {
     const btn = e.target.closest(".copy-btn");
     if (btn) copyMsg(btn);
   });
+
+  document.getElementById("charPremiumNote")?.addEventListener("click", openPricingPage);
 }
 
 async function openPricingPage() {

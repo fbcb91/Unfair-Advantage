@@ -188,6 +188,11 @@ async def analyze(request: AnalyzeRequest, user_id: str = Depends(get_current_us
             status_code=402,
             detail=f"Hai raggiunto il limite di {user_status['analyses_limit']} analisi gratuite questo mese. Passa a Premium per continuare.",
         )
+    if request.character and user_status["subscription"] != "premium":
+        raise HTTPException(
+            status_code=402,
+            detail="I personaggi sono riservati agli utenti Premium. Passa a Premium per scrivere come Chuck Bass.",
+        )
 
     try:
         from ai_analyzer import analyze_profile

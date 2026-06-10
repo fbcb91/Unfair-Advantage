@@ -171,7 +171,7 @@
     <!-- Mode toggle -->
     <div class="mode-toggle mb-3">
       <button class="mode-tab active" id="modeToneTab">Tono</button>
-      <button class="mode-tab" id="modeCharTab">Personaggio</button>
+      <button class="mode-tab" id="modeCharTab">Personaggio <span id="charPremiumStar" class="hidden" style="color:#d946ef;">✦</span></button>
     </div>
 
     <!-- Tone selector -->
@@ -186,6 +186,9 @@
 
     <!-- Character selector -->
     <div id="charPanel" class="hidden mb-3">
+      <div id="charPremiumNote" class="hidden" style="font-size:11px; color:#d946ef; background:rgba(217,70,239,0.08); border:1px solid rgba(217,70,239,0.2); border-radius:8px; padding:7px 10px; margin-bottom:8px; cursor:pointer;">
+        ✦ I personaggi sono una funzione Premium — tocca qui per sbloccarli
+      </div>
       <div class="char-grid">
         <button class="char-card" data-char="chuck_bass"><span class="char-name">Chuck Bass</span><span class="char-sub">Gossip Girl</span></button>
         <button class="char-card" data-char="damon_salvatore"><span class="char-name">Damon Salvatore</span><span class="char-sub">Vampire Diaries</span></button>
