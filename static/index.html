@@ -48,7 +48,7 @@
     .mockup-logo em { font-style: normal; color: #d946ef; }
     .mockup-pill { font-size: 10px; font-weight: 600; color: #9ca3af; background: rgba(255,255,255,0.06); padding: 3px 9px; border-radius: 9999px; }
     .mockup-profile { display: flex; align-items: center; gap: 10px; padding: 10px; background: #0a0a0a; border-radius: 12px; margin-bottom: 12px; }
-    .mockup-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #d946ef, #7c3aed); flex-shrink: 0; }
+    .mockup-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
     .mockup-name { font-size: 13px; font-weight: 600; }
     .mockup-meta { font-size: 11px; color: #6b7280; }
     .mockup-badge { margin-left: auto; font-size: 10px; font-weight: 600; color: #22c55e; }
@@ -82,6 +82,7 @@
     .example { background: #111; border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 20px; }
     .example-profile { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.06); }
     .example-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #d946ef33, #7c3aed33); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    img.example-avatar { object-fit: cover; }
     .example-name { font-size: 13px; font-weight: 600; }
     .example-meta { font-size: 11px; color: #6b7280; }
     .example-tag { display: inline-block; font-size: 10px; font-weight: 600; color: #d946ef; background: rgba(217,70,239,0.1); border: 1px solid rgba(217,70,239,0.2); padding: 2px 8px; border-radius: 9999px; margin-bottom: 10px; }
@@ -153,7 +154,7 @@
           <span class="mockup-pill">2/3</span>
         </div>
         <div class="mockup-profile">
-          <div class="mockup-avatar"></div>
+          <img class="mockup-avatar" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=68&h=68&fit=crop&crop=faces&auto=format" alt="" />
           <div>
             <div class="mockup-name">@giulia.rmn</div>
             <div class="mockup-meta">1.2K follower</div>
@@ -274,7 +275,7 @@
       <div class="examples-wrap">
         <div class="example">
           <div class="example-profile">
-            <div class="example-avatar">🎵</div>
+            <img class="example-avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=faces&auto=format" alt="" />
             <div>
               <div class="example-name">alice_b.</div>
               <div class="example-meta">Negoziante · 26K follower</div>
@@ -287,7 +288,7 @@
 
         <div class="example">
           <div class="example-profile">
-            <div class="example-avatar">🌊</div>
+            <img class="example-avatar" src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=80&h=80&fit=crop&crop=faces&auto=format" alt="" />
             <div>
               <div class="example-name">greta.g</div>
               <div class="example-meta">555 in bio · 3.9K follower</div>
@@ -300,7 +301,7 @@
 
         <div class="example">
           <div class="example-profile">
-            <div class="example-avatar">📸</div>
+            <img class="example-avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&h=80&fit=crop&crop=faces&auto=format" alt="" />
             <div>
               <div class="example-name">larabrandoni_</div>
               <div class="example-meta">lilli · 2.7K follower</div>
