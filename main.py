@@ -4,7 +4,7 @@ import httpx
 from typing import List, Optional
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Depends, Request
+from fastapi import FastAPI, HTTPException, Depends, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -365,6 +365,9 @@ async def stripe_portal(request: Request, user_id: str = Depends(get_current_use
         return_url=f"{origin}/success",
     )
     return {"url": session.url}
+
+
+@app.post("/api/webhook/stripe")
 async def stripe_webhook(request: Request):
     if not STRIPE_SECRET_KEY:
         raise HTTPException(status_code=503, detail="Stripe non configurato.")
