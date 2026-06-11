@@ -386,10 +386,21 @@ async def stripe_webhook(request: Request):
         customer_id = session.get("customer")
         subscription_id = session.get("subscription")
         if user_id:
+            period_end_iso = None
+            if subscription_id:
+                try:
+                    sub = stripe.Subscription.retrieve(subscription_id)
+                    import datetime
+                    period_end_iso = datetime.datetime.fromtimestamp(
+                        sub["current_period_end"], tz=datetime.timezone.utc
+                    ).isoformat()
+                except Exception:
+                    pass
             sb.table("profiles").update({
                 "stripe_customer_id": customer_id,
                 "subscription_id": subscription_id,
                 "subscription_status": "premium",
+                "current_period_end": period_end_iso,
             }).eq("id", user_id).execute()
 
     elif event["type"] in ("customer.subscription.deleted", "customer.subscription.updated"):
