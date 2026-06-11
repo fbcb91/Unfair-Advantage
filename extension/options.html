@@ -96,6 +96,15 @@
             <button class="btn" id="loginBtn">Accedi</button>
           </div>
           <div class="status" id="loginStatus"></div>
+          <button class="btn-ghost" id="forgotBtn" style="font-size:12px; margin-top:6px;">Password dimenticata?</button>
+          <div id="forgotForm" class="hidden" style="margin-top:10px;">
+            <label for="resetEmail">La tua email</label>
+            <input type="email" id="resetEmail" placeholder="tu@email.com" autocomplete="email" />
+            <div class="btn-row" style="margin-top:8px;">
+              <button class="btn" id="sendResetBtn">Invia link di reset</button>
+            </div>
+            <div class="status" id="resetStatus"></div>
+          </div>
         </div>
 
         <div id="signupForm" class="hidden">
@@ -130,6 +139,7 @@
         </div>
 
         <button class="btn-secondary hidden" id="upgradeBtn">✦ Passa a Premium — €4,99/mese</button>
+        <button class="btn-ghost hidden" id="manageSubBtn" style="font-size:12px;margin-top:4px;">Gestisci abbonamento</button>
         <button class="btn-ghost danger" id="logoutBtn" style="font-size:12px;margin-top:4px;">Disconnetti</button>
       </div>
     </div>

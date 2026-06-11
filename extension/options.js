@@ -34,6 +34,11 @@ function bindEvents() {
   document.getElementById("signupBtn").addEventListener("click", doSignup);
   document.getElementById("logoutBtn").addEventListener("click", doLogout);
   document.getElementById("upgradeBtn").addEventListener("click", openPricing);
+  document.getElementById("manageSubBtn").addEventListener("click", openPortal);
+  document.getElementById("forgotBtn").addEventListener("click", () => {
+    document.getElementById("forgotForm").classList.toggle("hidden");
+  });
+  document.getElementById("sendResetBtn").addEventListener("click", doResetPassword);
 
   // Enter key on password fields
   document.getElementById("loginPassword").addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
@@ -175,6 +180,48 @@ async function doLogout() {
   await refreshAccountView();
 }
 
+async function openPortal() {
+  const { backendUrl, accessToken } = await chrome.storage.sync.get({ backendUrl: DEFAULT_BACKEND, accessToken: "" });
+  const url = (backendUrl || DEFAULT_BACKEND).replace(/\/$/, "");
+  try {
+    const res = await fetch(`${url}/api/portal`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Errore");
+    chrome.tabs.create({ url: data.url });
+  } catch (err) {
+    alert("Errore: " + err.message);
+  }
+}
+
+async function doResetPassword() {
+  const email = document.getElementById("resetEmail").value.trim();
+  if (!email) return;
+  const btn = document.getElementById("sendResetBtn");
+  btn.disabled = true; btn.textContent = "Invio...";
+  try {
+    const { backendUrl } = await chrome.storage.sync.get({ backendUrl: DEFAULT_BACKEND });
+    const url = (backendUrl || DEFAULT_BACKEND).replace(/\/$/, "");
+    const res = await fetch(`${url}/api/auth/reset-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.detail || "Errore");
+    const el = document.getElementById("resetStatus");
+    el.textContent = "Email inviata! Controlla la tua casella.";
+    el.className = "status success";
+  } catch (err) {
+    const el = document.getElementById("resetStatus");
+    el.textContent = err.message; el.className = "status error";
+  } finally {
+    btn.disabled = false; btn.textContent = "Invia link di reset";
+  }
+}
+
 async function openPricing() {
   const { backendUrl, accessToken } = await chrome.storage.sync.get({ backendUrl: DEFAULT_BACKEND, accessToken: "" });
   const url = backendUrl.replace(/\/$/, "");
@@ -236,13 +283,16 @@ function showLoggedIn(email, status) {
   document.getElementById("userEmail").textContent = email || "—";
 
   const badge = document.getElementById("subBadge");
-  if (status.subscription === "premium") {
+  const isPremium = status.subscription === "premium";
+  if (isPremium) {
     badge.textContent = "Premium ✦"; badge.className = "sub-badge premium";
     document.getElementById("upgradeBtn").classList.add("hidden");
+    document.getElementById("manageSubBtn").classList.remove("hidden");
     document.getElementById("usageSection").classList.add("hidden");
   } else {
     badge.textContent = "Free"; badge.className = "sub-badge free";
     document.getElementById("upgradeBtn").classList.remove("hidden");
+    document.getElementById("manageSubBtn").classList.add("hidden");
     document.getElementById("usageSection").classList.remove("hidden");
 
     const count = status.analyses_this_month || 0;

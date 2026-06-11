@@ -71,6 +71,12 @@ class AuthRequest(BaseModel):
 class RefreshRequest(BaseModel):
     refresh_token: str
 
+class ResetRequest(BaseModel):
+    email: str
+
+class WaitlistRequest(BaseModel):
+    email: str
+
 class CheckoutRequest(BaseModel):
     success_url: str
     cancel_url: str
@@ -295,7 +301,70 @@ async def create_checkout(req: CheckoutRequest, user_id: str = Depends(get_curre
     return {"url": session.url}
 
 
-@app.post("/api/webhook/stripe")
+@app.post("/api/regen")
+async def regen(request: AnalyzeRequest, user_id: str = Depends(get_current_user_id)):
+    import anthropic as _anthropic
+
+    if not os.getenv("ANTHROPIC_API_KEY"):
+        raise HTTPException(status_code=500, detail="API key Anthropic non configurata sul server")
+    if request.profile.is_private:
+        raise HTTPException(status_code=400, detail="Profilo privato")
+
+    user_status = await asyncio.to_thread(get_user_status, user_id)
+    is_premium = user_status["subscription"] == "premium"
+    if request.character and not is_premium:
+        raise HTTPException(status_code=402, detail="I personaggi sono riservati agli utenti Premium.")
+
+    try:
+        from ai_analyzer import analyze_profile
+        result = await asyncio.to_thread(
+            analyze_profile,
+            request.profile.model_dump(),
+            request.tone,
+            request.character,
+            request.user_info,
+            is_premium,
+        )
+        return result
+    except _anthropic.AuthenticationError:
+        raise HTTPException(status_code=401, detail="API key Anthropic non valida.")
+    except _anthropic.RateLimitError:
+        raise HTTPException(status_code=429, detail="Troppe richieste. Riprova tra qualche secondo.")
+    except _anthropic.APIStatusError as e:
+        msg = getattr(e, "message", str(e))
+        raise HTTPException(status_code=502, detail=f"Errore API Anthropic: {msg}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/auth/reset-password")
+async def reset_password(req: ResetRequest):
+    data, status = await _supabase_post("recover", {"email": req.email})
+    if status >= 400:
+        msg = data.get("msg") or data.get("error_description") or "Errore durante il reset."
+        raise HTTPException(status_code=400, detail=msg)
+    return {"ok": True}
+
+
+@app.post("/api/portal")
+async def stripe_portal(request: Request, user_id: str = Depends(get_current_user_id)):
+    if not STRIPE_SECRET_KEY:
+        raise HTTPException(status_code=503, detail="Pagamenti non configurati.")
+    import stripe
+    stripe.api_key = STRIPE_SECRET_KEY
+
+    sb = get_admin_client()
+    profile_res = sb.table("profiles").select("stripe_customer_id").eq("id", user_id).single().execute()
+    customer_id = profile_res.data.get("stripe_customer_id") if profile_res.data else None
+    if not customer_id:
+        raise HTTPException(status_code=404, detail="Nessun abbonamento attivo trovato.")
+
+    origin = request.headers.get("origin", "https://unfair-advantage.fly.dev")
+    session = stripe.billing_portal.Session.create(
+        customer=customer_id,
+        return_url=f"{origin}/success",
+    )
+    return {"url": session.url}
 async def stripe_webhook(request: Request):
     if not STRIPE_SECRET_KEY:
         raise HTTPException(status_code=503, detail="Stripe non configurato.")
@@ -343,6 +412,16 @@ async def stripe_webhook(request: Request):
     return {"ok": True}
 
 
+@app.post("/api/waitlist")
+async def waitlist(req: WaitlistRequest):
+    try:
+        sb = get_admin_client()
+        sb.table("waitlist").upsert({"email": req.email}, on_conflict="email").execute()
+    except Exception:
+        pass  # Fail silently — table might not exist yet
+    return {"ok": True}
+
+
 @app.get("/pricing")
 async def pricing_page():
     return FileResponse("static/pricing.html")
@@ -354,6 +433,29 @@ async def success_page():
 @app.get("/privacy")
 async def privacy_page():
     return FileResponse("static/privacy.html")
+
+@app.get("/reset")
+async def reset_page():
+    return FileResponse("static/reset.html")
+
+class UpdatePasswordRequest(BaseModel):
+    password: str
+
+@app.post("/api/auth/update-password")
+async def update_password(req: UpdatePasswordRequest, authorization: str = Header(default=None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Token mancante.")
+    token = authorization.split(" ", 1)[1]
+    async with httpx.AsyncClient() as client:
+        res = await client.put(
+            f"{SUPABASE_URL}/auth/v1/user",
+            json={"password": req.password},
+            headers={"apikey": SUPABASE_ANON_KEY, "Authorization": f"Bearer {token}"},
+            timeout=10.0,
+        )
+    if res.status_code >= 400:
+        raise HTTPException(status_code=400, detail="Errore aggiornamento password.")
+    return {"ok": True}
 
 
 # ── Static / landing page ─────────────────────────────────────────────────

@@ -6,6 +6,8 @@ let activeMode = "tone";
 let currentUsername = null;
 let cachedProfileData = null;
 let userStatus = null;
+let regenCount = 0;
+const MAX_REGENS = 3;
 
 const CHAR_LABELS = {
   chuck_bass: "Chuck Bass",
@@ -69,6 +71,11 @@ async function checkAppAuth() {
     }
     return false;
   } catch {
+    // Network error — if we have a token assume logged in with defaults
+    if (accessToken) {
+      userStatus = { subscription: "free", analyses_this_month: 0, analyses_limit: 3, can_analyze: true };
+      return true;
+    }
     return false;
   }
 }
@@ -297,8 +304,10 @@ async function analyze() {
     setProfilePreview(profileData.username, profileData.profile_pic_url, profileData.full_name, profileData.follower_count);
 
     setLoadingText("Analisi AI in corso...");
+    regenCount = 0;
     const result = await callBackend(profileData);
     showResults(result);
+    updateRegenBtn();
     if (result._usage) {
       userStatus = { ...userStatus, ...result._usage, can_analyze: result._usage.subscription === "premium" || result._usage.analyses_this_month < (result._usage.analyses_limit || 3) };
       updateUsagePill();
@@ -312,19 +321,42 @@ async function analyze() {
 }
 
 async function analyzeWithCache() {
+  if (regenCount >= MAX_REGENS) {
+    showError(`Hai esaurito le ${MAX_REGENS} rigenerazioni per questo profilo. Analizza un nuovo profilo o torna domani.`);
+    return;
+  }
+
   hide("resultsSection"); hide("errorSection"); show("loadingSection");
-  setLoadingText("Rigenerazione in corso...");
+  const remaining = MAX_REGENS - regenCount - 1;
+  setLoadingText(`Rigenerazione in corso... (${remaining} rimast${remaining === 1 ? "a" : "e"} dopo questa)`);
   const btn = document.getElementById("analyzeBtn");
   btn.disabled = true;
 
   try {
-    const result = await callBackend(cachedProfileData);
+    const result = await callBackendRegen(cachedProfileData);
+    regenCount++;
     showResults(result);
+    updateRegenBtn();
   } catch (err) {
     showError(err.message || "Errore sconosciuto");
   } finally {
     hide("loadingSection");
     btn.disabled = false;
+  }
+}
+
+function updateRegenBtn() {
+  const btn = document.getElementById("regenBtn");
+  if (!btn) return;
+  const remaining = MAX_REGENS - regenCount;
+  if (remaining <= 0) {
+    btn.textContent = "↻ Rigenerazioni esaurite";
+    btn.disabled = true;
+    btn.style.opacity = "0.4";
+  } else {
+    btn.textContent = `↻ Rigenera (${remaining} rimast${remaining === 1 ? "a" : "e"})`;
+    btn.disabled = false;
+    btn.style.opacity = "";
   }
 }
 
@@ -336,6 +368,30 @@ async function extractProfileFromTab() {
       else resolve(response);
     });
   });
+}
+
+async function callBackendRegen(profileData) {
+  const { backendUrl, userInfo, accessToken } = await chrome.storage.sync.get({
+    backendUrl: DEFAULT_BACKEND, userInfo: "", accessToken: "",
+  });
+  const url = backendUrl.replace(/\/$/, "");
+  const body = {
+    profile: profileData,
+    tone: activeMode === "tone" ? selectedTone : "curioso",
+    character: activeMode === "char" ? selectedChar : "",
+    user_info: userInfo || "",
+  };
+  const res = await fetch(`${url}/api/regen`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}) },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    if (res.status === 402) openPricingPage();
+    throw new Error(err.detail || `Errore server (${res.status})`);
+  }
+  return res.json();
 }
 
 async function callBackend(profileData) {

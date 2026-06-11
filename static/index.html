@@ -363,15 +363,17 @@
   <!-- Install CTA -->
   <div class="section" id="install" style="text-align:center;">
     <div class="container">
-      <div class="section-title" style="max-width:500px; margin:0 auto 16px;">Pronto a smettere di scrivere messaggi generici?</div>
-      <p style="font-size:16px; color:#6b7280; margin-bottom:36px;">Installa l'estensione, crea un account gratuito e prova su un profilo reale.</p>
+      <div class="section-title" style="max-width:500px; margin:0 auto 16px;">In arrivo su Chrome Web Store</div>
+      <p style="font-size:16px; color:#6b7280; margin-bottom:36px;">Stiamo completando la review di Google. Lascia la tua email e ti avvisiamo non appena è disponibile.</p>
 
-      <div style="background:#111; border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:32px; max-width:520px; margin:0 auto;">
-        <p style="font-size:13px; color:#6b7280; margin-bottom:20px;">L'estensione è disponibile per Chrome. Scarica il pacchetto e caricalo come estensione non pacchettizzata.</p>
-        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-          <a href="https://github.com/fbcb91/Unfair-Advantage" target="_blank" class="btn-primary" style="font-size:14px; padding:12px 24px;">Scarica da GitHub</a>
-        </div>
-        <p style="font-size:11px; color:#374151; margin-top:16px;">Presto disponibile su Chrome Web Store</p>
+      <div style="background:#111; border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:32px; max-width:480px; margin:0 auto;">
+        <form id="waitlistForm" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+          <input type="email" id="waitlistEmail" placeholder="tu@email.com" required
+            style="flex:1; min-width:220px; background:#0d0d0d; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#f0f0f0; padding:11px 14px; font-size:14px; font-family:inherit; outline:none;" />
+          <button type="submit" class="btn-primary" style="font-size:14px; padding:11px 24px; border:none; cursor:pointer;">Avvisami</button>
+        </form>
+        <div id="waitlistStatus" style="font-size:13px; margin-top:12px; min-height:18px;"></div>
+        <p style="font-size:11px; color:#374151; margin-top:16px;">Niente spam. Solo un messaggio quando esce.</p>
       </div>
     </div>
   </div>
@@ -400,11 +402,42 @@
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    // Handle Supabase email confirmation redirect (tokens arrive as URL hash)
+    // Waitlist form
+    document.getElementById("waitlistForm")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("waitlistEmail").value.trim();
+      const status = document.getElementById("waitlistStatus");
+      status.textContent = ""; status.style.color = "";
+      try {
+        const res = await fetch("/api/waitlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+        if (res.ok) {
+          status.textContent = "✓ Ti avvisiamo non appena è disponibile!";
+          status.style.color = "#22c55e";
+          document.getElementById("waitlistEmail").value = "";
+        } else {
+          status.textContent = "Qualcosa non ha funzionato. Riprova.";
+          status.style.color = "#f87171";
+        }
+      } catch {
+        status.textContent = "Errore di rete. Riprova.";
+        status.style.color = "#f87171";
+      }
+    });
+
+    // Handle Supabase redirects (email confirm or password reset)
     if (window.location.hash.includes("access_token")) {
-      document.getElementById("confirmBanner").style.display = "block";
-      // Clean up the URL without reloading
-      history.replaceState(null, "", window.location.pathname);
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      if (hashParams.get("type") === "recovery") {
+        // Password reset — redirect to dedicated page with token
+        window.location.href = "/reset" + window.location.hash;
+      } else {
+        document.getElementById("confirmBanner").style.display = "block";
+        history.replaceState(null, "", window.location.pathname);
+      }
     }
   </script>
 </body>

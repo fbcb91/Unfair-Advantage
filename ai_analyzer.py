@@ -33,6 +33,17 @@ CHARACTER_INSTRUCTIONS = {
 }
 
 
+def _extract_json(raw: str) -> str:
+    if "```" in raw:
+        parts = raw.split("```")
+        for part in parts:
+            s = part.strip()
+            if s.startswith("{"):
+                return s
+        candidate = parts[1].strip()
+        return candidate[4:].strip() if candidate.startswith("json") else candidate
+    return raw
+
 PREMIUM_MODEL = "claude-opus-4-7"
 FREE_MODEL = "claude-sonnet-4-6"
 
@@ -166,19 +177,21 @@ Rispondi SOLO con JSON valido:
         )
         raw = response.content[0].text.strip()
 
-    if "```" in raw:
-        parts = raw.split("```")
-        for part in parts:
-            stripped = part.strip()
-            if stripped.startswith("{"):
-                raw = stripped
-                break
-        else:
-            raw = parts[1].strip()
-            if raw.startswith("json"):
-                raw = raw[4:].strip()
-
-    result = json.loads(raw)
+    raw = _extract_json(raw)
+    try:
+        result = json.loads(raw)
+    except json.JSONDecodeError:
+        # One retry without thinking
+        retry = client.messages.create(
+            model=model,
+            max_tokens=2000,
+            messages=[{"role": "user", "content": content}],
+        )
+        raw = _extract_json(retry.content[0].text.strip())
+        try:
+            result = json.loads(raw)
+        except json.JSONDecodeError:
+            raise ValueError("L'AI non ha risposto nel formato atteso. Riprova.")
     result["profile_pic_url"] = profile_data.get("profile_pic_url")
     result["full_name"] = profile_data.get("full_name", "")
     result["biography"] = profile_data.get("biography", "")
@@ -231,16 +244,8 @@ Rispondi SOLO con JSON valido:
     )
     raw = response.content[0].text.strip()
 
-    if "```" in raw:
-        parts = raw.split("```")
-        for part in parts:
-            stripped = part.strip()
-            if stripped.startswith("{"):
-                raw = stripped
-                break
-        else:
-            raw = parts[1].strip()
-            if raw.startswith("json"):
-                raw = raw[4:].strip()
-
-    return json.loads(raw).get("alternatives", [])
+    raw = _extract_json(raw)
+    try:
+        return json.loads(raw).get("alternatives", [])
+    except json.JSONDecodeError:
+        raise ValueError("L'AI non ha risposto nel formato atteso. Riprova.")
