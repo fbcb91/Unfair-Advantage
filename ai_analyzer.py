@@ -106,6 +106,7 @@ Cerca qualcosa che richiede vera attenzione:
 • Un oggetto, un gesto, un ruolo ricorrente nelle foto che non è il soggetto principale
 • Il modo in cui scrive le captions — un'ironia, una parola che torna, il tono
 • Qualcosa nella bio che è insolito o crea una domanda
+Se bio e captions sono vuote o quasi, l'aggancio DEVE venire dalle immagini: luoghi, situazioni, oggetti, dettagli ricorrenti. L'assenza di testo non è mai un'osservazione.
 
 STEP 3 — SCRIVI COME UN ESSERE UMANO BRILLANTE, NON COME UN'AI
 Il messaggio non spiega l'osservazione — la usa.
@@ -125,6 +126,7 @@ STRUTTURA VIETATA:
 ✗ Il trattino lungo (—) in qualsiasi posizione della frase
 ✗ Struttura "o sei X o Y" in qualsiasi forma
 ✗ Commentare ciò che manca nel profilo (bio vuota, nessuna caption, highlights senza testo) — guarda ciò che c'è
+✗ Parlare del profilo come oggetto: l'handle, l'username, il numero di post o highlights, com'è organizzato, cosa "comunica". Non stai recensendo un profilo, stai scrivendo a una persona: parla di lei e di quello che vive, non di come si presenta online
 
 STRUTTURA GIUSTA:
 ✓ Una frase secca che colpisce, con o senza domanda finale
@@ -137,7 +139,7 @@ Rispondi SOLO con JSON valido:
 {{
   "profile_summary": "Chi è questa persona in 2 righe — non cosa fa, come è.",
   "hooks": [
-    "Il dettaglio non ovvio trovato (dillo in una riga)",
+    "Il dettaglio non ovvio trovato (una riga — qualcosa che si vede, mai qualcosa che manca)",
     "Secondo dettaglio",
     "Terzo dettaglio"
   ],
@@ -231,6 +233,7 @@ REGOLE FERREE:
 • Niente trattino lungo (—)
 • Niente struttura "o sei X o Y"
 • Non commentare ciò che manca nel profilo
+• Non parlare del profilo come oggetto (handle, highlights, com'è organizzato): parla di lei
 • Spontaneo, non analitico
 • {tone_text}
 

@@ -62,3 +62,30 @@ def increment_usage(user_id: str) -> int:
     month = get_current_month()
     res = sb.rpc("increment_usage", {"p_user_id": user_id, "p_month": month}).execute()
     return res.data or 0
+
+
+def was_profile_analyzed(user_id: str, username: str) -> bool:
+    try:
+        sb = get_admin_client()
+        res = (
+            sb.table("analyzed_profiles")
+            .select("username")
+            .eq("user_id", user_id)
+            .eq("month", get_current_month())
+            .eq("username", username.strip().lower())
+            .execute()
+        )
+        return bool(res.data)
+    except Exception:
+        return False
+
+
+def mark_profile_analyzed(user_id: str, username: str):
+    try:
+        sb = get_admin_client()
+        sb.table("analyzed_profiles").upsert(
+            {"user_id": user_id, "username": username.strip().lower(), "month": get_current_month()},
+            on_conflict="user_id,username,month",
+        ).execute()
+    except Exception:
+        pass

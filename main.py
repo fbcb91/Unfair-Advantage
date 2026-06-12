@@ -85,7 +85,13 @@ class CheckoutRequest(BaseModel):
 # ── Auth helpers ──────────────────────────────────────────────────────────
 
 from auth_utils import get_current_user_id
-from supabase_client import get_user_status, increment_usage, get_admin_client
+from supabase_client import (
+    get_user_status,
+    increment_usage,
+    get_admin_client,
+    was_profile_analyzed,
+    mark_profile_analyzed,
+)
 
 async def _supabase_post(path: str, payload: dict) -> tuple[dict, int]:
     async with httpx.AsyncClient() as client:
@@ -189,7 +195,11 @@ async def analyze(request: AnalyzeRequest, user_id: str = Depends(get_current_us
         raise HTTPException(status_code=400, detail="Profilo privato")
 
     user_status = await asyncio.to_thread(get_user_status, user_id)
-    if not user_status["can_analyze"]:
+    # Ri-analizzare un profilo già analizzato questo mese non consuma un'analisi
+    already_analyzed = await asyncio.to_thread(
+        was_profile_analyzed, user_id, request.profile.username
+    )
+    if not user_status["can_analyze"] and not already_analyzed:
         raise HTTPException(
             status_code=402,
             detail=f"Hai raggiunto il limite di {user_status['analyses_limit']} analisi gratuite questo mese. Passa a Premium per continuare.",
@@ -210,9 +220,11 @@ async def analyze(request: AnalyzeRequest, user_id: str = Depends(get_current_us
             request.user_info,
             user_status["subscription"] == "premium",
         )
-        await asyncio.to_thread(increment_usage, user_id)
+        if not already_analyzed:
+            await asyncio.to_thread(increment_usage, user_id)
+            await asyncio.to_thread(mark_profile_analyzed, user_id, request.profile.username)
         result["_usage"] = {
-            "analyses_this_month": user_status["analyses_this_month"] + 1,
+            "analyses_this_month": user_status["analyses_this_month"] + (0 if already_analyzed else 1),
             "analyses_limit": user_status["analyses_limit"],
             "subscription": user_status["subscription"],
         }

@@ -19,6 +19,25 @@ create table public.usage (
   constraint usage_user_month_unique unique(user_id, month)
 );
 
+-- Profiles already analyzed this month (re-analysis of the same profile is free)
+create table if not exists public.analyzed_profiles (
+  user_id uuid references auth.users on delete cascade not null,
+  username text not null,
+  month text not null,
+  created_at timestamptz default now(),
+  primary key (user_id, username, month)
+);
+
+alter table public.analyzed_profiles enable row level security;
+
+-- Waitlist for Chrome Web Store launch
+create table if not exists public.waitlist (
+  email text primary key,
+  created_at timestamptz default now()
+);
+
+alter table public.waitlist enable row level security;
+
 -- Auto-create profile row when a new user signs up
 create or replace function public.handle_new_user()
 returns trigger
