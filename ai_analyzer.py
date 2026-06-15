@@ -44,7 +44,7 @@ def _extract_json(raw: str) -> str:
         return candidate[4:].strip() if candidate.startswith("json") else candidate
     return raw
 
-PREMIUM_MODEL = "claude-opus-4-7"
+PREMIUM_MODEL = "claude-opus-4-8"
 FREE_MODEL = "claude-sonnet-4-6"
 
 
