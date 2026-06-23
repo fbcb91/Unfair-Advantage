@@ -56,6 +56,7 @@ class AnalyzeRequest(BaseModel):
     tone: str = "curioso"
     character: str = ""
     user_info: str = ""
+    message_language: str = "italiano"
 
 class RefineRequest(BaseModel):
     profile: ProfileData
@@ -63,6 +64,7 @@ class RefineRequest(BaseModel):
     character: str = ""
     original_message: str
     instruction: str = ""
+    message_language: str = "italiano"
 
 class AuthRequest(BaseModel):
     email: str
@@ -219,6 +221,7 @@ async def analyze(request: AnalyzeRequest, user_id: str = Depends(get_current_us
             request.character,
             request.user_info,
             user_status["subscription"] == "premium",
+            request.message_language,
         )
         if not already_analyzed:
             await asyncio.to_thread(increment_usage, user_id)
@@ -270,6 +273,7 @@ async def refine(request: RefineRequest, user_id: str = Depends(get_current_user
             request.original_message,
             request.instruction,
             is_premium,
+            request.message_language,
         )
         if not is_premium:
             await asyncio.to_thread(increment_usage, user_id)
@@ -336,6 +340,7 @@ async def regen(request: AnalyzeRequest, user_id: str = Depends(get_current_user
             request.character,
             request.user_info,
             is_premium,
+            request.message_language,
         )
         return result
     except _anthropic.AuthenticationError:

@@ -48,7 +48,7 @@ PREMIUM_MODEL = "claude-opus-4-8"
 FREE_MODEL = "claude-sonnet-4-6"
 
 
-def analyze_profile(profile_data: dict, tone: str, character: str = "", user_info: str = "", is_premium: bool = False) -> dict:
+def analyze_profile(profile_data: dict, tone: str, character: str = "", user_info: str = "", is_premium: bool = False, output_language: str = "italiano") -> dict:
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
         raise ValueError("ANTHROPIC_API_KEY non configurata nelle impostazioni")
@@ -133,6 +133,7 @@ STRUTTURA GIUSTA:
 ✓ Ogni messaggio deve avere struttura diversa dagli altri due
 ✓ Almeno uno dei tre messaggi dovrebbe chiudersi con una domanda breve, solo se apre davvero qualcosa
 ✓ Il tono giusto: {tone_text}
+✓ LINGUA: scrivi tutti i messaggi in {output_language} — indipendentemente dalla lingua del profilo
 
 ━━━ OUTPUT ━━━
 Rispondi SOLO con JSON valido:
@@ -202,7 +203,7 @@ Rispondi SOLO con JSON valido:
     return result
 
 
-def refine_message(profile_data: dict, tone: str, character: str, original_message: str, instruction: str = "", is_premium: bool = False) -> list:
+def refine_message(profile_data: dict, tone: str, character: str, original_message: str, instruction: str = "", is_premium: bool = False, output_language: str = "italiano") -> list:
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
         raise ValueError("ANTHROPIC_API_KEY non configurata nelle impostazioni")
@@ -236,6 +237,7 @@ REGOLE FERREE:
 • Non parlare del profilo come oggetto (handle, highlights, com'è organizzato): parla di lei
 • Spontaneo, non analitico
 • {tone_text}
+• Scrivi in {output_language}
 
 Rispondi SOLO con JSON valido:
 {{"alternatives": ["Variante 1", "Variante 2", "Variante 3"]}}"""

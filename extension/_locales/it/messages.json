@@ -115,5 +115,10 @@
   "status_conn_ok":             { "message": "Connessione OK ✓" },
   "status_http_error_prefix":   { "message": "Errore HTTP" },
   "status_unreachable_short":   { "message": "Server non raggiungibile." },
-  "status_removed":             { "message": "Rimosso" }
+  "status_removed":             { "message": "Rimosso" },
+
+  "section_msg_language":  { "message": "Lingua dei messaggi" },
+  "msg_language_hint":     { "message": "In che lingua vuoi che l'AI scriva i messaggi?" },
+  "lang_italian":          { "message": "🇮🇹 Italiano" },
+  "lang_english":          { "message": "🇬🇧 English" }
 }

@@ -27,11 +27,16 @@ function applyI18n() {
 document.addEventListener("DOMContentLoaded", async () => {
   applyI18n();
 
-  const { backendUrl, userInfo } = await chrome.storage.sync.get({ backendUrl: DEFAULT_BACKEND, userInfo: "" });
+  const { backendUrl, userInfo, messageLanguage } = await chrome.storage.sync.get({ backendUrl: DEFAULT_BACKEND, userInfo: "", messageLanguage: "italiano" });
   document.getElementById("backendUrl").value = backendUrl || DEFAULT_BACKEND;
   const ta = document.getElementById("userInfo");
   ta.value = userInfo || "";
   updateCharsLeft(ta.value.length);
+
+  // Restore saved language selection
+  document.querySelectorAll("#langPills .pill").forEach(p => {
+    p.classList.toggle("active", p.dataset.lang === (messageLanguage || "italiano"));
+  });
 
   await refreshAccountView();
   bindEvents();
@@ -73,6 +78,15 @@ function bindEvents() {
   document.getElementById("saveBtn").addEventListener("click", saveBackend);
   document.getElementById("testBtn").addEventListener("click", testConnection);
   document.getElementById("backendUrl").addEventListener("keydown", e => { if (e.key === "Enter") saveBackend(); });
+
+  // Language selector
+  document.querySelectorAll("#langPills .pill").forEach(pill => {
+    pill.addEventListener("click", () => {
+      document.querySelectorAll("#langPills .pill").forEach(p => p.classList.remove("active"));
+      pill.classList.add("active");
+      chrome.storage.sync.set({ messageLanguage: pill.dataset.lang });
+    });
+  });
 
   document.getElementById("saveProfileBtn").addEventListener("click", saveProfile);
   const ta = document.getElementById("userInfo");

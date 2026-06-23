@@ -405,8 +405,8 @@ async function extractProfileFromTab() {
 }
 
 async function callBackendRegen(profileData) {
-  const { backendUrl, userInfo, accessToken } = await chrome.storage.sync.get({
-    backendUrl: DEFAULT_BACKEND, userInfo: "", accessToken: "",
+  const { backendUrl, userInfo, accessToken, messageLanguage } = await chrome.storage.sync.get({
+    backendUrl: DEFAULT_BACKEND, userInfo: "", accessToken: "", messageLanguage: "italiano",
   });
   const url = backendUrl.replace(/\/$/, "");
   const body = {
@@ -414,6 +414,7 @@ async function callBackendRegen(profileData) {
     tone: activeMode === "tone" ? selectedTone : "curioso",
     character: activeMode === "char" ? selectedChar : "",
     user_info: userInfo || "",
+    message_language: messageLanguage || "italiano",
   };
   const res = await fetch(`${url}/api/regen`, {
     method: "POST",
@@ -429,10 +430,11 @@ async function callBackendRegen(profileData) {
 }
 
 async function callBackend(profileData) {
-  const { backendUrl, userInfo, accessToken } = await chrome.storage.sync.get({
+  const { backendUrl, userInfo, accessToken, messageLanguage } = await chrome.storage.sync.get({
     backendUrl: DEFAULT_BACKEND,
     userInfo: "",
     accessToken: "",
+    messageLanguage: "italiano",
   });
   const url = backendUrl.replace(/\/$/, "");
 
@@ -441,6 +443,7 @@ async function callBackend(profileData) {
     tone: activeMode === "tone" ? selectedTone : "curioso",
     character: activeMode === "char" ? selectedChar : "",
     user_info: userInfo || "",
+    message_language: messageLanguage || "italiano",
   };
 
   const res = await fetch(`${url}/api/analyze`, {
