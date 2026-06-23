@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="it">
+<html>
 <head>
   <meta charset="UTF-8" />
-  <title>Unfair Advantage — Impostazioni</title>
+  <title>Unfair Advantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -72,50 +72,50 @@
 <body>
   <div class="container">
     <h1>Unfair <span>Advantage</span></h1>
-    <p class="subtitle">Impostazioni estensione</p>
+    <p class="subtitle" data-i18n="settings_subtitle">Impostazioni estensione</p>
 
     <!-- Account -->
     <div class="card" id="accountCard">
-      <h2 style="margin-bottom:16px">Account</h2>
+      <h2 style="margin-bottom:16px" data-i18n="section_account">Account</h2>
 
       <!-- Logged out -->
       <div id="authForms">
         <div class="auth-toggle">
-          <button class="auth-tab active" id="tabLogin">Accedi</button>
-          <button class="auth-tab" id="tabSignup">Registrati</button>
+          <button class="auth-tab active" id="tabLogin" data-i18n="tab_login">Accedi</button>
+          <button class="auth-tab" id="tabSignup" data-i18n="tab_signup">Registrati</button>
         </div>
 
         <div id="loginForm">
-          <label for="loginEmail">Email</label>
-          <input type="email" id="loginEmail" placeholder="tu@email.com" autocomplete="email" />
+          <label for="loginEmail" data-i18n="label_email">Email</label>
+          <input type="email" id="loginEmail" data-i18n-placeholder="placeholder_email" placeholder="tu@email.com" autocomplete="email" />
           <div style="margin-top:10px">
-            <label for="loginPassword">Password</label>
-            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
+            <label for="loginPassword" data-i18n="label_password">Password</label>
+            <input type="password" id="loginPassword" data-i18n-placeholder="placeholder_password" placeholder="••••••••" autocomplete="current-password" />
           </div>
           <div class="btn-row">
-            <button class="btn" id="loginBtn">Accedi</button>
+            <button class="btn" id="loginBtn" data-i18n="login_btn">Accedi</button>
           </div>
           <div class="status" id="loginStatus"></div>
-          <button class="btn-ghost" id="forgotBtn" style="font-size:12px; margin-top:6px;">Password dimenticata?</button>
+          <button class="btn-ghost" id="forgotBtn" style="font-size:12px; margin-top:6px;" data-i18n="forgot_password">Password dimenticata?</button>
           <div id="forgotForm" class="hidden" style="margin-top:10px;">
-            <label for="resetEmail">La tua email</label>
-            <input type="email" id="resetEmail" placeholder="tu@email.com" autocomplete="email" />
+            <label for="resetEmail" data-i18n="label_your_email">La tua email</label>
+            <input type="email" id="resetEmail" data-i18n-placeholder="placeholder_email" placeholder="tu@email.com" autocomplete="email" />
             <div class="btn-row" style="margin-top:8px;">
-              <button class="btn" id="sendResetBtn">Invia link di reset</button>
+              <button class="btn" id="sendResetBtn" data-i18n="send_reset_btn">Invia link di reset</button>
             </div>
             <div class="status" id="resetStatus"></div>
           </div>
         </div>
 
         <div id="signupForm" class="hidden">
-          <label for="signupEmail">Email</label>
-          <input type="email" id="signupEmail" placeholder="tu@email.com" autocomplete="email" />
+          <label for="signupEmail" data-i18n="label_email">Email</label>
+          <input type="email" id="signupEmail" data-i18n-placeholder="placeholder_email" placeholder="tu@email.com" autocomplete="email" />
           <div style="margin-top:10px">
-            <label for="signupPassword">Password</label>
-            <input type="password" id="signupPassword" placeholder="Min 6 caratteri" autocomplete="new-password" />
+            <label for="signupPassword" data-i18n="label_password">Password</label>
+            <input type="password" id="signupPassword" data-i18n-placeholder="placeholder_min6" placeholder="Min 6 caratteri" autocomplete="new-password" />
           </div>
           <div class="btn-row">
-            <button class="btn" id="signupBtn">Crea account</button>
+            <button class="btn" id="signupBtn" data-i18n="signup_btn">Crea account</button>
           </div>
           <div class="status" id="signupStatus"></div>
         </div>
@@ -130,7 +130,7 @@
 
         <div id="usageSection">
           <div class="usage-label">
-            <span>Analisi questo mese</span>
+            <span data-i18n="label_analyses">Analisi questo mese</span>
             <span id="usageCount">0 / 3</span>
           </div>
           <div class="usage-bar-wrap">
@@ -138,22 +138,22 @@
           </div>
         </div>
 
-        <button class="btn-secondary hidden" id="upgradeBtn">✦ Passa a Premium — €4,99/mese</button>
-        <button class="btn-ghost hidden" id="manageSubBtn" style="font-size:12px;margin-top:4px;">Gestisci abbonamento</button>
-        <button class="btn-ghost danger" id="logoutBtn" style="font-size:12px;margin-top:4px;">Disconnetti</button>
+        <button class="btn-secondary hidden" id="upgradeBtn" data-i18n="upgrade_btn_full">✦ Passa a Premium — €4,99/mese</button>
+        <button class="btn-ghost hidden" id="manageSubBtn" style="font-size:12px;margin-top:4px;" data-i18n="manage_sub">Gestisci abbonamento</button>
+        <button class="btn-ghost danger" id="logoutBtn" style="font-size:12px;margin-top:4px;" data-i18n="logout">Disconnetti</button>
       </div>
     </div>
 
     <!-- Advanced (collapsed by default) -->
-    <button class="advanced-toggle" id="advancedToggle">⚙ Impostazioni avanzate</button>
+    <button class="advanced-toggle" id="advancedToggle" data-i18n="advanced_toggle">⚙ Impostazioni avanzate</button>
     <div id="advancedSection" class="hidden">
       <div class="card">
-        <label for="backendUrl">URL Backend</label>
+        <label for="backendUrl" data-i18n="label_backend_url">URL Backend</label>
         <input type="text" id="backendUrl" placeholder="https://unfair-advantage.fly.dev" />
-        <p class="hint">Lascia invariato. Modifica solo se hai un server personalizzato.</p>
+        <p class="hint" data-i18n="backend_hint">Lascia invariato. Modifica solo se hai un server personalizzato.</p>
         <div class="btn-row">
-          <button class="btn" id="saveBtn">Salva</button>
-          <button class="btn-ghost" id="testBtn">Testa connessione</button>
+          <button class="btn" id="saveBtn" data-i18n="save">Salva</button>
+          <button class="btn-ghost" id="testBtn" data-i18n="test_connection">Testa connessione</button>
         </div>
         <div class="status" id="statusMsg"></div>
       </div>
@@ -161,32 +161,32 @@
 
     <!-- User profile (visible only when logged in) -->
     <div class="card hidden" id="profileCard">
-      <h2>Il tuo profilo</h2>
-      <p class="section-hint">Info su di te per rendere i messaggi più autentici. Scrivi in modo naturale.</p>
-      <label for="userInfo">Chi sei</label>
-      <textarea id="userInfo" placeholder="Es: Faccio il fotografo freelance, amo il jazz, viaggio spesso in Asia. Ironico e diretto."></textarea>
-      <div class="chars-left"><span id="charsLeft">500</span> caratteri rimasti</div>
+      <h2 data-i18n="section_profile">Il tuo profilo</h2>
+      <p class="section-hint" data-i18n="profile_hint">Info su di te per rendere i messaggi più autentici. Scrivi in modo naturale.</p>
+      <label for="userInfo" data-i18n="label_who_you_are">Chi sei</label>
+      <textarea id="userInfo" data-i18n-placeholder="profile_placeholder" placeholder="Es: Faccio il fotografo freelance, amo il jazz, viaggio spesso in Asia. Ironico e diretto."></textarea>
+      <div class="chars-left"><span id="charsLeft">500</span> <span data-i18n="chars_left_suffix">caratteri rimasti</span></div>
       <div class="tag-row">
-        <button class="tag" data-snippet="Faccio il fotografo">Fotografo</button>
-        <button class="tag" data-snippet="Lavoro in startup tech">Startup</button>
-        <button class="tag" data-snippet="Sono un atleta">Atleta</button>
-        <button class="tag" data-snippet="Viaggio spesso per lavoro">Viaggiatore</button>
-        <button class="tag" data-snippet="Amo la musica jazz">Jazz</button>
-        <button class="tag" data-snippet="Ironico e diretto">Ironico</button>
+        <button class="tag" data-i18n="tag_photographer" data-i18n-snippet="snippet_photographer" data-snippet="Faccio il fotografo">Fotografo</button>
+        <button class="tag" data-i18n="tag_startup" data-i18n-snippet="snippet_startup" data-snippet="Lavoro in startup tech">Startup</button>
+        <button class="tag" data-i18n="tag_athlete" data-i18n-snippet="snippet_athlete" data-snippet="Sono un atleta">Atleta</button>
+        <button class="tag" data-i18n="tag_traveler" data-i18n-snippet="snippet_traveler" data-snippet="Viaggio spesso per lavoro">Viaggiatore</button>
+        <button class="tag" data-i18n="tag_jazz" data-i18n-snippet="snippet_jazz" data-snippet="Amo la musica jazz">Jazz</button>
+        <button class="tag" data-i18n="tag_ironic" data-i18n-snippet="snippet_ironic" data-snippet="Ironico e diretto">Ironico</button>
       </div>
-      <button class="btn-secondary" id="saveProfileBtn">Salva profilo</button>
+      <button class="btn-secondary" id="saveProfileBtn" data-i18n="save_profile">Salva profilo</button>
       <div class="status" id="profileStatus"></div>
     </div>
 
     <!-- How to use -->
     <div class="card">
-      <h2>Come usare l'estensione</h2>
+      <h2 data-i18n="section_how_to">Come usare l'estensione</h2>
       <ol style="margin-top:12px">
-        <li>Assicurati di essere loggato su Instagram nel browser</li>
-        <li>Naviga sul profilo Instagram che vuoi analizzare</li>
-        <li>Clicca sull'icona dell'estensione in alto a destra</li>
-        <li>Scegli il tono (o un personaggio, se sei Premium) e clicca "Analizza"</li>
-        <li>Copia o migliora il messaggio che preferisci</li>
+        <li data-i18n="how_step1">Assicurati di essere loggato su Instagram nel browser</li>
+        <li data-i18n="how_step2">Naviga sul profilo Instagram che vuoi analizzare</li>
+        <li data-i18n="how_step3">Clicca sull'icona dell'estensione in alto a destra</li>
+        <li data-i18n="how_step4">Scegli il tono (o un personaggio, se sei Premium) e clicca "Analizza"</li>
+        <li data-i18n="how_step5">Copia o migliora il messaggio che preferisci</li>
       </ol>
     </div>
   </div>

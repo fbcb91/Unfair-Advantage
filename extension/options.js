@@ -1,35 +1,54 @@
 const DEFAULT_BACKEND = "https://unfair-advantage.fly.dev";
 const MAX_USER_INFO = 500;
 
+// ── i18n helper ───────────────────────────────────────────────────────────
+
+function t(key) {
+  return chrome.i18n.getMessage(key) || key;
+}
+
+function applyI18n() {
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const msg = t(el.dataset.i18n);
+    if (msg && msg !== el.dataset.i18n) el.textContent = msg;
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+    const msg = t(el.dataset.i18nPlaceholder);
+    if (msg && msg !== el.dataset.i18nPlaceholder) el.placeholder = msg;
+  });
+  document.querySelectorAll("[data-i18n-snippet]").forEach(el => {
+    const msg = t(el.dataset.i18nSnippet);
+    if (msg && msg !== el.dataset.i18nSnippet) el.dataset.snippet = msg;
+  });
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+
 document.addEventListener("DOMContentLoaded", async () => {
-  // Load saved backend URL + user info
+  applyI18n();
+
   const { backendUrl, userInfo } = await chrome.storage.sync.get({ backendUrl: DEFAULT_BACKEND, userInfo: "" });
   document.getElementById("backendUrl").value = backendUrl || DEFAULT_BACKEND;
   const ta = document.getElementById("userInfo");
   ta.value = userInfo || "";
   updateCharsLeft(ta.value.length);
 
-  // Check if already logged in
   await refreshAccountView();
-
   bindEvents();
 
-  // Quiet backend reachability check — show banner if server is down
   const url = (backendUrl || DEFAULT_BACKEND).replace(/\/$/, "");
   try {
     const res = await fetch(`${url}/api/health`, { signal: AbortSignal.timeout(6000) });
-    if (!res.ok) showAuthStatus("login", "Server non risponde correttamente. Riprova tra poco.", "error");
+    if (!res.ok) showAuthStatus("login", t("status_server_error"), "error");
   } catch {
-    showAuthStatus("login", "Server non raggiungibile. Controlla la connessione o riprova tra poco.", "error");
+    showAuthStatus("login", t("status_server_unreachable"), "error");
   }
 });
 
 function bindEvents() {
-  // Auth tabs
   document.getElementById("tabLogin").addEventListener("click", () => switchAuthTab("login"));
   document.getElementById("tabSignup").addEventListener("click", () => switchAuthTab("signup"));
 
-  // Auth forms
   document.getElementById("loginBtn").addEventListener("click", doLogin);
   document.getElementById("signupBtn").addEventListener("click", doSignup);
   document.getElementById("logoutBtn").addEventListener("click", doLogout);
@@ -40,25 +59,21 @@ function bindEvents() {
   });
   document.getElementById("sendResetBtn").addEventListener("click", doResetPassword);
 
-  // Enter key on password fields
   document.getElementById("loginPassword").addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
   document.getElementById("signupPassword").addEventListener("keydown", e => { if (e.key === "Enter") doSignup(); });
 
-  // Advanced section toggle
   document.getElementById("advancedToggle").addEventListener("click", () => {
     const section = document.getElementById("advancedSection");
     const btn = document.getElementById("advancedToggle");
     const open = !section.classList.contains("hidden");
     section.classList.toggle("hidden", open);
-    btn.textContent = open ? "⚙ Impostazioni avanzate" : "⚙ Nascondi impostazioni avanzate";
+    btn.textContent = open ? t("advanced_toggle") : t("advanced_toggle_open");
   });
 
-  // Backend URL
   document.getElementById("saveBtn").addEventListener("click", saveBackend);
   document.getElementById("testBtn").addEventListener("click", testConnection);
   document.getElementById("backendUrl").addEventListener("keydown", e => { if (e.key === "Enter") saveBackend(); });
 
-  // User profile
   document.getElementById("saveProfileBtn").addEventListener("click", saveProfile);
   const ta = document.getElementById("userInfo");
   ta.addEventListener("input", () => {
@@ -97,10 +112,10 @@ function switchAuthTab(tab) {
 async function doLogin() {
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value;
-  if (!email || !password) { showAuthStatus("login", "Inserisci email e password.", "error"); return; }
+  if (!email || !password) { showAuthStatus("login", t("status_enter_credentials"), "error"); return; }
 
   const btn = document.getElementById("loginBtn");
-  btn.disabled = true; btn.textContent = "Accesso...";
+  btn.disabled = true; btn.textContent = t("status_logging_in");
 
   try {
     const { backendUrl } = await chrome.storage.sync.get({ backendUrl: DEFAULT_BACKEND });
@@ -113,11 +128,11 @@ async function doLogin() {
         body: JSON.stringify({ email, password }),
       });
     } catch {
-      throw new Error("Server non raggiungibile. Controlla la tua connessione.");
+      throw new Error(t("status_network_error"));
     }
     let data;
     try { data = await res.json(); } catch { data = {}; }
-    if (!res.ok) throw new Error(data.detail || `Errore ${res.status}. Riprova.`);
+    if (!res.ok) throw new Error(data.detail || `${t("status_http_error_prefix")} ${res.status}`);
 
     await chrome.storage.sync.set({
       accessToken: data.access_token,
@@ -128,18 +143,18 @@ async function doLogin() {
   } catch (err) {
     showAuthStatus("login", err.message, "error");
   } finally {
-    btn.disabled = false; btn.textContent = "Accedi";
+    btn.disabled = false; btn.textContent = t("login_btn");
   }
 }
 
 async function doSignup() {
   const email = document.getElementById("signupEmail").value.trim();
   const password = document.getElementById("signupPassword").value;
-  if (!email || !password) { showAuthStatus("signup", "Inserisci email e password.", "error"); return; }
-  if (password.length < 6) { showAuthStatus("signup", "Password min 6 caratteri.", "error"); return; }
+  if (!email || !password) { showAuthStatus("signup", t("status_enter_credentials"), "error"); return; }
+  if (password.length < 6) { showAuthStatus("signup", t("status_password_min6"), "error"); return; }
 
   const btn = document.getElementById("signupBtn");
-  btn.disabled = true; btn.textContent = "Registrazione...";
+  btn.disabled = true; btn.textContent = t("status_signing_up");
 
   try {
     const { backendUrl } = await chrome.storage.sync.get({ backendUrl: DEFAULT_BACKEND });
@@ -152,11 +167,11 @@ async function doSignup() {
         body: JSON.stringify({ email, password }),
       });
     } catch {
-      throw new Error("Server non raggiungibile. Controlla la tua connessione.");
+      throw new Error(t("status_network_error"));
     }
     let data;
     try { data = await res.json(); } catch { data = {}; }
-    if (!res.ok) throw new Error(data.detail || `Errore ${res.status}. Riprova.`);
+    if (!res.ok) throw new Error(data.detail || `${t("status_http_error_prefix")} ${res.status}`);
 
     if (data.access_token) {
       await chrome.storage.sync.set({
@@ -166,12 +181,12 @@ async function doSignup() {
       });
       await refreshAccountView();
     } else {
-      showAuthStatus("signup", "Account creato! Controlla la tua email per confermare, poi accedi.", "success");
+      showAuthStatus("signup", t("status_account_created"), "success");
     }
   } catch (err) {
     showAuthStatus("signup", err.message, "error");
   } finally {
-    btn.disabled = false; btn.textContent = "Crea account";
+    btn.disabled = false; btn.textContent = t("signup_btn");
   }
 }
 
@@ -189,10 +204,10 @@ async function openPortal() {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.detail || "Errore");
+    if (!res.ok) throw new Error(data.detail || t("error_unknown"));
     chrome.tabs.create({ url: data.url });
   } catch (err) {
-    alert("Errore: " + err.message);
+    alert(err.message);
   }
 }
 
@@ -200,7 +215,7 @@ async function doResetPassword() {
   const email = document.getElementById("resetEmail").value.trim();
   if (!email) return;
   const btn = document.getElementById("sendResetBtn");
-  btn.disabled = true; btn.textContent = "Invio...";
+  btn.disabled = true; btn.textContent = t("status_sending");
   try {
     const { backendUrl } = await chrome.storage.sync.get({ backendUrl: DEFAULT_BACKEND });
     const url = (backendUrl || DEFAULT_BACKEND).replace(/\/$/, "");
@@ -210,15 +225,15 @@ async function doResetPassword() {
       body: JSON.stringify({ email }),
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.detail || "Errore");
+    if (!res.ok) throw new Error(data.detail || t("error_unknown"));
     const el = document.getElementById("resetStatus");
-    el.textContent = "Email inviata! Controlla la tua casella.";
+    el.textContent = t("status_reset_sent");
     el.className = "status success";
   } catch (err) {
     const el = document.getElementById("resetStatus");
     el.textContent = err.message; el.className = "status error";
   } finally {
-    btn.disabled = false; btn.textContent = "Invia link di reset";
+    btn.disabled = false; btn.textContent = t("send_reset_btn");
   }
 }
 
@@ -235,16 +250,13 @@ async function refreshAccountView() {
     accessToken: "", backendUrl: DEFAULT_BACKEND, userEmail: "",
   });
 
-  if (!accessToken) {
-    showAuthForms(); return;
-  }
+  if (!accessToken) { showAuthForms(); return; }
 
   try {
     const url = (backendUrl || DEFAULT_BACKEND).replace(/\/$/, "");
     const res = await fetch(`${url}/api/me`, { headers: { Authorization: `Bearer ${accessToken}` } });
 
     if (res.status === 401) {
-      // Token scaduto o non valido — logout
       await chrome.storage.sync.remove(["accessToken", "refreshToken", "userEmail"]);
       showAuthForms(); return;
     }
@@ -253,14 +265,12 @@ async function refreshAccountView() {
     try { status = await res.json(); } catch { status = null; }
 
     if (!res.ok || !status) {
-      // Errore server ma token presente — mostra loggato con valori di default
       showLoggedIn(userEmail, { subscription: "free", analyses_this_month: 0, analyses_limit: 3 });
       return;
     }
 
     showLoggedIn(userEmail, status);
   } catch {
-    // Errore di rete ma token presente — mostra loggato con valori di default
     if (accessToken) {
       showLoggedIn(userEmail, { subscription: "free", analyses_this_month: 0, analyses_limit: 3 });
     } else {
@@ -312,20 +322,20 @@ function showAuthStatus(form, msg, type) {
 
 function saveBackend() {
   const url = document.getElementById("backendUrl").value.trim().replace(/\/$/, "");
-  if (!url) { showStatus("Inserisci un URL valido", "error"); return; }
-  chrome.storage.sync.set({ backendUrl: url }, () => showStatus("Salvato ✓", "success"));
+  if (!url) { showStatus(t("status_enter_valid_url"), "error"); return; }
+  chrome.storage.sync.set({ backendUrl: url }, () => showStatus(t("status_saved"), "success"));
 }
 
 async function testConnection() {
   const url = document.getElementById("backendUrl").value.trim().replace(/\/$/, "");
-  if (!url) { showStatus("Inserisci prima l'URL", "error"); return; }
-  showStatus("Test in corso...", "neutral");
+  if (!url) { showStatus(t("status_enter_url_first"), "error"); return; }
+  showStatus(t("status_testing"), "neutral");
   try {
     const res = await fetch(`${url}/api/health`, { signal: AbortSignal.timeout(6000) });
-    if (res.ok) showStatus("Connessione OK ✓", "success");
-    else showStatus(`Errore HTTP ${res.status}`, "error");
+    if (res.ok) showStatus(t("status_conn_ok"), "success");
+    else showStatus(`${t("status_http_error_prefix")} ${res.status}`, "error");
   } catch {
-    showStatus("Server non raggiungibile.", "error");
+    showStatus(t("status_unreachable_short"), "error");
   }
 }
 
@@ -345,7 +355,7 @@ function saveProfile() {
   const info = document.getElementById("userInfo").value.trim();
   chrome.storage.sync.set({ userInfo: info }, () => {
     const el = document.getElementById("profileStatus");
-    el.textContent = info ? "Salvato ✓" : "Rimosso";
+    el.textContent = info ? t("status_saved") : t("status_removed");
     el.className = "status success";
     setTimeout(() => { el.textContent = ""; el.className = "status"; }, 3000);
   });

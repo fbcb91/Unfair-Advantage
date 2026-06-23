@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html>
 <head>
   <meta charset="UTF-8" />
   <title>Unfair Advantage</title>
@@ -138,22 +138,22 @@
   <!-- Not logged into the app -->
   <div id="notAppAuth" class="hidden text-center py-8">
     <div style="font-size:28px;margin-bottom:8px">🔑</div>
-    <p class="text-sm gray-500">Accedi per usare Unfair Advantage</p>
-    <button class="btn-link" id="openSettingsAuthBtn">Accedi / Registrati</button>
+    <p class="text-sm gray-500" data-i18n="not_auth_hint">Accedi per usare Unfair Advantage</p>
+    <button class="btn-link" id="openSettingsAuthBtn" data-i18n="open_settings_auth">Accedi / Registrati</button>
   </div>
 
   <!-- Not on a profile page -->
   <div id="notOnProfile" class="hidden text-center py-8">
     <div style="font-size:28px;margin-bottom:8px">📍</div>
-    <p class="text-sm gray-500">Naviga su un profilo Instagram<br>per usare l'estensione</p>
-    <button class="btn-link" id="openIgBtn">Apri Instagram</button>
+    <p class="text-sm gray-500" data-i18n="not_on_profile_hint">Naviga su un profilo Instagram per usare l'estensione</p>
+    <button class="btn-link" id="openIgBtn" data-i18n="open_instagram">Apri Instagram</button>
   </div>
 
   <!-- Not logged in to Instagram -->
   <div id="notLoggedIn" class="hidden text-center py-8">
     <div style="font-size:28px;margin-bottom:8px">🔐</div>
-    <p class="text-sm gray-500">Fai il login su Instagram nel browser<br>poi riapri l'estensione</p>
-    <button class="btn-link" id="igLoginBtn">Vai al login</button>
+    <p class="text-sm gray-500" data-i18n="not_ig_hint">Fai il login su Instagram nel browser poi riapri l'estensione</p>
+    <button class="btn-link" id="igLoginBtn" data-i18n="go_to_login">Vai al login</button>
   </div>
 
   <!-- Main UI -->
@@ -170,23 +170,23 @@
 
     <!-- Mode toggle -->
     <div class="mode-toggle mb-3">
-      <button class="mode-tab active" id="modeToneTab">Tono</button>
-      <button class="mode-tab" id="modeCharTab">Personaggio <span id="charPremiumStar" class="hidden" style="color:#d946ef;">✦</span></button>
+      <button class="mode-tab active" id="modeToneTab" data-i18n="tab_tone">Tono</button>
+      <button class="mode-tab" id="modeCharTab"><span data-i18n="tab_character">Personaggio</span> <span id="charPremiumStar" class="hidden" style="color:#d946ef;">✦</span></button>
     </div>
 
     <!-- Tone selector -->
     <div id="tonePanel" class="mb-3">
       <div class="pills">
-        <button class="pill" data-tone="diretto">Diretto</button>
-        <button class="pill active" data-tone="curioso">Curioso</button>
-        <button class="pill" data-tone="giocoso">Giocoso</button>
-        <button class="pill" data-tone="romantico">Romantico</button>
+        <button class="pill" data-tone="diretto" data-i18n="tone_direct">Diretto</button>
+        <button class="pill active" data-tone="curioso" data-i18n="tone_curious">Curioso</button>
+        <button class="pill" data-tone="giocoso" data-i18n="tone_playful">Giocoso</button>
+        <button class="pill" data-tone="romantico" data-i18n="tone_romantic">Romantico</button>
       </div>
     </div>
 
     <!-- Character selector -->
     <div id="charPanel" class="hidden mb-3">
-      <div id="charPremiumNote" class="hidden" style="font-size:11px; color:#d946ef; background:rgba(217,70,239,0.08); border:1px solid rgba(217,70,239,0.2); border-radius:8px; padding:7px 10px; margin-bottom:8px; cursor:pointer;">
+      <div id="charPremiumNote" class="hidden" data-i18n="char_premium_note" style="font-size:11px; color:#d946ef; background:rgba(217,70,239,0.08); border:1px solid rgba(217,70,239,0.2); border-radius:8px; padding:7px 10px; margin-bottom:8px; cursor:pointer;">
         ✦ I personaggi sono una funzione Premium — tocca qui per sbloccarli
       </div>
       <div class="char-grid">
@@ -194,40 +194,40 @@
         <button class="char-card" data-char="damon_salvatore"><span class="char-name">Damon Salvatore</span><span class="char-sub">Vampire Diaries</span></button>
         <button class="char-card" data-char="hitch"><span class="char-name">Hitch</span><span class="char-sub">Will Smith</span></button>
         <button class="char-card" data-char="harvey_specter"><span class="char-name">Harvey Specter</span><span class="char-sub">Suits</span></button>
-        <button class="char-card" data-char="michael_scott"><span class="char-name">Stile Selvaggio</span><span class="char-sub">Entusiasta sincero</span></button>
+        <button class="char-card" data-char="michael_scott"><span class="char-name" data-i18n="tag_ironic">Stile Selvaggio</span><span class="char-sub" data-i18n="tag_photographer">Entusiasta sincero</span></button>
       </div>
     </div>
 
     <!-- Analyze button -->
-    <button class="btn-analyze" id="analyzeBtn">Analizza profilo</button>
+    <button class="btn-analyze" id="analyzeBtn" data-i18n="analyze_btn">Analizza profilo</button>
 
     <!-- Loading -->
     <div id="loadingSection" class="hidden text-center py-4">
       <div style="margin-bottom:8px"><span class="spinner"></span></div>
-      <p class="text-xs gray-500" id="loadingText">Caricamento...</p>
+      <p class="text-xs gray-500" id="loadingText" data-i18n="loading_default">Caricamento...</p>
     </div>
 
     <!-- Results -->
     <div id="resultsSection" class="hidden results-scroll">
       <div id="summaryBlock" class="hidden mb-3">
-        <p class="label mb-1">Profilo</p>
+        <p class="label mb-1" data-i18n="label_profile">Profilo</p>
         <p class="text-xs gray-400 leading" id="summaryText"></p>
       </div>
       <div id="hooksBlock" class="hidden mb-3">
-        <p class="label mb-1">Hook trovati</p>
+        <p class="label mb-1" data-i18n="label_hooks">Hook trovati</p>
         <ul id="hooksList" class="space-y-1"></ul>
       </div>
       <div class="mb-2">
-        <p class="label mb-2">Messaggi <span id="charBadge" class="char-badge hidden"></span></p>
+        <p class="label mb-2"><span data-i18n="label_messages">Messaggi</span> <span id="charBadge" class="char-badge hidden"></span></p>
         <div id="messagesList" class="space-y-3"></div>
       </div>
-      <button class="btn-regen" id="regenBtn">↻ Rigenera messaggi</button>
+      <button class="btn-regen" id="regenBtn" data-i18n="regen_btn">↻ Rigenera messaggi</button>
     </div>
 
     <!-- Error -->
     <div id="errorSection" class="hidden">
       <p class="text-xs red-400 leading" id="errorText"></p>
-      <button class="btn-link" id="retryBtn">Riprova</button>
+      <button class="btn-link" id="retryBtn" data-i18n="retry">Riprova</button>
     </div>
 
   </div>

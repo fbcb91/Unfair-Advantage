@@ -17,9 +17,48 @@ const CHAR_LABELS = {
   michael_scott: "Stile Selvaggio",
 };
 
+// ── i18n helpers ──────────────────────────────────────────────────────────
+
+function t(key) {
+  return chrome.i18n.getMessage(key) || key;
+}
+
+function isIt() {
+  return chrome.i18n.getUILanguage().startsWith("it");
+}
+
+function tRegen(remaining) {
+  if (isIt()) {
+    const s = remaining === 1 ? "a" : "e";
+    return `↻ Rigenera (${remaining} rimast${s})`;
+  }
+  return `↻ Regenerate (${remaining} left)`;
+}
+
+function tLoadingRegen(remaining) {
+  if (isIt()) {
+    const s = remaining === 1 ? "a" : "e";
+    return `Rigenerazione in corso... (${remaining} rimast${s} dopo questa)`;
+  }
+  return `Regenerating... (${remaining} left after this)`;
+}
+
+function tRegenError() {
+  if (isIt()) return `Hai esaurito le ${MAX_REGENS} rigenerazioni per questo profilo. Analizza un nuovo profilo o torna domani.`;
+  return `You've used all ${MAX_REGENS} regenerations for this profile. Analyze a new profile or come back later.`;
+}
+
+function applyI18n() {
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const msg = t(el.dataset.i18n);
+    if (msg && msg !== el.dataset.i18n) el.textContent = msg;
+  });
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", async () => {
+  applyI18n();
   bindEvents();
 
   // 1. Check app auth
@@ -64,14 +103,12 @@ async function checkAppAuth() {
       return true;
     }
 
-    // Try refresh if 401
     if (res.status === 401 && refreshToken) {
       const refreshed = await tryRefreshToken(url, refreshToken);
       if (refreshed) return true;
     }
     return false;
   } catch {
-    // Network error — if we have a token assume logged in with defaults
     if (accessToken) {
       userStatus = { subscription: "free", analyses_this_month: 0, analyses_limit: 3, can_analyze: true };
       return true;
@@ -93,7 +130,6 @@ async function tryRefreshToken(url, refreshToken) {
       accessToken: data.access_token,
       refreshToken: data.refresh_token,
     });
-    // Re-fetch status with new token
     const meRes = await fetch(`${url}/api/me`, {
       headers: { Authorization: `Bearer ${data.access_token}` },
     });
@@ -111,7 +147,6 @@ function updateUsagePill() {
   const pill = document.getElementById("usagePill");
   if (!userStatus) { pill.classList.add("hidden"); return; }
 
-  // Premium hints on character tab/panel for free users
   const isPremium = userStatus.subscription === "premium";
   document.getElementById("charPremiumStar")?.classList.toggle("hidden", isPremium);
   document.getElementById("charPremiumNote")?.classList.toggle("hidden", isPremium);
@@ -126,10 +161,9 @@ function updateUsagePill() {
     pill.textContent = `${count}/${limit}`;
     pill.className = remaining <= 2 ? "usage-pill warning" : "usage-pill";
 
-    // Update analyze button if limit reached
     if (!userStatus.can_analyze) {
       const btn = document.getElementById("analyzeBtn");
-      btn.textContent = "Passa a Premium ✦";
+      btn.textContent = t("upgrade_btn");
       btn.classList.add("upgrade");
     }
   }
@@ -290,20 +324,20 @@ async function analyze() {
   btn.disabled = true;
 
   try {
-    setLoadingText("Caricamento profilo Instagram...");
+    setLoadingText(t("loading_profile"));
     const profileData = await extractProfileFromTab();
 
-    if (!profileData) throw new Error("Nessuna risposta dal content script. Ricarica la pagina Instagram e riprova.");
+    if (!profileData) throw new Error(t("error_no_content_script"));
     if (profileData.error) {
       if (profileData.error.toLowerCase().includes("login")) { hide("mainUi"); show("notLoggedIn"); return; }
       throw new Error(profileData.error);
     }
-    if (profileData.is_private) { showError("Questo profilo è privato 🔒\nImpossibile analizzarlo."); return; }
+    if (profileData.is_private) { showError(t("error_private")); return; }
 
     cachedProfileData = profileData;
     setProfilePreview(profileData.username, profileData.profile_pic_url, profileData.full_name, profileData.follower_count);
 
-    setLoadingText("Analisi AI in corso...");
+    setLoadingText(t("loading_ai"));
     regenCount = 0;
     const result = await callBackend(profileData);
     showResults(result);
@@ -313,7 +347,7 @@ async function analyze() {
       updateUsagePill();
     }
   } catch (err) {
-    showError(err.message || "Errore sconosciuto");
+    showError(err.message || t("error_unknown"));
   } finally {
     hide("loadingSection");
     btn.disabled = false;
@@ -322,13 +356,13 @@ async function analyze() {
 
 async function analyzeWithCache() {
   if (regenCount >= MAX_REGENS) {
-    showError(`Hai esaurito le ${MAX_REGENS} rigenerazioni per questo profilo. Analizza un nuovo profilo o torna domani.`);
+    showError(tRegenError());
     return;
   }
 
   hide("resultsSection"); hide("errorSection"); show("loadingSection");
   const remaining = MAX_REGENS - regenCount - 1;
-  setLoadingText(`Rigenerazione in corso... (${remaining} rimast${remaining === 1 ? "a" : "e"} dopo questa)`);
+  setLoadingText(tLoadingRegen(remaining));
   const btn = document.getElementById("analyzeBtn");
   btn.disabled = true;
 
@@ -338,7 +372,7 @@ async function analyzeWithCache() {
     showResults(result);
     updateRegenBtn();
   } catch (err) {
-    showError(err.message || "Errore sconosciuto");
+    showError(err.message || t("error_unknown"));
   } finally {
     hide("loadingSection");
     btn.disabled = false;
@@ -350,11 +384,11 @@ function updateRegenBtn() {
   if (!btn) return;
   const remaining = MAX_REGENS - regenCount;
   if (remaining <= 0) {
-    btn.textContent = "↻ Rigenerazioni esaurite";
+    btn.textContent = t("regen_exhausted");
     btn.disabled = true;
     btn.style.opacity = "0.4";
   } else {
-    btn.textContent = `↻ Rigenera (${remaining} rimast${remaining === 1 ? "a" : "e"})`;
+    btn.textContent = tRegen(remaining);
     btn.disabled = false;
     btn.style.opacity = "";
   }
@@ -364,7 +398,7 @@ async function extractProfileFromTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   return new Promise(resolve => {
     chrome.tabs.sendMessage(tab.id, { action: "extractProfile", username: currentUsername }, response => {
-      if (chrome.runtime.lastError) resolve({ error: "Ricarica la pagina Instagram e riprova." });
+      if (chrome.runtime.lastError) resolve({ error: t("error_reload_ig") });
       else resolve(response);
     });
   });
@@ -389,7 +423,7 @@ async function callBackendRegen(profileData) {
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     if (res.status === 402) openPricingPage();
-    throw new Error(err.detail || `Errore server (${res.status})`);
+    throw new Error(err.detail || `${t("status_http_error_prefix")} ${res.status}`);
   }
   return res.json();
 }
@@ -424,7 +458,7 @@ async function callBackend(profileData) {
       openPricingPage();
       throw new Error(err.detail);
     }
-    throw new Error(err.detail || `Errore server (${res.status})`);
+    throw new Error(err.detail || `${t("status_http_error_prefix")} ${res.status}`);
   }
   return res.json();
 }
@@ -468,10 +502,10 @@ function buildMessageCard(msg) {
   row.className = "clearfix";
 
   const copyBtn = document.createElement("button");
-  copyBtn.className = "copy-btn"; copyBtn.textContent = "Copia"; copyBtn.dataset.msg = msg;
+  copyBtn.className = "copy-btn"; copyBtn.textContent = t("copy"); copyBtn.dataset.msg = msg;
 
   const improveBtn = document.createElement("button");
-  improveBtn.className = "improve-btn"; improveBtn.textContent = "Migliora";
+  improveBtn.className = "improve-btn"; improveBtn.textContent = t("improve");
   improveBtn.addEventListener("click", () => toggleRefinePanel(wrap, msg));
 
   row.appendChild(improveBtn); row.appendChild(copyBtn);
@@ -488,21 +522,21 @@ function toggleRefinePanel(wrap, originalMsg) {
 
   const hint = document.createElement("p");
   hint.style.cssText = "font-size:10px;color:#4b5563;margin-bottom:5px;";
-  hint.textContent = "Direzione (opzionale) — es. più corta, aggiungi una domanda, più ironica";
+  hint.textContent = t("refine_hint");
 
   const textarea = document.createElement("textarea");
   textarea.className = "refine-input"; textarea.rows = 2;
-  textarea.placeholder = "Lascia vuoto e l'AI decide da sola";
+  textarea.placeholder = t("refine_placeholder");
 
   const actions = document.createElement("div");
   actions.className = "refine-actions";
 
   const goBtn = document.createElement("button");
-  goBtn.className = "btn-refine-go"; goBtn.textContent = "Genera varianti";
+  goBtn.className = "btn-refine-go"; goBtn.textContent = t("generate_variants");
   goBtn.addEventListener("click", () => runRefine(wrap, panel, goBtn, originalMsg, textarea.value));
 
   const cancelBtn = document.createElement("button");
-  cancelBtn.className = "btn-refine-cancel"; cancelBtn.textContent = "Annulla";
+  cancelBtn.className = "btn-refine-cancel"; cancelBtn.textContent = t("cancel");
   cancelBtn.addEventListener("click", () => panel.remove());
 
   actions.appendChild(goBtn); actions.appendChild(cancelBtn);
@@ -512,7 +546,7 @@ function toggleRefinePanel(wrap, originalMsg) {
 }
 
 async function runRefine(wrap, panel, goBtn, originalMsg, instruction) {
-  goBtn.disabled = true; goBtn.textContent = "Generazione...";
+  goBtn.disabled = true; goBtn.textContent = t("generating");
   const existing = panel.querySelector(".refine-results");
   if (existing) existing.remove();
 
@@ -540,7 +574,7 @@ async function runRefine(wrap, panel, goBtn, originalMsg, instruction) {
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       if (res.status === 402) openPricingPage();
-      throw new Error(err.detail || `Errore server (${res.status})`);
+      throw new Error(err.detail || `${t("status_http_error_prefix")} ${res.status}`);
     }
 
     const data = await res.json();
@@ -556,7 +590,7 @@ async function runRefine(wrap, panel, goBtn, originalMsg, instruction) {
 
       const copyAlt = document.createElement("button");
       copyAlt.className = "copy-btn"; copyAlt.style.float = "none";
-      copyAlt.textContent = "Copia"; copyAlt.dataset.msg = alt;
+      copyAlt.textContent = t("copy"); copyAlt.dataset.msg = alt;
       copyAlt.addEventListener("click", () => copyMsg(copyAlt));
 
       altRow.appendChild(copyAlt);
@@ -568,17 +602,17 @@ async function runRefine(wrap, panel, goBtn, originalMsg, instruction) {
   } catch (err) {
     const errEl = document.createElement("p");
     errEl.style.cssText = "font-size:11px;color:#f87171;margin-top:6px;";
-    errEl.textContent = err.message || "Errore sconosciuto";
+    errEl.textContent = err.message || t("error_unknown");
     panel.appendChild(errEl);
   } finally {
-    goBtn.disabled = false; goBtn.textContent = "Genera varianti";
+    goBtn.disabled = false; goBtn.textContent = t("generate_variants");
   }
 }
 
 function copyMsg(btn) {
   navigator.clipboard.writeText(btn.dataset.msg || "").then(() => {
-    btn.textContent = "Copiato ✓"; btn.classList.add("copied");
-    setTimeout(() => { btn.textContent = "Copia"; btn.classList.remove("copied"); }, 2000);
+    btn.textContent = t("copied"); btn.classList.add("copied");
+    setTimeout(() => { btn.textContent = t("copy"); btn.classList.remove("copied"); }, 2000);
   });
 }
 
