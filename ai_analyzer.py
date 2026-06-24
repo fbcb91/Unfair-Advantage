@@ -169,7 +169,7 @@ Rispondi SOLO con JSON valido:
         })
     content.append({"type": "text", "text": prompt})
 
-    # Try with extended thinking first, fall back to standard only if thinking is unsupported
+    # Try with extended thinking first, fall back to standard on any error
     try:
         response = client.messages.create(
             model=model,
@@ -177,8 +177,11 @@ Rispondi SOLO con JSON valido:
             thinking={"type": "enabled", "budget_tokens": 10000},
             messages=[{"role": "user", "content": content}],
         )
-        raw = next(b.text for b in response.content if b.type == "text").strip()
-    except anthropic.BadRequestError:
+        raw = next((b.text for b in response.content if b.type == "text"), None)
+        if not raw:
+            raise ValueError("no text block")
+        raw = raw.strip()
+    except Exception:
         response = client.messages.create(
             model=model,
             max_tokens=2000,
