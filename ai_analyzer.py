@@ -34,6 +34,7 @@ CHARACTER_INSTRUCTIONS = {
 
 
 def _extract_json(raw: str) -> str:
+    # Handle markdown code blocks first
     if "```" in raw:
         parts = raw.split("```")
         for part in parts:
@@ -41,7 +42,12 @@ def _extract_json(raw: str) -> str:
             if s.startswith("{"):
                 return s
         candidate = parts[1].strip()
-        return candidate[4:].strip() if candidate.startswith("json") else candidate
+        raw = candidate[4:].strip() if candidate.startswith("json") else candidate
+    # Find the outermost JSON object regardless of surrounding text
+    start = raw.find("{")
+    end = raw.rfind("}")
+    if start != -1 and end != -1 and end > start:
+        return raw[start:end + 1]
     return raw
 
 PREMIUM_MODEL = "claude-opus-4-8"
