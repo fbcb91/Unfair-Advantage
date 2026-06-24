@@ -50,7 +50,7 @@ def _extract_json(raw: str) -> str:
         return raw[start:end + 1]
     return raw
 
-PREMIUM_MODEL = "claude-opus-4-8"
+PREMIUM_MODEL = "claude-sonnet-4-6"
 FREE_MODEL = "claude-sonnet-4-6"
 
 
@@ -169,25 +169,12 @@ Rispondi SOLO con JSON valido:
         })
     content.append({"type": "text", "text": prompt})
 
-    # Try with extended thinking first, fall back to standard on any error
-    try:
-        response = client.messages.create(
-            model=model,
-            max_tokens=16000,
-            thinking={"type": "enabled", "budget_tokens": 10000},
-            messages=[{"role": "user", "content": content}],
-        )
-        raw = next((b.text for b in response.content if b.type == "text"), None)
-        if not raw:
-            raise ValueError("no text block")
-        raw = raw.strip()
-    except Exception:
-        response = client.messages.create(
-            model=model,
-            max_tokens=2000,
-            messages=[{"role": "user", "content": content}],
-        )
-        raw = response.content[0].text.strip()
+    response = client.messages.create(
+        model=model,
+        max_tokens=2000,
+        messages=[{"role": "user", "content": content}],
+    )
+    raw = response.content[0].text.strip()
 
     raw = _extract_json(raw)
     try:
