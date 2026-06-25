@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Unfair Advantage — Il primo messaggio che non viene ignorato</title>
-  <meta name="description" content="L'AI che analizza profili Instagram e ti suggerisce cosa scrivere — specifico, personale, impossibile da ignorare." />
+  <title data-i18n="title">Unfair Advantage — Il primo messaggio che non viene ignorato</title>
+  <meta name="description" data-i18n-meta-desc content="L'AI che analizza profili Instagram e ti suggerisce cosa scrivere — specifico, personale, impossibile da ignorare." />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,6 +24,11 @@
     .nav-logo span { color: #d946ef; }
     .nav-cta { background: #d946ef; color: #fff; font-weight: 600; padding: 8px 20px; border-radius: 8px; font-size: 13px; transition: background 0.12s; }
     .nav-cta:hover { background: #c026d3; }
+
+    /* Lang switcher */
+    .lang-switcher { display: flex; gap: 2px; background: rgba(255,255,255,0.06); border-radius: 8px; padding: 3px; }
+    .lang-btn { background: none; border: none; cursor: pointer; padding: 3px 10px; border-radius: 5px; font-size: 12px; font-weight: 600; color: #6b7280; font-family: inherit; transition: all 0.12s; }
+    .lang-btn.active { background: rgba(255,255,255,0.1); color: #f0f0f0; }
 
     /* Hero */
     .hero { padding: 100px 0 80px; text-align: center; }
@@ -131,7 +136,11 @@
     <div class="container">
       <div class="nav-inner">
         <div class="nav-logo">Unfair <span>Advantage</span></div>
-        <a href="#pricing" class="nav-cta">Inizia gratis</a>
+        <div class="lang-switcher">
+          <button class="lang-btn" id="btnIt" onclick="setLang('it')">🇮🇹 IT</button>
+          <button class="lang-btn" id="btnEn" onclick="setLang('en')">🇬🇧 EN</button>
+        </div>
+        <a href="#pricing" class="nav-cta" data-i18n="nav_cta">Inizia gratis</a>
       </div>
     </div>
   </nav>
@@ -139,12 +148,12 @@
   <!-- Hero -->
   <div class="hero glow">
     <div class="container">
-      <div class="hero-tag">Estensione Chrome × AI</div>
-      <h1>Il primo messaggio<br>che <em>non viene ignorato</em></h1>
-      <p class="hero-sub">Unfair Advantage analizza il profilo Instagram di lei — foto, bio, captions — e ti dice esattamente cosa scrivere. Specifico, personale, impossibile da ignorare.</p>
+      <div class="hero-tag" data-i18n="hero_tag">Estensione Chrome × AI</div>
+      <h1 data-i18n-html="hero_h1">Il primo messaggio<br>che <em>non viene ignorato</em></h1>
+      <p class="hero-sub" data-i18n="hero_sub">Unfair Advantage analizza il profilo Instagram di lei — foto, bio, captions — e ti dice esattamente cosa scrivere. Specifico, personale, impossibile da ignorare.</p>
       <div class="hero-actions">
-        <a href="#how" class="btn-primary">Come funziona</a>
-        <a href="#pricing" class="btn-outline">Vedi i prezzi</a>
+        <a href="#how" class="btn-primary" data-i18n="hero_btn1">Come funziona</a>
+        <a href="#pricing" class="btn-outline" data-i18n="hero_btn2">Vedi i prezzi</a>
       </div>
 
       <!-- Product mockup -->
@@ -159,14 +168,14 @@
             <div class="mockup-name">@giulia.rmn</div>
             <div class="mockup-meta">1.2K follower</div>
           </div>
-          <span class="mockup-badge">Analizzato ✓</span>
+          <span class="mockup-badge" data-i18n="mockup_badge">Analizzato ✓</span>
         </div>
-        <div class="mockup-hook">💡 In 4 foto su 9 c'è la stessa tazza gialla, mai citata</div>
+        <div class="mockup-hook" data-i18n="mockup_hook">💡 In 4 foto su 9 c'è la stessa tazza gialla, mai citata</div>
         <div class="mockup-msg">
-          <p>Ho bisogno di sapere la storia della tazza gialla. Compare ovunque e nessuno ne parla.</p>
+          <p data-i18n="mockup_msg">Ho bisogno di sapere la storia della tazza gialla. Compare ovunque e nessuno ne parla.</p>
           <div class="mockup-msg-actions">
-            <span class="mockup-btn-ghost">Migliora</span>
-            <span class="mockup-btn-copy">Copia</span>
+            <span class="mockup-btn-ghost" data-i18n="mockup_improve">Migliora</span>
+            <span class="mockup-btn-copy" data-i18n="mockup_copy">Copia</span>
           </div>
         </div>
       </div>
@@ -179,10 +188,10 @@
   <div class="section" id="problem" style="padding: 64px 0;">
     <div class="container">
       <div style="max-width: 640px; margin: 0 auto; text-align: center;">
-        <p style="font-size: clamp(20px, 3vw, 28px); font-weight: 700; line-height: 1.4; letter-spacing: -0.02em; color: #f0f0f0; margin-bottom: 20px;">
+        <p style="font-size: clamp(20px, 3vw, 28px); font-weight: 700; line-height: 1.4; letter-spacing: -0.02em; color: #f0f0f0; margin-bottom: 20px;" data-i18n-html="problem_h">
           Sei stanco di scrivere messaggi<br>che non ricevono risposta?
         </p>
-        <p style="font-size: 16px; color: #6b7280; line-height: 1.7; max-width: 520px; margin: 0 auto;">
+        <p style="font-size: 16px; color: #6b7280; line-height: 1.7; max-width: 520px; margin: 0 auto;" data-i18n-html="problem_p">
           Farsi notare da una ragazza che non conosci è difficile. Soprattutto se riceve già decine di messaggi al giorno — tutti uguali, tutti generici, tutti ignorati.<br><br>
           Il problema non sei tu. È il messaggio.
         </p>
@@ -195,25 +204,25 @@
   <!-- How it works -->
   <div class="section" id="how">
     <div class="container">
-      <div class="section-label">Come funziona</div>
-      <div class="section-title">Tre secondi. Poi scrivi.</div>
-      <p class="section-sub">Niente ricerche manuali, niente frasi copia-incolla. L'AI fa il lavoro pesante.</p>
+      <div class="section-label" data-i18n="how_label">Come funziona</div>
+      <div class="section-title" data-i18n="how_title">Tre secondi. Poi scrivi.</div>
+      <p class="section-sub" data-i18n="how_sub">Niente ricerche manuali, niente frasi copia-incolla. L'AI fa il lavoro pesante.</p>
 
       <div class="steps">
         <div class="step">
           <div class="step-num">1</div>
-          <h3>Vai sul profilo</h3>
-          <p>Naviga su qualsiasi profilo Instagram pubblico direttamente dal tuo browser.</p>
+          <h3 data-i18n="step1_h">Vai sul profilo</h3>
+          <p data-i18n="step1_p">Naviga su qualsiasi profilo Instagram pubblico direttamente dal tuo browser.</p>
         </div>
         <div class="step">
           <div class="step-num">2</div>
-          <h3>Clicca l'estensione</h3>
-          <p>L'AI legge bio, captions, highlights e analizza le foto con la vision — come faresti tu, ma più veloce.</p>
+          <h3 data-i18n="step2_h">Clicca l'estensione</h3>
+          <p data-i18n="step2_p">L'AI legge bio, captions, highlights e analizza le foto con la vision — come faresti tu, ma più veloce.</p>
         </div>
         <div class="step">
           <div class="step-num">3</div>
-          <h3>Copia e invia</h3>
-          <p>Ricevi 3 messaggi personalizzati pronti da inviare. Se non ti convincono, rigenerali o migliorane uno.</p>
+          <h3 data-i18n="step3_h">Copia e invia</h3>
+          <p data-i18n="step3_p">Ricevi 3 messaggi personalizzati pronti da inviare. Se non ti convincono, rigenerali o migliorane uno.</p>
         </div>
       </div>
     </div>
@@ -224,40 +233,40 @@
   <!-- Features -->
   <div class="section">
     <div class="container">
-      <div class="section-label">Funzionalità</div>
-      <div class="section-title">Non è un generatore di frasi.</div>
-      <p class="section-sub">È un'AI che guarda davvero il profilo e trova dettagli che nessuno nota.</p>
+      <div class="section-label" data-i18n="feat_label">Funzionalità</div>
+      <div class="section-title" data-i18n="feat_title">Non è un generatore di frasi.</div>
+      <p class="section-sub" data-i18n="feat_sub">È un'AI che guarda davvero il profilo e trova dettagli che nessuno nota.</p>
 
       <div class="features-grid">
         <div class="feature">
           <div class="feature-icon">👁</div>
-          <h3>Vision AI</h3>
-          <p>Analizza le foto come le vedi tu — outfit, luoghi, dettagli in background. Non solo il testo.</p>
+          <h3 data-i18n="feat1_h">Vision AI</h3>
+          <p data-i18n="feat1_p">Analizza le foto come le vedi tu — outfit, luoghi, dettagli in background. Non solo il testo.</p>
         </div>
         <div class="feature">
           <div class="feature-icon">🎭</div>
-          <h3>Personaggi</h3>
-          <p>Scrivi come Chuck Bass, Damon Salvatore, Harvey Specter o Hitch. La stessa voce, nel mondo reale.</p>
+          <h3 data-i18n="feat2_h">Personaggi</h3>
+          <p data-i18n="feat2_p">Scrivi come Chuck Bass, Damon Salvatore, Harvey Specter o Hitch. La stessa voce, nel mondo reale.</p>
         </div>
         <div class="feature">
           <div class="feature-icon">🎯</div>
-          <h3>Toni diversi</h3>
-          <p>Diretto, curioso, giocoso o romantico — scegli il registro che ti rappresenta e l'AI si adatta.</p>
+          <h3 data-i18n="feat3_h">Toni diversi</h3>
+          <p data-i18n="feat3_p">Diretto, curioso, giocoso o romantico — scegli il registro che ti rappresenta e l'AI si adatta.</p>
         </div>
         <div class="feature">
           <div class="feature-icon">✦</div>
-          <h3>Migliora</h3>
-          <p>Un messaggio ha del potenziale ma non è perfetto? Indicagli la direzione e ricevi 3 varianti.</p>
+          <h3 data-i18n="feat4_h">Migliora</h3>
+          <p data-i18n="feat4_p">Un messaggio ha del potenziale ma non è perfetto? Indicagli la direzione e ricevi 3 varianti.</p>
         </div>
         <div class="feature">
           <div class="feature-icon">🔒</div>
-          <h3>Privacy totale</h3>
-          <p>Usa la tua sessione Instagram esistente. Nessun login Instagram richiesto, nessun dato salvato.</p>
+          <h3 data-i18n="feat5_h">Privacy totale</h3>
+          <p data-i18n="feat5_p">Usa la tua sessione Instagram esistente. Nessun login Instagram richiesto, nessun dato salvato.</p>
         </div>
         <div class="feature">
           <div class="feature-icon">⚡</div>
-          <h3>Istantaneo</h3>
-          <p>Risultati in 15-20 secondi. Meno tempo di quanto impiegheresti a pensare cosa scrivere da solo.</p>
+          <h3 data-i18n="feat6_h">Istantaneo</h3>
+          <p data-i18n="feat6_p">Risultati in 15-20 secondi. Meno tempo di quanto impiegheresti a pensare cosa scrivere da solo.</p>
         </div>
       </div>
     </div>
@@ -268,9 +277,9 @@
   <!-- Examples -->
   <div class="section">
     <div class="container">
-      <div class="section-label">Esempi reali</div>
-      <div class="section-title">Questi non li scrive nessun altro.</div>
-      <p class="section-sub">L'AI trova dettagli che richiedono vera attenzione. Niente "bella foto" o "dove sei stata?".</p>
+      <div class="section-label" data-i18n="ex_label">Esempi reali</div>
+      <div class="section-title" data-i18n="ex_title">Questi non li scrive nessun altro.</div>
+      <p class="section-sub" data-i18n="ex_sub">L'AI trova dettagli che richiedono vera attenzione. Niente "bella foto" o "dove sei stata?".</p>
 
       <div class="examples-wrap">
         <div class="example">
@@ -278,12 +287,12 @@
             <img class="example-avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=faces&auto=format" alt="" />
             <div>
               <div class="example-name">alice_b.</div>
-              <div class="example-meta">Negoziante · 26K follower</div>
+              <div class="example-meta" data-i18n="ex1_meta">Negoziante · 26K follower</div>
             </div>
           </div>
-          <div class="example-tag">Tono Diretto</div>
-          <div class="example-msg">"Negozio di dolciumi fondato a 24 anni. Rispetto."</div>
-          <div class="example-hook">→ Hook trovato: ha aperto un'attività in proprio da giovanissima, non lo dice nella bio</div>
+          <div class="example-tag" data-i18n="ex1_tag">Tono Diretto</div>
+          <div class="example-msg" data-i18n="ex1_msg">"Negozio di dolciumi fondato a 24 anni. Rispetto."</div>
+          <div class="example-hook" data-i18n="ex1_hook">→ Hook trovato: ha aperto un'attività in proprio da giovanissima, non lo dice nella bio</div>
         </div>
 
         <div class="example">
@@ -291,12 +300,12 @@
             <img class="example-avatar" src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=80&h=80&fit=crop&crop=faces&auto=format" alt="" />
             <div>
               <div class="example-name">greta.g</div>
-              <div class="example-meta">555 in bio · 3.9K follower</div>
+              <div class="example-meta" data-i18n="ex2_meta">555 in bio · 3.9K follower</div>
             </div>
           </div>
-          <div class="example-tag">Chuck Bass</div>
-          <div class="example-msg">"Un bestiario, un'ostrica e un tè. Manca solo il movente."</div>
-          <div class="example-hook">→ Hook trovato: cover degli highlights sono animali esotici senza senso apparente</div>
+          <div class="example-tag" data-i18n="ex2_tag">Chuck Bass</div>
+          <div class="example-msg" data-i18n="ex2_msg">"Un bestiario, un'ostrica e un tè. Manca solo il movente."</div>
+          <div class="example-hook" data-i18n="ex2_hook">→ Hook trovato: cover degli highlights sono animali esotici senza senso apparente</div>
         </div>
 
         <div class="example">
@@ -304,12 +313,12 @@
             <img class="example-avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&h=80&fit=crop&crop=faces&auto=format" alt="" />
             <div>
               <div class="example-name">larabrandoni_</div>
-              <div class="example-meta">lilli · 2.7K follower</div>
+              <div class="example-meta" data-i18n="ex3_meta">lilli · 2.7K follower</div>
             </div>
           </div>
-          <div class="example-tag">Tono Curioso</div>
-          <div class="example-msg">"Profilo senza una parola scritta da nessuna parte, ci vuole disciplina. Cosa non vuoi che si legga?"</div>
-          <div class="example-hook">→ Hook trovato: zero captions su tutti i post, scelta precisa non casuale</div>
+          <div class="example-tag" data-i18n="ex3_tag">Tono Curioso</div>
+          <div class="example-msg" data-i18n="ex3_msg">"Profilo senza una parola scritta da nessuna parte, ci vuole disciplina. Cosa non vuoi che si legga?"</div>
+          <div class="example-hook" data-i18n="ex3_hook">→ Hook trovato: zero captions su tutti i post, scelta precisa non casuale</div>
         </div>
       </div>
     </div>
@@ -321,38 +330,38 @@
   <div class="section" id="pricing">
     <div class="container">
       <div style="text-align:center; margin-bottom:0;">
-        <div class="section-label" style="display:inline-block">Prezzi</div>
-        <div class="section-title">Inizia gratis. Scala quando vuoi.</div>
-        <p class="section-sub" style="margin:0 auto 0;">Nessuna carta richiesta per iniziare.</p>
+        <div class="section-label" style="display:inline-block" data-i18n="price_label">Prezzi</div>
+        <div class="section-title" data-i18n="price_title">Inizia gratis. Scala quando vuoi.</div>
+        <p class="section-sub" style="margin:0 auto 0;" data-i18n="price_sub">Nessuna carta richiesta per iniziare.</p>
       </div>
 
       <div class="pricing-grid">
         <div class="pricing-card">
-          <div class="pricing-badge">Free</div>
-          <div class="pricing-price">€0<span>/mese</span></div>
-          <div class="pricing-desc">Per provare il prodotto davvero.</div>
+          <div class="pricing-badge" data-i18n="free_badge">Free</div>
+          <div class="pricing-price" data-i18n-html="free_price">€0<span>/mese</span></div>
+          <div class="pricing-desc" data-i18n="free_desc">Per provare il prodotto davvero.</div>
           <ul class="pricing-features">
-            <li>3 analisi al mese</li>
-            <li>Tutti i toni (diretto, curioso, giocoso, romantico)</li>
-            <li>Migliora i messaggi (conta come analisi)</li>
-            <li class="muted">Personaggi (Chuck Bass, Damon...)</li>
-            <li class="muted">AI più potente</li>
+            <li data-i18n="free_f1">3 analisi al mese</li>
+            <li data-i18n="free_f2">Tutti i toni (diretto, curioso, giocoso, romantico)</li>
+            <li data-i18n="free_f3">Migliora i messaggi (conta come analisi)</li>
+            <li class="muted" data-i18n="free_f4">Personaggi (Chuck Bass, Damon...)</li>
+            <li class="muted" data-i18n="free_f5">AI più potente</li>
           </ul>
-          <a href="#install" class="btn-pricing btn-pricing-free">Inizia gratis</a>
+          <a href="#install" class="btn-pricing btn-pricing-free" data-i18n="free_btn">Inizia gratis</a>
         </div>
 
         <div class="pricing-card featured">
-          <div class="pricing-badge">Premium</div>
-          <div class="pricing-price">€4,99<span>/mese</span></div>
-          <div class="pricing-desc">Per chi vuole il massimo ogni giorno.</div>
+          <div class="pricing-badge" data-i18n="prem_badge">Premium</div>
+          <div class="pricing-price" data-i18n-html="prem_price">€4,99<span>/mese</span></div>
+          <div class="pricing-desc" data-i18n="prem_desc">Per chi vuole il massimo ogni giorno.</div>
           <ul class="pricing-features">
-            <li>Analisi illimitate</li>
-            <li>AI più potente — messaggi più brillanti</li>
-            <li>Personaggi (Chuck Bass, Damon, Hitch, Harvey...)</li>
-            <li>Migliora i messaggi senza limiti</li>
-            <li>Tutti i toni</li>
+            <li data-i18n="prem_f1">Analisi illimitate</li>
+            <li data-i18n="prem_f2">AI più potente — messaggi più brillanti</li>
+            <li data-i18n="prem_f3">Personaggi (Chuck Bass, Damon, Hitch, Harvey...)</li>
+            <li data-i18n="prem_f4">Migliora i messaggi senza limiti</li>
+            <li data-i18n="prem_f5">Tutti i toni</li>
           </ul>
-          <a href="#install" class="btn-pricing btn-pricing-premium">Attiva Premium</a>
+          <a href="#install" class="btn-pricing btn-pricing-premium" data-i18n="prem_btn">Attiva Premium</a>
         </div>
       </div>
     </div>
@@ -363,17 +372,17 @@
   <!-- Install CTA -->
   <div class="section" id="install" style="text-align:center;">
     <div class="container">
-      <div class="section-title" style="max-width:500px; margin:0 auto 16px;">In arrivo su Chrome Web Store</div>
-      <p style="font-size:16px; color:#6b7280; margin-bottom:36px;">Stiamo completando la review di Google. Lascia la tua email e ti avvisiamo non appena è disponibile.</p>
+      <div class="section-title" style="max-width:500px; margin:0 auto 16px;" data-i18n="install_title">In arrivo su Chrome Web Store</div>
+      <p style="font-size:16px; color:#6b7280; margin-bottom:36px;" data-i18n="install_sub">Stiamo completando la review di Google. Lascia la tua email e ti avvisiamo non appena è disponibile.</p>
 
       <div style="background:#111; border:1px solid rgba(255,255,255,0.07); border-radius:16px; padding:32px; max-width:480px; margin:0 auto;">
         <form id="waitlistForm" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-          <input type="email" id="waitlistEmail" placeholder="tu@email.com" required
+          <input type="email" id="waitlistEmail" placeholder="tu@email.com" required data-i18n-placeholder="install_placeholder"
             style="flex:1; min-width:220px; background:#0d0d0d; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#f0f0f0; padding:11px 14px; font-size:14px; font-family:inherit; outline:none;" />
-          <button type="submit" class="btn-primary" style="font-size:14px; padding:11px 24px; border:none; cursor:pointer;">Avvisami</button>
+          <button type="submit" class="btn-primary" style="font-size:14px; padding:11px 24px; border:none; cursor:pointer;" data-i18n="install_btn">Avvisami</button>
         </form>
         <div id="waitlistStatus" style="font-size:13px; margin-top:12px; min-height:18px;"></div>
-        <p style="font-size:11px; color:#374151; margin-top:16px;">Niente spam. Solo un messaggio quando esce.</p>
+        <p style="font-size:11px; color:#374151; margin-top:16px;" data-i18n="install_fine">Niente spam. Solo un messaggio quando esce.</p>
       </div>
     </div>
   </div>
@@ -384,9 +393,9 @@
     <div class="container">
       <span style="font-weight:700; color:#6b7280;">Unfair <span style="color:#d946ef;">Advantage</span></span>
       <span style="margin: 0 12px; color:#1f2937;">·</span>
-      <span>Disdici quando vuoi</span>
+      <span data-i18n="footer_cancel">Disdici quando vuoi</span>
       <span style="margin: 0 12px; color:#1f2937;">·</span>
-      <a href="/privacy" style="color:#4b5563;">Privacy</a>
+      <a href="/privacy" style="color:#4b5563;" data-i18n="footer_privacy">Privacy</a>
       <span style="margin: 0 12px; color:#1f2937;">·</span>
       <span id="year"></span>
     </div>
@@ -395,11 +404,238 @@
   <!-- Email confirmation banner (shown when Supabase redirects here after email verification) -->
   <div id="confirmBanner" style="display:none; position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#111; border:1px solid rgba(34,197,94,0.4); border-radius:14px; padding:16px 28px; z-index:999; text-align:center; box-shadow:0 8px 32px rgba(0,0,0,0.5); max-width:90vw;">
     <div style="font-size:22px; margin-bottom:8px;">✅</div>
-    <div style="font-size:15px; font-weight:700; color:#f0f0f0; margin-bottom:4px;">Email confermata!</div>
-    <div style="font-size:13px; color:#6b7280;">Torna all'estensione Chrome e accedi con le tue credenziali.</div>
+    <div style="font-size:15px; font-weight:700; color:#f0f0f0; margin-bottom:4px;" data-i18n="confirm_title">Email confermata!</div>
+    <div style="font-size:13px; color:#6b7280;" data-i18n="confirm_sub">Torna all'estensione Chrome e accedi con le tue credenziali.</div>
   </div>
 
   <script>
+    const T = {
+      it: {
+        title: "Unfair Advantage — Il primo messaggio che non viene ignorato",
+        meta_desc: "L'AI che analizza profili Instagram e ti suggerisce cosa scrivere — specifico, personale, impossibile da ignorare.",
+        nav_cta: "Inizia gratis",
+        hero_tag: "Estensione Chrome × AI",
+        hero_h1: "Il primo messaggio<br>che <em>non viene ignorato</em>",
+        hero_sub: "Unfair Advantage analizza il profilo Instagram di lei — foto, bio, captions — e ti dice esattamente cosa scrivere. Specifico, personale, impossibile da ignorare.",
+        hero_btn1: "Come funziona",
+        hero_btn2: "Vedi i prezzi",
+        mockup_badge: "Analizzato ✓",
+        mockup_hook: "💡 In 4 foto su 9 c'è la stessa tazza gialla, mai citata",
+        mockup_msg: "Ho bisogno di sapere la storia della tazza gialla. Compare ovunque e nessuno ne parla.",
+        mockup_improve: "Migliora",
+        mockup_copy: "Copia",
+        problem_h: "Sei stanco di scrivere messaggi<br>che non ricevono risposta?",
+        problem_p: "Farsi notare da una ragazza che non conosci è difficile. Soprattutto se riceve già decine di messaggi al giorno — tutti uguali, tutti generici, tutti ignorati.<br><br>Il problema non sei tu. È il messaggio.",
+        how_label: "Come funziona",
+        how_title: "Tre secondi. Poi scrivi.",
+        how_sub: "Niente ricerche manuali, niente frasi copia-incolla. L'AI fa il lavoro pesante.",
+        step1_h: "Vai sul profilo",
+        step1_p: "Naviga su qualsiasi profilo Instagram pubblico direttamente dal tuo browser.",
+        step2_h: "Clicca l'estensione",
+        step2_p: "L'AI legge bio, captions, highlights e analizza le foto con la vision — come faresti tu, ma più veloce.",
+        step3_h: "Copia e invia",
+        step3_p: "Ricevi 3 messaggi personalizzati pronti da inviare. Se non ti convincono, rigenerali o migliorane uno.",
+        feat_label: "Funzionalità",
+        feat_title: "Non è un generatore di frasi.",
+        feat_sub: "È un'AI che guarda davvero il profilo e trova dettagli che nessuno nota.",
+        feat1_h: "Vision AI",
+        feat1_p: "Analizza le foto come le vedi tu — outfit, luoghi, dettagli in background. Non solo il testo.",
+        feat2_h: "Personaggi",
+        feat2_p: "Scrivi come Chuck Bass, Damon Salvatore, Harvey Specter o Hitch. La stessa voce, nel mondo reale.",
+        feat3_h: "Toni diversi",
+        feat3_p: "Diretto, curioso, giocoso o romantico — scegli il registro che ti rappresenta e l'AI si adatta.",
+        feat4_h: "Migliora",
+        feat4_p: "Un messaggio ha del potenziale ma non è perfetto? Indicagli la direzione e ricevi 3 varianti.",
+        feat5_h: "Privacy totale",
+        feat5_p: "Usa la tua sessione Instagram esistente. Nessun login Instagram richiesto, nessun dato salvato.",
+        feat6_h: "Istantaneo",
+        feat6_p: "Risultati in 15-20 secondi. Meno tempo di quanto impiegheresti a pensare cosa scrivere da solo.",
+        ex_label: "Esempi reali",
+        ex_title: "Questi non li scrive nessun altro.",
+        ex_sub: "L'AI trova dettagli che richiedono vera attenzione. Niente \"bella foto\" o \"dove sei stata?\".",
+        ex1_meta: "Negoziante · 26K follower",
+        ex1_tag: "Tono Diretto",
+        ex1_msg: "\"Negozio di dolciumi fondato a 24 anni. Rispetto.\"",
+        ex1_hook: "→ Hook trovato: ha aperto un'attività in proprio da giovanissima, non lo dice nella bio",
+        ex2_meta: "555 in bio · 3.9K follower",
+        ex2_tag: "Chuck Bass",
+        ex2_msg: "\"Un bestiario, un'ostrica e un tè. Manca solo il movente.\"",
+        ex2_hook: "→ Hook trovato: cover degli highlights sono animali esotici senza senso apparente",
+        ex3_meta: "lilli · 2.7K follower",
+        ex3_tag: "Tono Curioso",
+        ex3_msg: "\"Profilo senza una parola scritta da nessuna parte, ci vuole disciplina. Cosa non vuoi che si legga?\"",
+        ex3_hook: "→ Hook trovato: zero captions su tutti i post, scelta precisa non casuale",
+        price_label: "Prezzi",
+        price_title: "Inizia gratis. Scala quando vuoi.",
+        price_sub: "Nessuna carta richiesta per iniziare.",
+        free_badge: "Free",
+        free_price: "€0<span>/mese</span>",
+        free_desc: "Per provare il prodotto davvero.",
+        free_f1: "3 analisi al mese",
+        free_f2: "Tutti i toni (diretto, curioso, giocoso, romantico)",
+        free_f3: "Migliora i messaggi (conta come analisi)",
+        free_f4: "Personaggi (Chuck Bass, Damon...)",
+        free_f5: "AI più potente",
+        free_btn: "Inizia gratis",
+        prem_badge: "Premium",
+        prem_price: "€4,99<span>/mese</span>",
+        prem_desc: "Per chi vuole il massimo ogni giorno.",
+        prem_f1: "Analisi illimitate",
+        prem_f2: "AI più potente — messaggi più brillanti",
+        prem_f3: "Personaggi (Chuck Bass, Damon, Hitch, Harvey...)",
+        prem_f4: "Migliora i messaggi senza limiti",
+        prem_f5: "Tutti i toni",
+        prem_btn: "Attiva Premium",
+        install_title: "In arrivo su Chrome Web Store",
+        install_sub: "Stiamo completando la review di Google. Lascia la tua email e ti avvisiamo non appena è disponibile.",
+        install_placeholder: "tu@email.com",
+        install_btn: "Avvisami",
+        install_fine: "Niente spam. Solo un messaggio quando esce.",
+        footer_cancel: "Disdici quando vuoi",
+        footer_privacy: "Privacy",
+        confirm_title: "Email confermata!",
+        confirm_sub: "Torna all'estensione Chrome e accedi con le tue credenziali.",
+        waitlist_ok: "✓ Ti avvisiamo non appena è disponibile!",
+        waitlist_err: "Qualcosa non ha funzionato. Riprova.",
+        waitlist_net: "Errore di rete. Riprova.",
+      },
+      en: {
+        title: "Unfair Advantage — The first message she won't ignore",
+        meta_desc: "The AI that analyzes Instagram profiles and tells you exactly what to write — specific, personal, impossible to ignore.",
+        nav_cta: "Start free",
+        hero_tag: "Chrome Extension × AI",
+        hero_h1: "The first message<br>she <em>won't ignore</em>",
+        hero_sub: "Unfair Advantage analyzes her Instagram profile — photos, bio, captions — and tells you exactly what to write. Specific, personal, impossible to ignore.",
+        hero_btn1: "How it works",
+        hero_btn2: "See pricing",
+        mockup_badge: "Analyzed ✓",
+        mockup_hook: "💡 The same yellow mug appears in 4 out of 9 photos, never mentioned",
+        mockup_msg: "I need to know the story behind the yellow mug. It shows up everywhere and no one talks about it.",
+        mockup_improve: "Improve",
+        mockup_copy: "Copy",
+        problem_h: "Tired of sending messages<br>that get ignored?",
+        problem_p: "Getting noticed by someone you don't know is hard. Especially when she already gets dozens of messages a day — all the same, all generic, all ignored.<br><br>The problem isn't you. It's the message.",
+        how_label: "How it works",
+        how_title: "Three seconds. Then write.",
+        how_sub: "No manual research, no copy-paste lines. The AI does the heavy lifting.",
+        step1_h: "Visit the profile",
+        step1_p: "Navigate to any public Instagram profile directly from your browser.",
+        step2_h: "Click the extension",
+        step2_p: "The AI reads bio, captions, highlights and analyzes photos with vision — just like you would, but faster.",
+        step3_h: "Copy and send",
+        step3_p: "Get 3 personalized messages ready to send. Not convinced? Regenerate or improve one.",
+        feat_label: "Features",
+        feat_title: "Not a line generator.",
+        feat_sub: "An AI that actually looks at the profile and finds details no one else notices.",
+        feat1_h: "Vision AI",
+        feat1_p: "Analyzes photos like you would — outfits, locations, background details. Not just the text.",
+        feat2_h: "Characters",
+        feat2_p: "Write like Chuck Bass, Damon Salvatore, Harvey Specter or Hitch. Same voice, real world.",
+        feat3_h: "Different tones",
+        feat3_p: "Direct, curious, playful or romantic — choose your style and the AI adapts.",
+        feat4_h: "Improve",
+        feat4_p: "A message has potential but isn't quite there? Give it a direction and get 3 variants.",
+        feat5_h: "Full privacy",
+        feat5_p: "Uses your existing Instagram session. No Instagram login required, no data stored.",
+        feat6_h: "Instant",
+        feat6_p: "Results in 15–20 seconds. Less time than you'd spend thinking of something to write.",
+        ex_label: "Real examples",
+        ex_title: "No one else writes these.",
+        ex_sub: "The AI finds details that take real attention. No 'nice photo' or 'where was this taken?'.",
+        ex1_meta: "Shop owner · 26K followers",
+        ex1_tag: "Direct tone",
+        ex1_msg: "\"Opened a candy shop at 24. Respect.\"",
+        ex1_hook: "→ Hook found: started her own business very young, not mentioned in bio",
+        ex2_meta: "555 in bio · 3.9K followers",
+        ex2_tag: "Chuck Bass",
+        ex2_msg: "\"A bestiary, an oyster and a tea. Just missing the motive.\"",
+        ex2_hook: "→ Hook found: highlight covers are exotic animals with no apparent connection",
+        ex3_meta: "lilli · 2.7K followers",
+        ex3_tag: "Curious tone",
+        ex3_msg: "\"A profile with no text anywhere — takes discipline. What don't you want people to read?\"",
+        ex3_hook: "→ Hook found: zero captions on every post, a deliberate choice",
+        price_label: "Pricing",
+        price_title: "Start free. Scale when you're ready.",
+        price_sub: "No card required to get started.",
+        free_badge: "Free",
+        free_price: "€0<span>/month</span>",
+        free_desc: "To actually try the product.",
+        free_f1: "3 analyses per month",
+        free_f2: "All tones (direct, curious, playful, romantic)",
+        free_f3: "Improve messages (counts as analysis)",
+        free_f4: "Characters (Chuck Bass, Damon...)",
+        free_f5: "More powerful AI",
+        free_btn: "Start free",
+        prem_badge: "Premium",
+        prem_price: "€4.99<span>/month</span>",
+        prem_desc: "For those who want the best every day.",
+        prem_f1: "Unlimited analyses",
+        prem_f2: "More powerful AI — sharper messages",
+        prem_f3: "Characters (Chuck Bass, Damon, Hitch, Harvey...)",
+        prem_f4: "Improve messages without limits",
+        prem_f5: "All tones",
+        prem_btn: "Activate Premium",
+        install_title: "Coming to Chrome Web Store",
+        install_sub: "We're completing Google's review. Leave your email and we'll notify you as soon as it's available.",
+        install_placeholder: "you@email.com",
+        install_btn: "Notify me",
+        install_fine: "No spam. Just one message when it goes live.",
+        footer_cancel: "Cancel anytime",
+        footer_privacy: "Privacy",
+        confirm_title: "Email confirmed!",
+        confirm_sub: "Go back to the Chrome extension and sign in with your credentials.",
+        waitlist_ok: "✓ We'll notify you as soon as it's available!",
+        waitlist_err: "Something went wrong. Please try again.",
+        waitlist_net: "Network error. Please try again.",
+      }
+    };
+
+    function applyLang(lang) {
+      document.documentElement.lang = lang;
+      const d = T[lang];
+
+      // Update <title>
+      document.title = d.title;
+
+      // Update meta description
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', d.meta_desc);
+
+      // data-i18n: set textContent
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (d[key] !== undefined) el.textContent = d[key];
+      });
+
+      // data-i18n-html: set innerHTML
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.getAttribute('data-i18n-html');
+        if (d[key] !== undefined) el.innerHTML = d[key];
+      });
+
+      // data-i18n-placeholder: set placeholder
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (d[key] !== undefined) el.placeholder = d[key];
+      });
+
+      // Update active button state
+      document.getElementById('btnIt').classList.toggle('active', lang === 'it');
+      document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+    }
+
+    function setLang(lang) {
+      localStorage.setItem('lang', lang);
+      applyLang(lang);
+    }
+
+    // Init language on load
+    (function () {
+      const saved = localStorage.getItem('lang');
+      const lang = saved || (navigator.language.startsWith('it') ? 'it' : 'en');
+      applyLang(lang);
+    })();
+
     document.getElementById("year").textContent = new Date().getFullYear();
 
     // Waitlist form
@@ -407,6 +643,7 @@
       e.preventDefault();
       const email = document.getElementById("waitlistEmail").value.trim();
       const status = document.getElementById("waitlistStatus");
+      const lang = localStorage.getItem('lang') || (navigator.language.startsWith('it') ? 'it' : 'en');
       status.textContent = ""; status.style.color = "";
       try {
         const res = await fetch("/api/waitlist", {
@@ -415,15 +652,15 @@
           body: JSON.stringify({ email }),
         });
         if (res.ok) {
-          status.textContent = "✓ Ti avvisiamo non appena è disponibile!";
+          status.textContent = T[lang].waitlist_ok;
           status.style.color = "#22c55e";
           document.getElementById("waitlistEmail").value = "";
         } else {
-          status.textContent = "Qualcosa non ha funzionato. Riprova.";
+          status.textContent = T[lang].waitlist_err;
           status.style.color = "#f87171";
         }
       } catch {
-        status.textContent = "Errore di rete. Riprova.";
+        status.textContent = T[lang].waitlist_net;
         status.style.color = "#f87171";
       }
     });

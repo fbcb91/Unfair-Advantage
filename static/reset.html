@@ -22,19 +22,97 @@
     .status { font-size: 13px; margin-top: 14px; min-height: 18px; text-align: center; }
     .status.success { color: #22c55e; }
     .status.error { color: #ef4444; }
+    .lang-switcher { display: flex; gap: 2px; background: rgba(255,255,255,0.06); border-radius: 8px; padding: 3px; }
+    .lang-btn { background: none; border: none; cursor: pointer; padding: 3px 10px; border-radius: 5px; font-size: 12px; font-weight: 600; color: #6b7280; font-family: inherit; transition: all 0.12s; }
+    .lang-btn.active { background: rgba(255,255,255,0.1); color: #f0f0f0; }
   </style>
 </head>
 <body>
+
+  <script>
+    const T = {
+      it: {
+        title: "Unfair Advantage — Nuova password",
+        h1: "Scegli una nuova password",
+        label_new: "Nuova password",
+        placeholder_new: "Minimo 6 caratteri",
+        label_confirm: "Conferma password",
+        placeholder_confirm: "Ripeti la password",
+        btn_update: "Aggiorna password",
+        err_invalid_link: "Link non valido o scaduto. Richiedi un nuovo link di reset.",
+        err_min6: "Minimo 6 caratteri.",
+        err_mismatch: "Le password non coincidono.",
+        btn_loading: "Aggiornamento...",
+        success_msg: "✓ Password aggiornata! Torna all'estensione e accedi.",
+        err_default: "Errore durante l'aggiornamento.",
+      },
+      en: {
+        title: "Unfair Advantage — New password",
+        h1: "Choose a new password",
+        label_new: "New password",
+        placeholder_new: "At least 6 characters",
+        label_confirm: "Confirm password",
+        placeholder_confirm: "Repeat password",
+        btn_update: "Update password",
+        err_invalid_link: "Invalid or expired link. Request a new reset link.",
+        err_min6: "Minimum 6 characters.",
+        err_mismatch: "Passwords don't match.",
+        btn_loading: "Updating...",
+        success_msg: "✓ Password updated! Go back to the extension and sign in.",
+        err_default: "Error updating password.",
+      }
+    };
+
+    function applyLang(lang) {
+      document.documentElement.lang = lang;
+      const d = T[lang];
+
+      document.title = d.title;
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (d[key] !== undefined) el.textContent = d[key];
+      });
+
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (d[key] !== undefined) el.placeholder = d[key];
+      });
+
+      const btnIt = document.getElementById('btnIt');
+      const btnEn = document.getElementById('btnEn');
+      if (btnIt) btnIt.classList.toggle('active', lang === 'it');
+      if (btnEn) btnEn.classList.toggle('active', lang === 'en');
+    }
+
+    function setLang(lang) {
+      localStorage.setItem('lang', lang);
+      applyLang(lang);
+    }
+
+    // Init language on load
+    (function () {
+      const saved = localStorage.getItem('lang');
+      const lang = saved || (navigator.language.startsWith('it') ? 'it' : 'en');
+      applyLang(lang);
+    })();
+  </script>
+
+  <div style="position:fixed;top:16px;right:16px;" class="lang-switcher">
+    <button class="lang-btn" id="btnIt" onclick="setLang('it')">🇮🇹 IT</button>
+    <button class="lang-btn" id="btnEn" onclick="setLang('en')">🇬🇧 EN</button>
+  </div>
+
   <div class="container">
     <div class="logo"><a href="/" style="color:inherit; text-decoration:none;">Unfair <span>Advantage</span></a></div>
     <div class="card">
-      <h1>Scegli una nuova password</h1>
+      <h1 data-i18n="h1">Scegli una nuova password</h1>
       <div id="formWrap">
-        <label for="newPassword">Nuova password</label>
-        <input type="password" id="newPassword" placeholder="Minimo 6 caratteri" />
-        <label for="confirmPassword">Conferma password</label>
-        <input type="password" id="confirmPassword" placeholder="Ripeti la password" />
-        <button class="btn" id="updateBtn">Aggiorna password</button>
+        <label for="newPassword" data-i18n="label_new">Nuova password</label>
+        <input type="password" id="newPassword" placeholder="Minimo 6 caratteri" data-i18n-placeholder="placeholder_new" />
+        <label for="confirmPassword" data-i18n="label_confirm">Conferma password</label>
+        <input type="password" id="confirmPassword" placeholder="Ripeti la password" data-i18n-placeholder="placeholder_confirm" />
+        <button class="btn" id="updateBtn" data-i18n="btn_update">Aggiorna password</button>
       </div>
       <div class="status" id="statusMsg"></div>
     </div>
@@ -49,10 +127,14 @@
     const accessToken = params.get("access_token");
     const type = params.get("type");
 
+    function getLang() {
+      return localStorage.getItem('lang') || (navigator.language.startsWith('it') ? 'it' : 'en');
+    }
+
     if (!accessToken || type !== "recovery") {
       document.getElementById("formWrap").innerHTML = "";
       const s = document.getElementById("statusMsg");
-      s.textContent = "Link non valido o scaduto. Richiedi un nuovo link di reset.";
+      s.textContent = T[getLang()].err_invalid_link;
       s.className = "status error";
     }
 
@@ -61,11 +143,12 @@
       const pw2 = document.getElementById("confirmPassword").value;
       const status = document.getElementById("statusMsg");
       const btn = document.getElementById("updateBtn");
+      const lang = getLang();
 
-      if (pw.length < 6) { status.textContent = "Minimo 6 caratteri."; status.className = "status error"; return; }
-      if (pw !== pw2) { status.textContent = "Le password non coincidono."; status.className = "status error"; return; }
+      if (pw.length < 6) { status.textContent = T[lang].err_min6; status.className = "status error"; return; }
+      if (pw !== pw2) { status.textContent = T[lang].err_mismatch; status.className = "status error"; return; }
 
-      btn.disabled = true; btn.textContent = "Aggiornamento...";
+      btn.disabled = true; btn.textContent = T[lang].btn_loading;
       try {
         const res = await fetch(`${SUPABASE_URL}/api/auth/update-password`, {
           method: "POST",
@@ -74,15 +157,15 @@
         });
         if (res.ok) {
           document.getElementById("formWrap").innerHTML = "";
-          status.textContent = "✓ Password aggiornata! Torna all'estensione e accedi.";
+          status.textContent = T[lang].success_msg;
           status.className = "status success";
         } else {
           const d = await res.json().catch(() => ({}));
-          throw new Error(d.detail || "Errore durante l'aggiornamento.");
+          throw new Error(d.detail || T[lang].err_default);
         }
       } catch (err) {
         status.textContent = err.message; status.className = "status error";
-        btn.disabled = false; btn.textContent = "Aggiorna password";
+        btn.disabled = false; btn.textContent = T[lang].btn_update;
       }
     });
   </script>

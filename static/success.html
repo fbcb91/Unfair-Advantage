@@ -13,14 +13,70 @@
     h1 span { color: #d946ef; }
     p { font-size: 14px; color: #6b7280; line-height: 1.6; max-width: 320px; }
     .hint { margin-top: 28px; font-size: 13px; color: #4b5563; }
+    .lang-switcher { display: flex; gap: 2px; background: rgba(255,255,255,0.06); border-radius: 8px; padding: 3px; }
+    .lang-btn { background: none; border: none; cursor: pointer; padding: 3px 10px; border-radius: 5px; font-size: 12px; font-weight: 600; color: #6b7280; font-family: inherit; transition: all 0.12s; }
+    .lang-btn.active { background: rgba(255,255,255,0.1); color: #f0f0f0; }
   </style>
 </head>
 <body>
+
+  <script>
+    const T = {
+      it: {
+        h1: "Sei su <span>Premium</span>",
+        p: "Abbonamento attivato. Torna all'estensione e riapri il popup — le analisi ora sono illimitate.",
+        hint: "Puoi chiudere questa scheda.",
+      },
+      en: {
+        h1: "You're on <span>Premium</span>",
+        p: "Subscription activated. Go back to the extension and reopen the popup — analyses are now unlimited.",
+        hint: "You can close this tab.",
+      }
+    };
+
+    function applyLang(lang) {
+      document.documentElement.lang = lang;
+      const d = T[lang];
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (d[key] !== undefined) el.textContent = d[key];
+      });
+
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.getAttribute('data-i18n-html');
+        if (d[key] !== undefined) el.innerHTML = d[key];
+      });
+
+      const btnIt = document.getElementById('btnIt');
+      const btnEn = document.getElementById('btnEn');
+      if (btnIt) btnIt.classList.toggle('active', lang === 'it');
+      if (btnEn) btnEn.classList.toggle('active', lang === 'en');
+    }
+
+    function setLang(lang) {
+      localStorage.setItem('lang', lang);
+      applyLang(lang);
+    }
+
+    // Init language on load
+    (function () {
+      const saved = localStorage.getItem('lang');
+      const lang = saved || (navigator.language.startsWith('it') ? 'it' : 'en');
+      applyLang(lang);
+    })();
+  </script>
+
+  <div style="position:fixed;top:16px;right:16px;" class="lang-switcher">
+    <button class="lang-btn" id="btnIt" onclick="setLang('it')">🇮🇹 IT</button>
+    <button class="lang-btn" id="btnEn" onclick="setLang('en')">🇬🇧 EN</button>
+  </div>
+
   <div>
     <div class="icon">🎉</div>
-    <h1>Sei su <span>Premium</span></h1>
-    <p>Abbonamento attivato. Torna all'estensione e riapri il popup — le analisi ora sono illimitate.</p>
-    <p class="hint">Puoi chiudere questa scheda.</p>
+    <h1 data-i18n-html="h1">Sei su <span>Premium</span></h1>
+    <p data-i18n="p">Abbonamento attivato. Torna all'estensione e riapri il popup — le analisi ora sono illimitate.</p>
+    <p class="hint" data-i18n="hint">Puoi chiudere questa scheda.</p>
   </div>
 </body>
 </html>

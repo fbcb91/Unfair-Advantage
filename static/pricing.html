@@ -42,30 +42,115 @@
 
     .status { font-size: 13px; text-align: center; margin-top: 14px; min-height: 18px; }
     .status.error { color: #f87171; }
+
+    /* Lang switcher */
+    .lang-switcher { display: flex; gap: 2px; background: rgba(255,255,255,0.06); border-radius: 8px; padding: 3px; }
+    .lang-btn { background: none; border: none; cursor: pointer; padding: 3px 10px; border-radius: 5px; font-size: 12px; font-weight: 600; color: #6b7280; font-family: inherit; transition: all 0.12s; }
+    .lang-btn.active { background: rgba(255,255,255,0.1); color: #f0f0f0; }
+
+    .top-nav { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 40px; }
   </style>
 </head>
 <body>
+
+  <script>
+    const T = {
+      it: {
+        title: "Unfair Advantage — Premium",
+        plan_name: "Premium",
+        plan_price: "€4,99<span>/mese</span>",
+        plan_desc: "Tutto illimitato, nessuna sorpresa.",
+        f1: "Analisi illimitate ogni mese",
+        f2: "AI più potente — messaggi più brillanti",
+        f3: "Tutti i personaggi (Chuck Bass, Damon, Hitch...)",
+        f4: "Migliora i messaggi senza limiti",
+        free_note: "Piano gratuito: <strong>3 analisi al mese</strong>",
+        subscribe_btn: "Attiva Premium",
+        btn_loading: "Attendere...",
+        err_no_token: "Token mancante. Riapri da estensione.",
+        err_unknown: "Errore sconosciuto",
+        terms: "Disdici quando vuoi. Nessun vincolo. · <a href=\"/privacy\" style=\"color:#4b5563;\">Privacy</a>",
+      },
+      en: {
+        title: "Unfair Advantage — Premium",
+        plan_name: "Premium",
+        plan_price: "€4.99<span>/month</span>",
+        plan_desc: "Everything unlimited, no surprises.",
+        f1: "Unlimited analyses per month",
+        f2: "More powerful AI — sharper messages",
+        f3: "All characters (Chuck Bass, Damon, Hitch...)",
+        f4: "Improve messages without limits",
+        free_note: "Free plan: <strong>3 analyses per month</strong>",
+        subscribe_btn: "Activate Premium",
+        btn_loading: "Loading...",
+        err_no_token: "Missing token. Reopen from the extension.",
+        err_unknown: "Unknown error",
+        terms: "Cancel anytime. No commitment. · <a href=\"/privacy\" style=\"color:#4b5563;\">Privacy</a>",
+      }
+    };
+
+    function applyLang(lang) {
+      document.documentElement.lang = lang;
+      const d = T[lang];
+
+      document.title = d.title;
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (d[key] !== undefined) el.textContent = d[key];
+      });
+
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.getAttribute('data-i18n-html');
+        if (d[key] !== undefined) el.innerHTML = d[key];
+      });
+
+      const btnIt = document.getElementById('btnIt');
+      const btnEn = document.getElementById('btnEn');
+      if (btnIt) btnIt.classList.toggle('active', lang === 'it');
+      if (btnEn) btnEn.classList.toggle('active', lang === 'en');
+    }
+
+    function setLang(lang) {
+      localStorage.setItem('lang', lang);
+      applyLang(lang);
+    }
+
+    // Init language on load
+    (function () {
+      const saved = localStorage.getItem('lang');
+      const lang = saved || (navigator.language.startsWith('it') ? 'it' : 'en');
+      applyLang(lang);
+    })();
+  </script>
+
   <div class="container">
-    <div class="logo">Unfair <span>Advantage</span></div>
+    <div class="top-nav">
+      <div class="logo" style="margin-bottom:0;">Unfair <span>Advantage</span></div>
+      <div class="lang-switcher">
+        <button class="lang-btn" id="btnIt" onclick="setLang('it')">🇮🇹 IT</button>
+        <button class="lang-btn" id="btnEn" onclick="setLang('en')">🇬🇧 EN</button>
+      </div>
+    </div>
 
     <div class="card">
-      <div class="plan-name">Premium</div>
-      <div class="plan-price">€4,99<span>/mese</span></div>
-      <div class="plan-desc">Tutto illimitato, nessuna sorpresa.</div>
+      <div class="plan-name" data-i18n="plan_name">Premium</div>
+      <div class="plan-price" data-i18n-html="plan_price">€4,99<span>/mese</span></div>
+      <div class="plan-desc" data-i18n="plan_desc">Tutto illimitato, nessuna sorpresa.</div>
 
       <ul class="features">
-        <li>Analisi illimitate ogni mese</li>
-        <li>AI più potente — messaggi più brillanti</li>
-        <li>Tutti i personaggi (Chuck Bass, Damon, Hitch...)</li>
-        <li>Migliora i messaggi senza limiti</li>
+        <li data-i18n="f1">Analisi illimitate ogni mese</li>
+        <li data-i18n="f2">AI più potente — messaggi più brillanti</li>
+        <li data-i18n="f3">Tutti i personaggi (Chuck Bass, Damon, Hitch...)</li>
+        <li data-i18n="f4">Migliora i messaggi senza limiti</li>
       </ul>
 
       <div class="divider"></div>
 
-      <div class="free-note">Piano gratuito: <strong>3 analisi al mese</strong></div>
+      <div class="free-note" data-i18n-html="free_note">Piano gratuito: <strong>3 analisi al mese</strong></div>
 
-      <button class="btn-subscribe" id="subscribeBtn">Attiva Premium</button>
-      <div class="terms">Disdici quando vuoi. Nessun vincolo. · <a href="/privacy" style="color:#4b5563;">Privacy</a></div>
+      <button class="btn-subscribe" id="subscribeBtn" data-i18n="subscribe_btn">Attiva Premium</button>
+      <div class="terms" data-i18n-html="terms">Disdici quando vuoi. Nessun vincolo. · <a href="/privacy" style="color:#4b5563;">Privacy</a></div>
       <div class="status" id="statusMsg"></div>
     </div>
   </div>
@@ -77,17 +162,18 @@
     document.getElementById("subscribeBtn").addEventListener("click", async () => {
       const btn = document.getElementById("subscribeBtn");
       const status = document.getElementById("statusMsg");
+      const lang = localStorage.getItem('lang') || (navigator.language.startsWith('it') ? 'it' : 'en');
       btn.disabled = true;
-      btn.textContent = "Attendere...";
+      btn.textContent = T[lang].btn_loading;
       status.textContent = "";
       status.className = "status";
 
       const token = params.get("token") || "";
       if (!token) {
-        status.textContent = "Token mancante. Riapri da estensione.";
+        status.textContent = T[lang].err_no_token;
         status.className = "status error";
         btn.disabled = false;
-        btn.textContent = "Attiva Premium";
+        btn.textContent = T[lang].subscribe_btn;
         return;
       }
 
@@ -101,13 +187,13 @@
           }),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || "Errore sconosciuto");
+        if (!res.ok) throw new Error(data.detail || T[lang].err_unknown);
         window.location.href = data.url;
       } catch (err) {
         status.textContent = err.message;
         status.className = "status error";
         btn.disabled = false;
-        btn.textContent = "Attiva Premium";
+        btn.textContent = T[lang].subscribe_btn;
       }
     });
   </script>
