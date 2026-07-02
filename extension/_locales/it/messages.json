@@ -1,6 +1,6 @@
 {
-  "ext_name":               { "message": "Unfair Advantage — AI per Instagram" },
-  "ext_description":        { "message": "Analizza profili Instagram e genera messaggi personalizzati con AI" },
+  "ext_name":               { "message": "Unfair Advantage – Primo Messaggio Instagram con AI" },
+  "ext_description":        { "message": "Genera il primo messaggio perfetto per Instagram con l'AI. Rompighiaccio personalizzato in 15 secondi." },
 
   "not_auth_hint":          { "message": "Accedi per usare Unfair Advantage" },
   "open_settings_auth":     { "message": "Accedi / Registrati" },

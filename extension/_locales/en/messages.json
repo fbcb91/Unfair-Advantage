@@ -1,6 +1,6 @@
 {
-  "ext_name":               { "message": "Unfair Advantage — AI for Instagram" },
-  "ext_description":        { "message": "Analyze Instagram profiles and generate personalized messages with AI" },
+  "ext_name":               { "message": "Unfair Advantage – Instagram Icebreaker AI" },
+  "ext_description":        { "message": "AI-generated opening messages for Instagram. Personalized icebreakers in 15 seconds." },
 
   "not_auth_hint":          { "message": "Sign in to use Unfair Advantage" },
   "open_settings_auth":     { "message": "Sign in / Sign up" },
